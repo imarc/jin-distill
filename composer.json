@@ -1,0 +1,16 @@
+{
+    "name": "imarc/jin-tumbler",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Austin Fishbaugh",
+            "email": "austinfishbaugh@imarc.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Tumbler\\": "src/Tumbler/"
+        }
+    }
+}
