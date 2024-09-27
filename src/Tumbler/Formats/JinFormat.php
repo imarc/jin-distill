@@ -17,13 +17,13 @@ class JinFormat implements FormatInterface
 	 * @param int    $boundary   The depth to switch from INI to JSON format.
 	 * @param string $tabs       The tab character to use for indentation.
 	 * @param bool   $extensions Whether to include the --extends key in the output.
-	 * @param bool   $flexible   Whether to gracefully handle invalid structures or throw an exception.
+	 * @param bool   $strict   Whether to gracefully handle invalid structures or throw an exception.
 	 */
 	public function __construct(
 		protected int    $boundary   = 1, 
 		protected string $tabs       = "\t", 
 		protected bool   $extensions = true,
-		protected bool   $flexible   = true
+		protected bool   $strict   = true
 	) {
 		$this->boundary = $boundary;
 		$this->tabs = $tabs;
@@ -40,7 +40,7 @@ class JinFormat implements FormatInterface
 			if ($this->extensions !== false) {
 				$extends = sprintf('file(%s)', $array["--extends"]);
 				$this->write(
-					sprintf("%s %s\n", $this->encodeKey('--extends', 0, null), $this->encodeValue($extends, 0))
+					sprintf("%s %s\n", $this->encodeKey('--extends', 0, 'ini'), $this->encodeValue($extends, 0))
 				);
 			}
             unset($array["--extends"]);
@@ -86,7 +86,7 @@ class JinFormat implements FormatInterface
 			return false;
 		}
 		if (is_array($value) && array_is_list($value)) {
-			if ($this->flexible) {
+			if ($this->strict) {
 				throw new InvalidStructureException("The config structure is not able to be represented given the current INI boundary depth.");
 			}
 			return true;
@@ -104,11 +104,11 @@ class JinFormat implements FormatInterface
 	/**
 	 * 
 	 */
-	protected function handle($key, $value, $depth = 0, $context = null)
+	protected function handle($key, $value, $depth = 0, $context = 'ini')
 	{
 		$this->writeTabs($depth);
 
-		if ($context === null) {
+		if ($context === 'ini') {
 			if ($depth >= $this->boundary) {
 				$context = 'object';
 			}
@@ -147,7 +147,11 @@ class JinFormat implements FormatInterface
 							$this->handle($k, $v, $depth + 1, 'array');
 						}
 						$this->writeTabs($depth);
-						$this->write("]\n\n");
+						if ($context == 'object') {
+							$this->write("],\n\n");
+						} else {
+							$this->write("]\n\n");
+						}
 						break;
 				}
 				break;
@@ -215,7 +219,7 @@ class JinFormat implements FormatInterface
 	 */
 	protected function encodeKey($key, $depth, $context) 
 	{
-		if ($context !== null && $depth > $this->boundary) {
+		if ($context !== 'ini' && $depth > $this->boundary) {
 			return sprintf('"%s": ', $key);
 		} else {
 			return sprintf('%s =', $key);
@@ -233,7 +237,7 @@ class JinFormat implements FormatInterface
 			$comma = '';
 		}
 
-        if ($value === NULL) {
+        if ($value === null) {
             return sprintf('%s%s', 'null' , $comma);
         }
 
