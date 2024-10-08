@@ -1,5 +1,5 @@
 {
-    "name": "imarc/jin-tumbler",
+    "name": "imarc/jin-distill",
     "type": "library",
     "authors": [
         {
@@ -10,7 +10,7 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "Tumbler\\": "src/Tumbler/"
+            "JinDistill\\": "src/JinDistill/"
         }
     }
 }

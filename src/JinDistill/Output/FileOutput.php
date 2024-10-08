@@ -1,6 +1,6 @@
 <?php
 
-namespace Tumbler\Output;
+namespace JinDistill\Output;
 
 class FileOutput implements OutputInterface
 {

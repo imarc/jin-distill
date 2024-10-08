@@ -1,6 +1,6 @@
 <?php
 
-namespace Tumbler\Exceptions;
+namespace JinDistill\Exceptions;
 
 class InvalidStructureException extends \Exception
 {

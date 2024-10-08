@@ -1,6 +1,6 @@
 <?php
 
-namespace Tumbler\Formats;
+namespace JinDistill\Formats;
 
 class CsvFormat implements FormatInterface
 {

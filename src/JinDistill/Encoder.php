@@ -1,8 +1,8 @@
 <?php
-namespace Tumbler;
+namespace JinDistill;
 
-use Tumbler\Formats\{JinFormat, CsvFormat, FormatInterface};
-use Tumbler\Output\OutputInterface;
+use JinDistill\Formats\{JinFormat, CsvFormat, FormatInterface};
+use JinDistill\Output\OutputInterface;
 
 
 

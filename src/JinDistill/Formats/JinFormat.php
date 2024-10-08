@@ -1,8 +1,8 @@
 <?php
 
-namespace Tumbler\Formats;
+namespace JinDistill\Formats;
 
-use Tumbler\Exceptions\InvalidStructureException;
+use JinDistill\Exceptions\InvalidStructureException;
 
 class JinFormat implements FormatInterface
 {
