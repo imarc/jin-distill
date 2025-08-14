@@ -51,7 +51,7 @@ class JinFormat implements FormatInterface
 			$this->handle($key, $value);
 		}
 
-		return $this->data;
+		return $this->clean($this->data);
 	}
 
 
@@ -274,5 +274,16 @@ class JinFormat implements FormatInterface
 	protected function write($string)
 	{
 		$this->data .= $string;
+	}
+
+	
+	/**
+	 * 
+	 */
+	protected function clean($string)
+	{
+		$string = str_replace('  ', ' ', $string);
+		$string = str_replace(',,', ',', $string);
+		return $string;
 	}
 }
