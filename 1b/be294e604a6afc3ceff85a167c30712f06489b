@@ -1,0 +1,57 @@
+tests/JinDistillerTest.php
+  s_ab0d3e88f980bc::t_376e250965f993 1-26
+tests/JinFormatTest.php
+  s_ab0d3e88f980bc::t_a4dc2ef6c05bc9 73-90
+  s_ab0d3e88f980bc::t_2ee8cb17e5895a 1-72
+tests/fixtures/circular-b.jin
+  s_ab0d3e88f980bc::t_e418edde007f28 1-2
+tests/JinDocumentTest.php
+  s_ab0d3e88f980bc::t_5c0baf40269aa8 1-53
+tests/fixtures/base.jin
+  s_ab0d3e88f980bc::t_e418edde007f28 1-14
+src/JinDistill/Support/Arr.php
+  s_ab0d3e88f980bc::t_476201ab8f6f10 1-59
+tests/fixtures/circular-a.jin
+  s_ab0d3e88f980bc::t_e418edde007f28 1-2
+src/JinDistill/JinDistiller.php
+  s_ab0d3e88f980bc::t_d0b60b73757e62 1-53
+src/JinDistill/JinResolver.php
+  s_ab0d3e88f980bc::t_dac9b6bf5ccbd4 1-82
+tests/fixtures/comments.jin
+  s_ab0d3e88f980bc::t_163fb0acacbfee 1-16
+src/JinDistill/Formats/JinFormat.php
+  s_ab0d3e88f980bc::t_3b8a55738728fa 68-72,74
+  s_ab0d3e88f980bc::t_b75c1dfe1e6778 6,10-67,73,75-76,79-84,86-98,100-101,103-104,108-110,112-115,117-137,139-151,153-169,171-186,188,192,195-197,199,202-232,234-274
+tests/run.php
+  s_ab0d3e88f980bc::t_175c4f56437829 1-5,7-85
+  s_ab0d3e88f980bc::t_5c0baf40269aa8 6
+src/JinDistill/Decoders/DecoderInterface.php
+  s_ab0d3e88f980bc::t_5b0d3a8ec067ce 1-10
+src/JinDistill/Decoders/JinDecoder.php
+  s_ab0d3e88f980bc::t_5b0d3a8ec067ce 1-246
+tests/JinDecoderTest.php
+  s_ab0d3e88f980bc::t_163fb0acacbfee 69-85
+  s_ab0d3e88f980bc::t_cb7d7599f299c7 1-68
+src/JinDistill/JinDocument.php
+  s_ab0d3e88f980bc::t_476201ab8f6f10 1-24
+tests/JinResolverTest.php
+  s_ab0d3e88f980bc::t_e418edde007f28 1-30
+tests/fixtures/child.jin
+  s_ab0d3e88f980bc::t_e418edde007f28 1-14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.11",
+  "base_commit_sha": "1bbe294e604a6afc3ceff85a167c30712f06489b",
+  "prompts": {},
+  "sessions": {
+    "s_ab0d3e88f980bc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0b1fbe1ecffenuYXrZeGHg5Xkz",
+        "model": "gpt-5.5-fast"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
