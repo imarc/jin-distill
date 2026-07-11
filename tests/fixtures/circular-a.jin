@@ -1,0 +1,2 @@
+--extends = file(circular-b.jin)
+name = A

@@ -1,0 +1,14 @@
+--extends = file(base.jin)
+--without = [
+    "form.fields.person.avatar",
+    "form.fields.person.middleName",
+]
+
+[form]
+
+    name = CPA
+    fields = {
+        "person": {
+            "birthDate": true,
+        },
+    }

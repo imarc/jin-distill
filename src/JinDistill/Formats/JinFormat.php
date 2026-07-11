@@ -3,287 +3,272 @@
 namespace JinDistill\Formats;
 
 use JinDistill\Exceptions\InvalidStructureException;
+use JinDistill\JinDocument;
 
 class JinFormat implements FormatInterface
 {
-	/**
-	 * Holds the data that will be the final output.
-	 * @var string
-	 */
-	protected $data = "";
+    protected string $data = '';
+    protected array $metadata = [];
+    protected bool $comments = false;
 
+    public function __construct(
+        protected int $boundary = 1,
+        protected string $tabs = "\t",
+        protected bool $strict = true,
+    ) {
+    }
 
-	/**
-	 * @param int    $boundary   The depth to switch from INI to JSON format.
-	 * @param string $tabs       The tab character to use for indentation.
-	 * @param bool   $extensions Whether to include the --extends key in the output.
-	 * @param bool   $strict   Whether to gracefully handle invalid structures or throw an exception.
-	 */
-	public function __construct(
-		protected int    $boundary   = 1, 
-		protected string $tabs       = "\t", 
-		protected bool   $extensions = true,
-		protected bool   $strict   = true
-	) {
-		$this->boundary = $boundary;
-		$this->tabs = $tabs;
-		$this->extensions = $extensions;
-	}
+    public function encode(array $data, bool $extensions = true): string
+    {
+        $directives = [];
 
-
-	/**
-	 * 
-	 */
-	public function encode($array): string
-	{
-        if (isset($array["--extends"])) {
-			if ($this->extensions !== false) {
-				$extends = sprintf('file(%s)', $array["--extends"]);
-				$this->write(
-					sprintf("%s %s\n", $this->encodeKey('--extends', 0, 'ini'), $this->encodeValue($extends, 0))
-				);
-			}
-            unset($array["--extends"]);
+        if (array_key_exists('--extends', $data)) {
+            $directives['extends'] = $data['--extends'];
+            unset($data['--extends']);
         }
 
-		$array = $this->prepareInput($array);
-		foreach($array as $key => $value) {
-			$this->handle($key, $value);
-		}
+        if (array_key_exists('--without', $data)) {
+            $directives['without'] = (array) $data['--without'];
+            unset($data['--without']);
+        }
 
-		return $this->clean($this->data);
-	}
+        return $this->encodeDocument(new JinDocument($data, $directives), $extensions);
+    }
 
-
-	/**
-	 * 
-	 */
-	protected function prepareInput($array) 
-	{
-		$marked = [];
-		foreach ($array as $key => $value) {
-			if ($this->findArrayDepthIssues($value)) {
-				$marked[$key] = true;	
-			}
-		}
-		foreach ($marked as $key => $value) {
-			$saved = $array[$key];
-			unset($array[$key]);
-			$array = array_merge([$key => $saved], $array);
-		}
-		return $array;
-	}
-
-
-	/**
-	 * 
-	 */
-	protected function findArrayDepthIssues($value, $depth = 0) {
-		if ($depth > $this->boundary) {
-			return false;
-		}
-		if (!is_array($value)) {
-			return false;
-		}
-		if (is_array($value) && array_is_list($value)) {
-			if ($this->strict) {
-				throw new InvalidStructureException("The config structure is not able to be represented given the current INI boundary depth.");
-			}
-			return true;
-		}
-
-		foreach ($value as $k => $v) {
-			if ($this->findArrayDepthIssues($v, $depth + 1)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-
-	/**
-	 * 
-	 */
-	protected function handle($key, $value, $depth = 0, $context = 'ini')
-	{
-		$this->writeTabs($depth);
-
-		if ($context === 'ini') {
-			if ($depth >= $this->boundary) {
-				$context = 'object';
-			}
-		}
-
-		switch ($this->valueType($value)) {
-			case 'primitive':
-				switch ($context) {
-					case 'array':
-						$this->write(
-							sprintf("%s,\n", $this->encodeValue($value, $depth))
-						);
-						break;
-					default:
-						$this->write(
-							sprintf("%s %s\n", $this->encodeKey($key, $depth, $context), $this->encodeValue($value, $depth))
-						);
-						break;
-				}
-				break;
-			case 'array':
-				switch ($context) {
-					case 'array':
-						$this->write("[\n");
-						foreach ($value as $k => $v) {
-							$this->handle($k, $v, $depth + 1, 'array');
-						}
-						$this->writeTabs($depth);
-						$this->write("],\n\n");
-						break;
-					default:
-						$this->write(
-							sprintf("%s [\n", $this->encodeKey($key, $depth, $context))
-						);
-						foreach ($value as $k => $v) {
-							$this->handle($k, $v, $depth + 1, 'array');
-						}
-						$this->writeTabs($depth);
-						if ($context == 'object') {
-							$this->write("],\n\n");
-						} else {
-							$this->write("]\n\n");
-						}
-						break;
-				}
-				break;
-			case 'object':
-				switch ($context) {
-					case 'array':
-						$this->write("{\n");
-						foreach ($value as $k => $v) {
-							$this->handle($k, $v, $depth + 1, 'object');
-						}
-						$this->writeTabs($depth);
-						$this->write("},\n\n");
-						break;
-					case 'object':
-						$this->write(
-							sprintf("%s {\n", $this->encodeKey($key, $depth, 'object'))
-						);
-						foreach ($value as $k => $v) {
-							$this->handle($k, $v, $depth + 1, 'object');
-						}
-						$this->writeTabs($depth);
-						if ($depth > $this->boundary) {
-							$this->write("},\n\n");
-						} else {
-							$this->write("}\n\n");
-						}
-						break;
-					default:
-						$this->write(
-							sprintf("[%s]\n\n", $key)
-						);
-						foreach ($value as $k => $v) {
-							$this->handle($k, $v, $depth + 1);
-						}
-						$this->write("\n");
-						break;
-				}
-				break;
-			default:
-				throw new InvalidStructureException("Unexpected, unknown, or invalid structure detected.");
-				break;
-		}
-	}
-
-
-	/**
-	 * 
-	 */
-    protected function valueType($value)
+    public function encodeDocument(JinDocument $document, bool $extensions = true, bool $comments = false): string
     {
-        if (is_array($value)) {
-            if (array_is_list($value)) {
-                return 'array';
-            } else {
-                return 'object';
+        $this->data = '';
+        $this->metadata = $document->metadata;
+        $this->comments = $comments;
+
+        if ($extensions) {
+            $this->writeDirectives($document->directives);
+        }
+
+        $this->writeTopLevel($document->data);
+
+        return rtrim($this->data) . "\n";
+    }
+
+    protected function writeDirectives(array $directives): void
+    {
+        $wrote = false;
+
+        if (!empty($directives['extends'])) {
+            $this->writeComments('--extends', 0);
+            $this->write(sprintf('--extends = file(%s)', $directives['extends']));
+            $this->writeInlineComment('--extends');
+            $this->write("\n");
+            $wrote = true;
+        }
+
+        if (!empty($directives['without'])) {
+            $without = array_values((array) $directives['without']);
+
+            $this->writeComments('--without', 0);
+            $this->write("--without = [\n");
+            foreach ($without as $path) {
+                $this->writeTabs(1);
+                $this->write(sprintf("%s,\n", $this->quoteJsonString($path)));
             }
-        } else {
-            return 'primitive';
+            $this->write("]\n");
+
+            $wrote = true;
+        }
+
+        if ($wrote) {
+            $this->write("\n");
         }
     }
 
-
-	/**
-	 * 
-	 */
-	protected function encodeKey($key, $depth, $context) 
-	{
-		if ($context !== 'ini' && $depth > $this->boundary) {
-			return sprintf('"%s": ', $key);
-		} else {
-			return sprintf('%s =', $key);
-		}
-	}
-
-
-    /**
-     * 
-     */
-    protected function encodeValue($value, $depth)
+    protected function writeTopLevel(array $data): void
     {
-		$comma = ',';
-		if ($depth <= $this->boundary) {
-			$comma = '';
-		}
+        $first = true;
 
+        foreach ($data as $key => $value) {
+            if (!$first) {
+                $this->write("\n");
+            }
+
+            if (is_array($value) && !array_is_list($value)) {
+                $this->writeComments((string) $key, 0);
+                $this->write(sprintf('[%s]', $key));
+                $this->writeInlineComment((string) $key);
+                $this->write("\n\n");
+                $this->writeIniFields($value, 1, (string) $key);
+            } else {
+                $this->writeComments((string) $key, 0);
+                $this->writeIniAssignment((string) $key, $value, 0, (string) $key);
+            }
+
+            $first = false;
+        }
+    }
+
+    protected function writeIniFields(array $fields, int $depth, string $path): void
+    {
+        $first = true;
+
+        foreach ($fields as $key => $value) {
+            if (!$first) {
+                $this->write("\n");
+            }
+
+            $fieldPath = $path . '.' . $key;
+            $this->writeComments($fieldPath, $depth);
+
+            if (is_array($value) && $depth >= $this->boundary) {
+                $this->writeTabs($depth);
+                $this->write(sprintf('%s = %s', $key, $this->encodeJsonValue($value, $depth)));
+            } elseif (is_array($value)) {
+                if (array_is_list($value)) {
+                    if ($this->strict) {
+                        throw new InvalidStructureException('List arrays cannot be represented before the JSON boundary.');
+                    }
+
+                    $this->writeTabs($depth);
+                    $this->write(sprintf('%s = %s', $key, $this->encodeJsonValue($value, $depth)));
+                } else {
+                    $this->writeTabs($depth);
+                    $this->write(sprintf('%s = %s', $key, $this->encodeJsonValue($value, $depth)));
+                }
+            } else {
+                $this->writeIniAssignment((string) $key, $value, $depth, $fieldPath);
+            }
+
+            $first = false;
+        }
+    }
+
+    protected function writeIniAssignment(string $key, mixed $value, int $depth, string $path): void
+    {
+        $this->writeTabs($depth);
+        $this->write(sprintf('%s = %s', $key, $this->encodeIniValue($value)));
+        $this->writeInlineComment($path);
+        $this->write("\n");
+    }
+
+    protected function encodeJsonValue(mixed $value, int $depth): string
+    {
+        if (!is_array($value)) {
+            return $this->encodeJsonScalar($value);
+        }
+
+        if (array_is_list($value)) {
+            if ($value === []) {
+                return '[]';
+            }
+
+            $output = "[\n";
+            foreach ($value as $item) {
+                $this->appendTabsTo($output, $depth + 1);
+                $output .= $this->encodeJsonValue($item, $depth + 1) . ",\n";
+            }
+            $this->appendTabsTo($output, $depth);
+            return $output . ']';
+        }
+
+        if ($value === []) {
+            return '{}';
+        }
+
+        $output = "{\n";
+        foreach ($value as $key => $item) {
+            $this->appendTabsTo($output, $depth + 1);
+            $output .= sprintf('%s: %s,', $this->quoteJsonString((string) $key), $this->encodeJsonValue($item, $depth + 1));
+            $output .= "\n";
+        }
+        $this->appendTabsTo($output, $depth);
+        return $output . '}';
+    }
+
+    protected function encodeJsonScalar(mixed $value): string
+    {
         if ($value === null) {
-            return sprintf('%s%s', 'null' , $comma);
+            return 'null';
         }
 
         if (is_bool($value)) {
-            return sprintf('%s%s', ($value ? 'true' : 'false'), $comma);
+            return $value ? 'true' : 'false';
         }
 
-		if (is_numeric($value)) {
-			return sprintf('%d%s', $value, $comma);
-		}
+        if (is_int($value) || is_float($value)) {
+            return (string) $value;
+        }
 
-		if ($depth > $this->boundary) { 
-			return sprintf('"%s"%s', $value, $comma);
-		} else {
-			return sprintf("%s%s\n", $value, $comma);
-		}
+        return $this->quoteJsonString((string) $value);
     }
 
+    protected function encodeIniValue(mixed $value): string
+    {
+        if ($value === null) {
+            return 'null';
+        }
 
-	/**
-	 * 
-	 */
-	protected function writeTabs($depth)
-	{
-		for ($i = 0; $i < $depth; $i++) {
-			$this->write($this->tabs);
-		}
-	}	
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
 
+        if (is_int($value) || is_float($value)) {
+            return (string) $value;
+        }
 
-	/**
-	 * 
-	 */
-	protected function write($string)
-	{
-		$this->data .= $string;
-	}
+        $value = (string) $value;
 
-	
-	/**
-	 * 
-	 */
-	protected function clean($string)
-	{
-		$string = str_replace('  ', ' ', $string);
-		$string = str_replace(',,', ',', $string);
-		return $string;
-	}
+        if ($this->shouldQuoteIniString($value)) {
+            return $this->quoteJsonString($value);
+        }
+
+        return $value;
+    }
+
+    protected function shouldQuoteIniString(string $value): bool
+    {
+        return $value === ''
+            || trim($value) !== $value
+            || preg_match('/[;\n{}\[\]]/', $value)
+            || in_array(strtolower($value), ['true', 'false', 'null'], true)
+            || is_numeric($value);
+    }
+
+    protected function quoteJsonString(string $value): string
+    {
+        return json_encode($value, JSON_UNESCAPED_SLASHES);
+    }
+
+    protected function writeComments(string $path, int $depth): void
+    {
+        if (!$this->comments || empty($this->metadata[$path]['leadingComments'])) {
+            return;
+        }
+
+        foreach ($this->metadata[$path]['leadingComments'] as $comment) {
+            $this->writeTabs($depth);
+            $this->write('; ' . $comment . "\n");
+        }
+    }
+
+    protected function writeInlineComment(string $path): void
+    {
+        if (!$this->comments || !isset($this->metadata[$path]['inlineComment']) || $this->metadata[$path]['inlineComment'] === null) {
+            return;
+        }
+
+        $this->write(' ; ' . $this->metadata[$path]['inlineComment']);
+    }
+
+    protected function writeTabs(int $depth): void
+    {
+        $this->data .= str_repeat($this->tabs, $depth);
+    }
+
+    protected function appendTabsTo(string &$output, int $depth): void
+    {
+        $output .= str_repeat($this->tabs, $depth);
+    }
+
+    protected function write(string $string): void
+    {
+        $this->data .= $string;
+    }
 }

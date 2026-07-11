@@ -1,0 +1,14 @@
+[form]
+
+    name = Default
+    fields = {
+        "person": {
+            "avatar": false,
+            "firstName": true,
+            "middleName": false,
+            "lastName": true,
+        },
+        "agreements": {
+            "terms": false,
+        },
+    }
