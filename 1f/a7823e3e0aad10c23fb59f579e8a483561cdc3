@@ -1,0 +1,19 @@
+README.md
+  s_ab0d3e88f980bc::t_5ac10fd95792c8 1-78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.11",
+  "base_commit_sha": "1fa7823e3e0aad10c23fb59f579e8a483561cdc3",
+  "prompts": {},
+  "sessions": {
+    "s_ab0d3e88f980bc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0b1fbe1ecffenuYXrZeGHg5Xkz",
+        "model": "gpt-5.5-fast"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
