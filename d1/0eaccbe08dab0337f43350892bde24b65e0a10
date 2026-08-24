@@ -1,0 +1,29 @@
+tests/JinFormatTest.php
+  s_ab0d3e88f980bc::t_f851482830577c 91-118
+tests/JinDecoderTest.php
+  s_ab0d3e88f980bc::t_f851482830577c 86-141
+src/JinDistill/Support/Arr.php
+  s_ab0d3e88f980bc::t_12659ac445b92d 23-37
+src/JinDistill/Decoders/JinDecoder.php
+  s_ab0d3e88f980bc::t_12659ac445b92d 43,58-62,83-85,148,160-209
+  s_ab0d3e88f980bc::t_6e926a77bb3907 210
+src/JinDistill/Formats/JinFormat.php
+  s_ab0d3e88f980bc::t_12659ac445b92d 122,130,133,151,165,177-178,180-181,273-292
+  s_ab0d3e88f980bc::t_7f9e91efb8fb21 293
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "d10eaccbe08dab0337f43350892bde24b65e0a10",
+  "prompts": {},
+  "sessions": {
+    "s_ab0d3e88f980bc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0b1fbe1ecffenuYXrZeGHg5Xkz",
+        "model": "gpt-5.5-fast"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
