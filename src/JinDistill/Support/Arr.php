@@ -20,6 +20,21 @@ class Arr
         $target = $value;
     }
 
+    public static function has(array $data, string $path): bool
+    {
+        $segments = explode('.', $path);
+
+        foreach ($segments as $segment) {
+            if (!is_array($data) || !array_key_exists($segment, $data)) {
+                return false;
+            }
+
+            $data = $data[$segment];
+        }
+
+        return true;
+    }
+
     public static function delete(array &$data, string $path): void
     {
         $segments = explode('.', $path);

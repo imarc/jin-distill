@@ -119,7 +119,7 @@ class JinFormat implements FormatInterface
 
             if (is_array($value) && $depth >= $this->boundary) {
                 $this->writeTabs($depth);
-                $this->write(sprintf('%s = %s', $key, $this->encodeJsonValue($value, $depth)));
+                $this->write(sprintf('%s = %s', $key, $this->encodeJsonValue($value, $depth, $fieldPath)));
             } elseif (is_array($value)) {
                 if (array_is_list($value)) {
                     if ($this->strict) {
@@ -127,10 +127,10 @@ class JinFormat implements FormatInterface
                     }
 
                     $this->writeTabs($depth);
-                    $this->write(sprintf('%s = %s', $key, $this->encodeJsonValue($value, $depth)));
+                    $this->write(sprintf('%s = %s', $key, $this->encodeJsonValue($value, $depth, $fieldPath)));
                 } else {
                     $this->writeTabs($depth);
-                    $this->write(sprintf('%s = %s', $key, $this->encodeJsonValue($value, $depth)));
+                    $this->write(sprintf('%s = %s', $key, $this->encodeJsonValue($value, $depth, $fieldPath)));
                 }
             } else {
                 $this->writeIniAssignment((string) $key, $value, $depth, $fieldPath);
@@ -148,7 +148,7 @@ class JinFormat implements FormatInterface
         $this->write("\n");
     }
 
-    protected function encodeJsonValue(mixed $value, int $depth): string
+    protected function encodeJsonValue(mixed $value, int $depth, ?string $path = null): string
     {
         if (!is_array($value)) {
             return $this->encodeJsonScalar($value);
@@ -162,7 +162,7 @@ class JinFormat implements FormatInterface
             $output = "[\n";
             foreach ($value as $item) {
                 $this->appendTabsTo($output, $depth + 1);
-                $output .= $this->encodeJsonValue($item, $depth + 1) . ",\n";
+                $output .= $this->encodeJsonValue($item, $depth + 1, $path) . ",\n";
             }
             $this->appendTabsTo($output, $depth);
             return $output . ']';
@@ -174,8 +174,11 @@ class JinFormat implements FormatInterface
 
         $output = "{\n";
         foreach ($value as $key => $item) {
+            $childPath = $path ? $path . '.' . $key : (string) $key;
+            $this->appendCommentsTo($output, $childPath, $depth + 1);
             $this->appendTabsTo($output, $depth + 1);
-            $output .= sprintf('%s: %s,', $this->quoteJsonString((string) $key), $this->encodeJsonValue($item, $depth + 1));
+            $output .= sprintf('%s: %s,', $this->quoteJsonString((string) $key), $this->encodeJsonValue($item, $depth + 1, $childPath));
+            $this->appendInlineCommentTo($output, $childPath);
             $output .= "\n";
         }
         $this->appendTabsTo($output, $depth);
@@ -265,6 +268,27 @@ class JinFormat implements FormatInterface
     protected function appendTabsTo(string &$output, int $depth): void
     {
         $output .= str_repeat($this->tabs, $depth);
+    }
+
+    protected function appendCommentsTo(string &$output, string $path, int $depth): void
+    {
+        if (!$this->comments || empty($this->metadata[$path]['leadingComments'])) {
+            return;
+        }
+
+        foreach ($this->metadata[$path]['leadingComments'] as $comment) {
+            $this->appendTabsTo($output, $depth);
+            $output .= '; ' . $comment . "\n";
+        }
+    }
+
+    protected function appendInlineCommentTo(string &$output, string $path): void
+    {
+        if (!$this->comments || !isset($this->metadata[$path]['inlineComment']) || $this->metadata[$path]['inlineComment'] === null) {
+            return;
+        }
+
+        $output .= ' ; ' . $this->metadata[$path]['inlineComment'];
     }
 
     protected function write(string $string): void

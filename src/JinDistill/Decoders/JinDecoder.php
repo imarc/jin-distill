@@ -40,7 +40,7 @@ class JinDecoder implements DecoderInterface
                 $section = trim($matches[1]);
                 $this->attachMetadata($metadata, $section, $pendingComments, null, $i + 1, $path);
                 $pendingComments = [];
-                if (!isset($data[$section])) {
+                if (!Arr::has($data, $section)) {
                     Arr::set($data, $section, []);
                 }
                 continue;
@@ -54,6 +54,11 @@ class JinDecoder implements DecoderInterface
             $key = $matches[1];
             $rawValue = $matches[2];
             $startLine = $i + 1;
+
+            if (str_starts_with($key, '--') && $section !== null) {
+                $this->fail(sprintf('File-level directive %s cannot appear inside section %s.', $key, $section));
+                continue;
+            }
 
             if ($this->startsBalancedValue($rawValue)) {
                 while (!$this->isBalanced($rawValue) && $i + 1 < count($lines)) {
@@ -75,6 +80,9 @@ class JinDecoder implements DecoderInterface
                 $fullPath = $section ? $section . '.' . $key : $key;
                 Arr::set($data, $fullPath, $value);
                 $this->attachMetadata($metadata, $fullPath, $pendingComments, $inlineComment, $startLine, $path);
+                if ($this->startsBalancedValue($valueSource)) {
+                    $this->collectJsonLikeMetadata($valueSource, $fullPath, $metadata, $path, $startLine);
+                }
             }
 
             $pendingComments = [];
@@ -137,6 +145,7 @@ class JinDecoder implements DecoderInterface
     {
         $json = $this->stripComments($value);
         $json = preg_replace('/,\s*([}\]])/', '$1', $json);
+        $json = $this->prepareQuotedStringsForJson($json);
         $json = str_replace(["\n", "\t"], [' ', ' '], $json);
         $decoded = json_decode($json, true);
 
@@ -146,6 +155,57 @@ class JinDecoder implements DecoderInterface
         }
 
         return $decoded;
+    }
+
+    protected function prepareQuotedStringsForJson(string $value): string
+    {
+        return preg_replace_callback('/"((?:""|[^"])*)"/s', function (array $matches): string {
+            $content = str_replace('\\', '\\\\', $matches[1]);
+            $content = str_replace('""', '\\"', $content);
+
+            return '"' . $content . '"';
+        }, $value);
+    }
+
+    protected function collectJsonLikeMetadata(string $value, string $basePath, array &$metadata, ?string $source, int $startLine): void
+    {
+        $lines = explode("\n", $value);
+        $stack = [];
+        $pendingComments = [];
+
+        foreach ($lines as $offset => $line) {
+            $trimmed = trim($line);
+
+            if ($trimmed === '' || $trimmed === '{' || $trimmed === '[') {
+                if ($trimmed === '') {
+                    $pendingComments = [];
+                }
+                continue;
+            }
+
+            if (str_starts_with($trimmed, ';')) {
+                $pendingComments[] = trim(substr($trimmed, 1));
+                continue;
+            }
+
+            if (str_starts_with($trimmed, '}') || str_starts_with($trimmed, ']')) {
+                array_pop($stack);
+                continue;
+            }
+
+            if (preg_match('/^"((?:""|[^"])*)"\s*:\s*(.*)$/', $trimmed, $matches)) {
+                [$sourceValue, $inlineComment] = $this->splitInlineComment($matches[2]);
+                $key = str_replace('""', '"', $matches[1]);
+                $path = implode('.', array_merge([$basePath], $stack, [$key]));
+                $this->attachMetadata($metadata, $path, $pendingComments, $inlineComment, $startLine + $offset, $source);
+                $pendingComments = [];
+
+                $sourceValue = trim($sourceValue);
+                if ($sourceValue !== '' && in_array($sourceValue[0], ['{', '['], true)) {
+                    $stack[] = $key;
+                }
+            }
+        }
     }
 
     protected function startsBalancedValue(string $value): bool

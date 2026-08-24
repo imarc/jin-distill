@@ -83,3 +83,59 @@ function test_jin_decoder_stores_leading_and_inline_comment_metadata(): void
     assertSameValue('visible label', $document->metadata['form.name']['inlineComment'], 'Key inline comment is stored.');
     assertSameValue(['Required person fields'], $document->metadata['form.fields']['leadingComments'], 'JSON-like assignment leading comment is stored on assignment path.');
 }
+
+function test_jin_decoder_preserves_values_when_section_is_reopened(): void
+{
+    $decoder = new JinDecoder();
+    $document = $decoder->decode(<<<'JIN'
+[form.fields]
+    firstName = true
+
+[form.fields]
+    lastName = true
+JIN);
+
+    assertSameValue(true, $document->data['form']['fields']['firstName'], 'First section value remains after section is reopened.');
+    assertSameValue(true, $document->data['form']['fields']['lastName'], 'Second section value is added.');
+}
+
+function test_jin_decoder_parses_json_like_strings_with_literal_backslashes(): void
+{
+    $decoder = new JinDecoder();
+    $document = $decoder->decode(<<<'JIN'
+[routing]
+    middleware = {
+        "handler": "App\Middleware\ResponseHandler",
+    }
+JIN);
+
+    assertSameValue('App\Middleware\ResponseHandler', $document->data['routing']['middleware']['handler'], 'Literal backslashes are valid in Jin JSON-like strings.');
+}
+
+function test_jin_decoder_rejects_directives_after_sections(): void
+{
+    $decoder = new JinDecoder();
+
+    assertThrows(
+        fn() => $decoder->decode("[form]\n--without = name\nname = CPA\n"),
+        JinDistill\Exceptions\InvalidStructureException::class,
+        'File-level directives after a section should throw.'
+    );
+}
+
+function test_jin_decoder_stores_json_land_key_comment_metadata(): void
+{
+    $decoder = new JinDecoder();
+    $document = $decoder->decode(<<<'JIN'
+[form]
+    fields = {
+        "person": {
+            ; First name label
+            "firstName": true, ; required
+        },
+    }
+JIN);
+
+    assertSameValue(['First name label'], $document->metadata['form.fields.person.firstName']['leadingComments'], 'JSON-land key leading comment is stored.');
+    assertSameValue('required', $document->metadata['form.fields.person.firstName']['inlineComment'], 'JSON-land key inline comment is stored.');
+}

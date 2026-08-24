@@ -88,3 +88,31 @@ function test_jin_format_can_emit_leading_and_inline_comments_from_document_meta
         'Formatter can re-emit stored comments.'
     );
 }
+
+function test_jin_format_can_emit_json_land_comments_from_document_metadata(): void
+{
+    $format = new JinFormat();
+    $document = new JinDocument(
+        data: [
+            'form' => [
+                'fields' => [
+                    'person' => [
+                        'firstName' => true,
+                    ],
+                ],
+            ],
+        ],
+        metadata: [
+            'form.fields.person.firstName' => [
+                'leadingComments' => ['First name label'],
+                'inlineComment' => 'required',
+            ],
+        ]
+    );
+
+    assertSameValue(
+        "[form]\n\n\tfields = {\n\t\t\"person\": {\n\t\t\t; First name label\n\t\t\t\"firstName\": true, ; required\n\t\t},\n\t}\n",
+        $format->encodeDocument($document, comments: true),
+        'Formatter can re-emit stored JSON-land comments.'
+    );
+}
