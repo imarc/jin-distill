@@ -1,0 +1,21 @@
+src/JinDistill/Exceptions/InvalidStructureException.php
+  s_31b3329ef47d63::t_f4a85464ed6adb 7
+src/JinDistill/Formats/CsvFormat.php
+  s_31b3329ef47d63::t_84e0a74e5dea07 130
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "528e45ecf64cea9f780a63ae17e620eb4a8100f5",
+  "prompts": {},
+  "sessions": {
+    "s_31b3329ef47d63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e272af79-ebcc-480e-8d51-ad59d0767182",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
