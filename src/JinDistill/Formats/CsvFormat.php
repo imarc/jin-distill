@@ -127,7 +127,7 @@ class CsvFormat implements FormatInterface
 	protected function write(array $data)
 	{
 		$fp = fopen('php://temp', 'r+');
-		fputcsv($fp, $data, $this->delimiter, '"');
+		fputcsv($fp, $data, $this->delimiter, '"', '\\');
 		rewind($fp);
 		$data = fread($fp, 1048576);
 		fclose($fp);
