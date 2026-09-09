@@ -1,0 +1,14 @@
+.gitignore
+  h_b44430a3281f44 2-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c97c4ef490c9bda3d2257f5f1125da1f70e3fb0a",
+  "prompts": {},
+  "humans": {
+    "h_b44430a3281f44": {
+      "author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
