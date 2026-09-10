@@ -1,0 +1,32 @@
+tests/Composition/DynamicCompositionTest.php
+  s_672ac1cdfe526c::t_bc5d99631b8530 1-31
+src/JinDistill/Exceptions/UnflattenableDefinitionException.php
+  s_672ac1cdfe526c::t_dfbf6c2e96dd54 1-17
+src/JinDistill/Composition/DefinitionComposer.php
+  s_672ac1cdfe526c::t_dfbf6c2e96dd54 17,41-45,56-58,65-69
+  s_6520643a6a9316::t_6b51091f8ac0f7 70-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "edd3231b55127f77581fc88353e10cb32f3a3207",
+  "prompts": {},
+  "sessions": {
+    "s_6520643a6a9316": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4ea9c92f-4df7-4531-9716-3ee9f897cfad",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    },
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
