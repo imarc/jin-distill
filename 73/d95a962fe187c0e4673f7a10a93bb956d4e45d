@@ -1,0 +1,25 @@
+src/JinDistill/Exceptions/InvalidStructureException.php
+  s_672ac1cdfe526c::t_9def046534cdfc 5-7,9-25
+src/JinDistill/Decoders/JinDecoder.php
+  s_672ac1cdfe526c::t_9def046534cdfc 6-7,22-24,31,76,104-109,133-134,249,332,334
+tests/Syntax/JinParserTest.php
+  s_672ac1cdfe526c::t_df0d3a1db922ab 6,157-176,178-179
+  s_672ac1cdfe526c::t_b1452939f5abdc 177,180
+  s_672ac1cdfe526c::t_16d5c46a8413f5 181-182
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "73d95a962fe187c0e4673f7a10a93bb956d4e45d",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
