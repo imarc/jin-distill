@@ -14,6 +14,7 @@ final class DefinitionComposer
     {
         $statements = [];
         $positions = [];
+        $opaque = [];
         $source = null;
         foreach (array_reverse($analysis->sourceGraph()->documents()) as $document) {
             $source ??= $document->source();
@@ -37,6 +38,11 @@ final class DefinitionComposer
                 if (str_starts_with($statement->path()->segments()[0], '--')) {
                     continue;
                 }
+                foreach ($opaque as $ancestor) {
+                    if ($this->isAncestor($ancestor->path()->segments(), $statement->path()->segments())) {
+                        throw new \JinDistill\Exceptions\UnflattenableDefinitionException();
+                    }
+                }
                 $path = $statement->path()->toJsonPointer();
                 if (isset($positions[$path])) {
                     $existing = $statements[$positions[$path]];
@@ -47,10 +53,20 @@ final class DefinitionComposer
                 }
                 $positions[$path] = count($statements);
                 $statements[] = $statement;
+                if (!$statement->value()->isStaticallyKnown()) {
+                    $opaque[] = $statement;
+                }
             }
         }
         $source ??= new \JinDistill\Source\SourceId('memory://composed.jin', 'composed.jin');
         return new ComposedDocument(new Document(array_values(array_filter($statements)), $source), $analysis->provenance());
+    }
+
+    /** @param list<string> $ancestor @param list<string> $path */
+    private function isAncestor(array $ancestor, array $path): bool
+    {
+        return count($ancestor) < count($path)
+            && array_slice($path, 0, count($ancestor)) === $ancestor;
     }
 
     private function merge(Assignment $parent, Assignment $child): Assignment
