@@ -1,118 +1,99 @@
 <?php
 
+namespace JinDistill\Tests;
+
 use JinDistill\Formats\FormatInterface;
 use JinDistill\Formats\JinFormat;
 use JinDistill\JinDocument;
+use PHPUnit\Framework\TestCase;
 
-function test_jin_format_still_implements_format_interface(): void
+final class JinFormatTest extends TestCase
 {
-    $format = new JinFormat();
+    public function testItImplementsFormatInterface(): void
+    {
+        self::assertInstanceOf(FormatInterface::class, new JinFormat());
+    }
 
-    assertTrueValue($format instanceof FormatInterface, 'JinFormat implements FormatInterface.');
-}
+    public function testItEncodesLegacyExtendsAndCanOmitIt(): void
+    {
+        $format = new JinFormat(boundary: 1, tabs: "\t", strict: true);
+        $data = [
+            '--extends' => 'local/forms/application/standard.jin',
+            'form' => ['name' => 'CPA'],
+        ];
 
-function test_jin_format_encodes_legacy_extends_by_default_and_can_omit_it(): void
-{
-    $format = new JinFormat(boundary: 1, tabs: "\t", strict: true);
+        self::assertSame(
+            "--extends = file(local/forms/application/standard.jin)\n\n[form]\n\n\tname = CPA\n",
+            $format->encode($data)
+        );
+        self::assertSame("[form]\n\n\tname = CPA\n", $format->encode($data, false));
+    }
 
-    $data = [
-        '--extends' => 'local/forms/application/standard.jin',
-        'form' => ['name' => 'CPA'],
-    ];
-
-    assertSameValue(
-        "--extends = file(local/forms/application/standard.jin)\n\n[form]\n\n\tname = CPA\n",
-        $format->encode($data),
-        'Legacy extends is emitted by default.'
-    );
-
-    assertSameValue(
-        "[form]\n\n\tname = CPA\n",
-        $format->encode($data, false),
-        'Legacy extends can be omitted.'
-    );
-}
-
-function test_jin_format_encodes_json_land_with_trailing_commas(): void
-{
-    $format = new JinFormat(boundary: 1, tabs: "  ", strict: true);
-
-    $data = [
-        'form' => [
-            'name' => 'CPA',
-            'fields' => [
-                'person' => [
-                    'firstName' => true,
-                    'lastName' => true,
-                ],
-            ],
-        ],
-    ];
-
-    assertSameValue(
-        "[form]\n\n  name = CPA\n\n  fields = {\n    \"person\": {\n      \"firstName\": true,\n      \"lastName\": true,\n    },\n  }\n",
-        $format->encode($data),
-        'JSON-land objects include trailing commas and configured indentation.'
-    );
-}
-
-function test_jin_format_encodes_document_directives_and_data(): void
-{
-    $format = new JinFormat();
-    $document = new JinDocument(
-        data: ['form' => ['name' => 'CPA']],
-        directives: ['extends' => 'base.jin', 'without' => ['form.fields.person.avatar']],
-    );
-
-    assertSameValue(
-        "--extends = file(base.jin)\n--without = [\n\t\"form.fields.person.avatar\",\n]\n\n[form]\n\n\tname = CPA\n",
-        $format->encodeDocument($document),
-        'Document directives are emitted before data.'
-    );
-}
-
-function test_jin_format_can_emit_leading_and_inline_comments_from_document_metadata(): void
-{
-    $format = new JinFormat();
-    $document = new JinDocument(
-        data: ['form' => ['name' => 'CPA']],
-        metadata: [
-            'form' => ['leadingComments' => ['Form section'], 'inlineComment' => null],
-            'form.name' => ['leadingComments' => ['Public display name'], 'inlineComment' => 'visible label'],
-        ]
-    );
-
-    assertSameValue(
-        "; Form section\n[form]\n\n\t; Public display name\n\tname = CPA ; visible label\n",
-        $format->encodeDocument($document, comments: true),
-        'Formatter can re-emit stored comments.'
-    );
-}
-
-function test_jin_format_can_emit_json_land_comments_from_document_metadata(): void
-{
-    $format = new JinFormat();
-    $document = new JinDocument(
-        data: [
+    public function testItEncodesJsonLandWithTrailingCommas(): void
+    {
+        $format = new JinFormat(boundary: 1, tabs: '  ', strict: true);
+        $data = [
             'form' => [
+                'name' => 'CPA',
                 'fields' => [
                     'person' => [
                         'firstName' => true,
+                        'lastName' => true,
                     ],
                 ],
             ],
-        ],
-        metadata: [
-            'form.fields.person.firstName' => [
-                'leadingComments' => ['First name label'],
-                'inlineComment' => 'required',
-            ],
-        ]
-    );
+        ];
 
-    assertSameValue(
-        "[form]\n\n\tfields = {\n\t\t\"person\": {\n\t\t\t; First name label\n\t\t\t\"firstName\": true, ; required\n\t\t},\n\t}\n",
-        $format->encodeDocument($document, comments: true),
-        'Formatter can re-emit stored JSON-land comments.'
-    );
+        self::assertSame(
+            "[form]\n\n  name = CPA\n\n  fields = {\n    \"person\": {\n      \"firstName\": true,\n      \"lastName\": true,\n    },\n  }\n",
+            $format->encode($data)
+        );
+    }
+
+    public function testItEncodesDocumentDirectivesAndData(): void
+    {
+        $document = new JinDocument(
+            data: ['form' => ['name' => 'CPA']],
+            directives: ['extends' => 'base.jin', 'without' => ['form.fields.person.avatar']],
+        );
+
+        self::assertSame(
+            "--extends = file(base.jin)\n--without = [\n\t\"form.fields.person.avatar\",\n]\n\n[form]\n\n\tname = CPA\n",
+            (new JinFormat())->encodeDocument($document)
+        );
+    }
+
+    public function testItEmitsLeadingAndInlineComments(): void
+    {
+        $document = new JinDocument(
+            data: ['form' => ['name' => 'CPA']],
+            metadata: [
+                'form' => ['leadingComments' => ['Form section'], 'inlineComment' => null],
+                'form.name' => ['leadingComments' => ['Public display name'], 'inlineComment' => 'visible label'],
+            ]
+        );
+
+        self::assertSame(
+            "; Form section\n[form]\n\n\t; Public display name\n\tname = CPA ; visible label\n",
+            (new JinFormat())->encodeDocument($document, comments: true)
+        );
+    }
+
+    public function testItEmitsJsonLandComments(): void
+    {
+        $document = new JinDocument(
+            data: ['form' => ['fields' => ['person' => ['firstName' => true]]]],
+            metadata: [
+                'form.fields.person.firstName' => [
+                    'leadingComments' => ['First name label'],
+                    'inlineComment' => 'required',
+                ],
+            ]
+        );
+
+        self::assertSame(
+            "[form]\n\n\tfields = {\n\t\t\"person\": {\n\t\t\t; First name label\n\t\t\t\"firstName\": true, ; required\n\t\t},\n\t}\n",
+            (new JinFormat())->encodeDocument($document, comments: true)
+        );
+    }
 }

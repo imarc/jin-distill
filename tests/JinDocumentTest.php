@@ -1,53 +1,59 @@
 <?php
 
+namespace JinDistill\Tests;
+
 use JinDistill\JinDocument;
 use JinDistill\Support\Arr;
+use PHPUnit\Framework\TestCase;
 
-function test_jin_document_stores_data_directives_metadata_and_path(): void
+final class JinDocumentTest extends TestCase
 {
-    $document = new JinDocument(
-        data: ['form' => ['name' => 'CPA']],
-        directives: ['extends' => 'base.jin', 'without' => ['form.name']],
-        metadata: ['form.name' => ['leadingComments' => ['Name'], 'inlineComment' => 'inline']],
-        path: '/tmp/forms/cpa.jin'
-    );
+    public function testItStoresDataDirectivesMetadataAndPath(): void
+    {
+        $document = new JinDocument(
+            data: ['form' => ['name' => 'CPA']],
+            directives: ['extends' => 'base.jin', 'without' => ['form.name']],
+            metadata: ['form.name' => ['leadingComments' => ['Name'], 'inlineComment' => 'inline']],
+            path: '/tmp/forms/cpa.jin'
+        );
 
-    assertSameValue(['form' => ['name' => 'CPA']], $document->data, 'Document stores data.');
-    assertSameValue('base.jin', $document->directives['extends'], 'Document stores extends directive.');
-    assertSameValue(['form.name'], $document->directives['without'], 'Document stores without directive.');
-    assertSameValue('/tmp/forms/cpa.jin', $document->path, 'Document stores path.');
-}
+        self::assertSame(['form' => ['name' => 'CPA']], $document->data);
+        self::assertSame('base.jin', $document->directives['extends']);
+        self::assertSame(['form.name'], $document->directives['without']);
+        self::assertSame('/tmp/forms/cpa.jin', $document->path);
+    }
 
-function test_arr_deletes_dot_path_and_deep_merges_assoc_arrays(): void
-{
-    $data = [
-        'form' => [
-            'name' => 'Default',
-            'fields' => [
-                'person' => [
-                    'firstName' => true,
-                    'avatar' => false,
+    public function testArrayHelpersDeletePathsAndMergeAssociativeArrays(): void
+    {
+        $data = [
+            'form' => [
+                'name' => 'Default',
+                'fields' => [
+                    'person' => [
+                        'firstName' => true,
+                        'avatar' => false,
+                    ],
                 ],
             ],
-        ],
-    ];
+        ];
 
-    Arr::delete($data, 'form.fields.person.avatar');
+        Arr::delete($data, 'form.fields.person.avatar');
 
-    assertSameValue(false, isset($data['form']['fields']['person']['avatar']), 'Dot path is deleted.');
+        self::assertArrayNotHasKey('avatar', $data['form']['fields']['person']);
 
-    $merged = Arr::mergeDistinct($data, [
-        'form' => [
-            'name' => 'CPA',
-            'fields' => [
-                'person' => [
-                    'lastName' => true,
+        $merged = Arr::mergeDistinct($data, [
+            'form' => [
+                'name' => 'CPA',
+                'fields' => [
+                    'person' => [
+                        'lastName' => true,
+                    ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    assertSameValue('CPA', $merged['form']['name'], 'Child scalar replaces parent scalar.');
-    assertSameValue(true, $merged['form']['fields']['person']['firstName'], 'Parent nested value remains.');
-    assertSameValue(true, $merged['form']['fields']['person']['lastName'], 'Child nested value is added.');
+        self::assertSame('CPA', $merged['form']['name']);
+        self::assertTrue($merged['form']['fields']['person']['firstName']);
+        self::assertTrue($merged['form']['fields']['person']['lastName']);
+    }
 }

@@ -1,20 +1,23 @@
 <?php
 
+namespace JinDistill\Tests;
+
 use JinDistill\Decoders\DecoderInterface;
 use JinDistill\Decoders\JinDecoder;
+use JinDistill\Exceptions\InvalidStructureException;
 use JinDistill\JinDocument;
+use PHPUnit\Framework\TestCase;
 
-function test_jin_decoder_implements_decoder_interface(): void
+final class JinDecoderTest extends TestCase
 {
-    $decoder = new JinDecoder();
+    public function testItImplementsDecoderInterface(): void
+    {
+        self::assertInstanceOf(DecoderInterface::class, new JinDecoder());
+    }
 
-    assertTrueValue($decoder instanceof DecoderInterface, 'JinDecoder implements DecoderInterface.');
-}
-
-function test_jin_decoder_parses_root_values_sections_and_json_like_values(): void
-{
-    $decoder = new JinDecoder();
-    $document = $decoder->decode(<<<'JIN'
+    public function testItParsesRootValuesSectionsAndJsonLikeValues(): void
+    {
+        $document = (new JinDecoder())->decode(<<<'JIN'
 home = null
 enabled = true
 count = 13
@@ -31,18 +34,17 @@ name = CPA
     }
 JIN);
 
-    assertTrueValue($document instanceof JinDocument, 'Decoder returns JinDocument.');
-    assertSameValue(null, $document->data['home'], 'Null scalar parsed.');
-    assertSameValue(true, $document->data['enabled'], 'Boolean scalar parsed.');
-    assertSameValue(13, $document->data['count'], 'Integer scalar parsed.');
-    assertSameValue('CPA', $document->data['form']['name'], 'Section value parsed.');
-    assertSameValue(true, $document->data['form']['fields']['person']['firstName'], 'Nested JSON-like object parsed.');
-}
+        self::assertInstanceOf(JinDocument::class, $document);
+        self::assertNull($document->data['home']);
+        self::assertTrue($document->data['enabled']);
+        self::assertSame(13, $document->data['count']);
+        self::assertSame('CPA', $document->data['form']['name']);
+        self::assertTrue($document->data['form']['fields']['person']['firstName']);
+    }
 
-function test_jin_decoder_parses_extends_and_without_directives(): void
-{
-    $decoder = new JinDecoder();
-    $document = $decoder->decode(<<<'JIN'
+    public function testItParsesExtendsAndWithoutDirectives(): void
+    {
+        $document = (new JinDecoder())->decode(<<<'JIN'
 --extends = file(base.jin)
 --without = [
     "form.name",
@@ -54,40 +56,33 @@ function test_jin_decoder_parses_extends_and_without_directives(): void
     name = CPA
 JIN);
 
-    assertSameValue('base.jin', $document->directives['extends'], 'Extends directive parsed.');
-    assertSameValue(['form.name', 'form.fields.person.avatar'], $document->directives['without'], 'Without directive parsed.');
-    assertSameValue('CPA', $document->data['form']['name'], 'Data remains separate from directives.');
-}
+        self::assertSame('base.jin', $document->directives['extends']);
+        self::assertSame(['form.name', 'form.fields.person.avatar'], $document->directives['without']);
+        self::assertSame('CPA', $document->data['form']['name']);
+    }
 
-function test_jin_decoder_parses_single_without_directive(): void
-{
-    $decoder = new JinDecoder();
-    $document = $decoder->decode("--without = form.name\nname = CPA\n");
+    public function testItParsesSingleWithoutDirective(): void
+    {
+        $document = (new JinDecoder())->decode("--without = form.name\nname = CPA\n");
 
-    assertSameValue(['form.name'], $document->directives['without'], 'Single without path becomes array.');
-}
+        self::assertSame(['form.name'], $document->directives['without']);
+    }
 
-function test_jin_decoder_stores_leading_and_inline_comment_metadata(): void
-{
-    $decoder = new JinDecoder();
-    $document = $decoder->decodeFile(__DIR__ . '/fixtures/comments.jin');
+    public function testItStoresLeadingAndInlineCommentMetadata(): void
+    {
+        $document = (new JinDecoder())->decodeFile(__DIR__ . '/fixtures/comments.jin');
 
-    assertSameValue(
-        ['Document overview', 'Base form configuration'],
-        $document->metadata['--extends']['leadingComments'],
-        'Directive leading comments are stored.'
-    );
-    assertSameValue('parent file', $document->metadata['--extends']['inlineComment'], 'Directive inline comment is stored.');
-    assertSameValue(['Form section'], $document->metadata['form']['leadingComments'], 'Section leading comment is stored.');
-    assertSameValue(['Public display name'], $document->metadata['form.name']['leadingComments'], 'Key leading comment is stored.');
-    assertSameValue('visible label', $document->metadata['form.name']['inlineComment'], 'Key inline comment is stored.');
-    assertSameValue(['Required person fields'], $document->metadata['form.fields']['leadingComments'], 'JSON-like assignment leading comment is stored on assignment path.');
-}
+        self::assertSame(['Document overview', 'Base form configuration'], $document->metadata['--extends']['leadingComments']);
+        self::assertSame('parent file', $document->metadata['--extends']['inlineComment']);
+        self::assertSame(['Form section'], $document->metadata['form']['leadingComments']);
+        self::assertSame(['Public display name'], $document->metadata['form.name']['leadingComments']);
+        self::assertSame('visible label', $document->metadata['form.name']['inlineComment']);
+        self::assertSame(['Required person fields'], $document->metadata['form.fields']['leadingComments']);
+    }
 
-function test_jin_decoder_preserves_values_when_section_is_reopened(): void
-{
-    $decoder = new JinDecoder();
-    $document = $decoder->decode(<<<'JIN'
+    public function testItPreservesValuesWhenSectionIsReopened(): void
+    {
+        $document = (new JinDecoder())->decode(<<<'JIN'
 [form.fields]
     firstName = true
 
@@ -95,38 +90,32 @@ function test_jin_decoder_preserves_values_when_section_is_reopened(): void
     lastName = true
 JIN);
 
-    assertSameValue(true, $document->data['form']['fields']['firstName'], 'First section value remains after section is reopened.');
-    assertSameValue(true, $document->data['form']['fields']['lastName'], 'Second section value is added.');
-}
+        self::assertTrue($document->data['form']['fields']['firstName']);
+        self::assertTrue($document->data['form']['fields']['lastName']);
+    }
 
-function test_jin_decoder_parses_json_like_strings_with_literal_backslashes(): void
-{
-    $decoder = new JinDecoder();
-    $document = $decoder->decode(<<<'JIN'
+    public function testItParsesJsonLikeStringsWithLiteralBackslashes(): void
+    {
+        $document = (new JinDecoder())->decode(<<<'JIN'
 [routing]
     middleware = {
         "handler": "App\Middleware\ResponseHandler",
     }
 JIN);
 
-    assertSameValue('App\Middleware\ResponseHandler', $document->data['routing']['middleware']['handler'], 'Literal backslashes are valid in Jin JSON-like strings.');
-}
+        self::assertSame('App\Middleware\ResponseHandler', $document->data['routing']['middleware']['handler']);
+    }
 
-function test_jin_decoder_rejects_directives_after_sections(): void
-{
-    $decoder = new JinDecoder();
+    public function testItRejectsDirectivesAfterSections(): void
+    {
+        $this->expectException(InvalidStructureException::class);
 
-    assertThrows(
-        fn() => $decoder->decode("[form]\n--without = name\nname = CPA\n"),
-        JinDistill\Exceptions\InvalidStructureException::class,
-        'File-level directives after a section should throw.'
-    );
-}
+        (new JinDecoder())->decode("[form]\n--without = name\nname = CPA\n");
+    }
 
-function test_jin_decoder_stores_json_land_key_comment_metadata(): void
-{
-    $decoder = new JinDecoder();
-    $document = $decoder->decode(<<<'JIN'
+    public function testItStoresJsonLandKeyCommentMetadata(): void
+    {
+        $document = (new JinDecoder())->decode(<<<'JIN'
 [form]
     fields = {
         "person": {
@@ -136,6 +125,7 @@ function test_jin_decoder_stores_json_land_key_comment_metadata(): void
     }
 JIN);
 
-    assertSameValue(['First name label'], $document->metadata['form.fields.person.firstName']['leadingComments'], 'JSON-land key leading comment is stored.');
-    assertSameValue('required', $document->metadata['form.fields.person.firstName']['inlineComment'], 'JSON-land key inline comment is stored.');
+        self::assertSame(['First name label'], $document->metadata['form.fields.person.firstName']['leadingComments']);
+        self::assertSame('required', $document->metadata['form.fields.person.firstName']['inlineComment']);
+    }
 }
