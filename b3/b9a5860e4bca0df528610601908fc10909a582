@@ -1,0 +1,33 @@
+src/JinDistill/Formatting/Profiles/DotinkStyle.php
+  s_672ac1cdfe526c::t_518feae79d1416 1-14
+src/JinDistill/Formatting/ExtendsPathStyle.php
+  s_672ac1cdfe526c::t_518feae79d1416 1-4,6,13
+  s_672ac1cdfe526c::t_66b3a5255f4c7f 5,7-12
+src/JinDistill/Formatting/CommentPolicy.php
+  s_672ac1cdfe526c::t_518feae79d1416 1-9
+src/JinDistill/Formatting/OrderingPolicy.php
+  s_672ac1cdfe526c::t_518feae79d1416 1-9
+src/JinDistill/Formatting/FormatOptions.php
+  s_672ac1cdfe526c::t_518feae79d1416 1-13,15-29,31-39,41
+  s_672ac1cdfe526c::t_66b3a5255f4c7f 14,30,40
+src/JinDistill/Formatting/Profiles/ImarcStyle.php
+  s_672ac1cdfe526c::t_518feae79d1416 1-13
+tests/Formatting/FormatOptionsTest.php
+  s_672ac1cdfe526c::t_f5df5c051ea552 1-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b3b9a5860e4bca0df528610601908fc10909a582",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
