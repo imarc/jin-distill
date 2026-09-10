@@ -73,4 +73,24 @@ final class DotinkEvaluatorTest extends TestCase
         self::assertSame('First World', $first->resolvedData()['greeting']);
         self::assertSame('Second World', $second->resolvedData()['greeting']);
     }
+
+    public function testItEvaluatesInheritanceOnlyWhenCallerProvidesTheRequiredFunction(): void
+    {
+        $fixtureRoot = realpath(__DIR__ . '/../fixtures');
+        self::assertNotFalse($fixtureRoot);
+        $analyzer = new Analyzer(new SourceGraphBuilder(
+            new FilesystemSourceLoader(new PathPolicy([$fixtureRoot])),
+            new JinDecoder(),
+            [new RelativeExtendsResolver(), new FunctionExtendsResolver('file', $fixtureRoot)],
+        ));
+        $evaluator = new DotinkEvaluator($analyzer);
+
+        $result = $evaluator->evaluateFile($fixtureRoot . '/child.jin', new EvaluationOptions(
+            functions: ['file' => static fn (string $path): string => $fixtureRoot . '/' . $path],
+        ));
+
+        self::assertSame('CPA', $result->resolvedData()['form']['name']);
+        self::assertTrue($result->resolvedData()['form']['fields']['person']['birthDate']);
+        self::assertArrayNotHasKey('avatar', $result->resolvedData()['form']['fields']['person']);
+    }
 }
