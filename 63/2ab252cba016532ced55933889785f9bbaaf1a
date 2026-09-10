@@ -1,0 +1,31 @@
+src/JinDistill/Diagnostics/Diagnostic.php
+  s_bddf737e764599::t_8300b92f406a6e 1-31
+tests/Source/PathTest.php
+  s_bddf737e764599::t_112e242c1e6fa0 1-32
+src/JinDistill/Source/Path.php
+  s_bddf737e764599::t_8300b92f406a6e 1-41
+src/JinDistill/Diagnostics/Severity.php
+  s_bddf737e764599::t_8300b92f406a6e 1-10
+src/JinDistill/Source/SourceId.php
+  s_bddf737e764599::t_8300b92f406a6e 1-22
+src/JinDistill/Source/SourceSpan.php
+  s_bddf737e764599::t_8300b92f406a6e 1-25
+tests/Diagnostics/DiagnosticTest.php
+  s_bddf737e764599::t_112e242c1e6fa0 1-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "632ab252cba016532ced55933889785f9bbaaf1a",
+  "prompts": {},
+  "sessions": {
+    "s_bddf737e764599": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcb894fc1ffeN0FrOHLYxbP8VK",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
