@@ -1,0 +1,26 @@
+tests/Evaluation/DotinkEvaluatorTest.php
+  s_672ac1cdfe526c::t_9ee17caaa1268f 8,34-51
+  s_672ac1cdfe526c::t_b2fb7d070b9167 52
+src/JinDistill/Evaluation/DotinkEvaluator.php
+  s_672ac1cdfe526c::t_a969cd121f3fbd 15,17,23
+tests/fixtures/evaluation-functions.jin
+  s_672ac1cdfe526c::t_9ee17caaa1268f 1
+src/JinDistill/Evaluation/EvaluationOptions.php
+  s_672ac1cdfe526c::t_a969cd121f3fbd 1-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "bcc68afa8eb44e671679e450df26dec62a85c168",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
