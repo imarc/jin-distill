@@ -1,0 +1,26 @@
+src/JinDistill/Formatting/ExtendsRenderer.php
+  s_672ac1cdfe526c::t_d8cee38dd8db9c 1-27
+src/JinDistill/Formatting/JinRenderer.php
+  s_672ac1cdfe526c::t_07535c4e2d4a17 88-95,98,110-112,128,136,138
+  s_672ac1cdfe526c::t_d8cee38dd8db9c 1-87,96-97,99-109,113-127,129-135,137,139-167
+tests/Formatting/JinRendererTest.php
+  s_672ac1cdfe526c::t_23183e32aeab66 1-65
+src/JinDistill/Exceptions/UnrepresentableValueException.php
+  s_672ac1cdfe526c::t_d8cee38dd8db9c 1-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "394037c2e6f781d0eb7d0fd84923314b4f8db28a",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
