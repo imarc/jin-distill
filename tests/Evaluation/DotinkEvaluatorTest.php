@@ -50,4 +50,27 @@ final class DotinkEvaluatorTest extends TestCase
 
         self::assertSame('Hello World', $result->resolvedData()['greeting']);
     }
+
+    public function testItUsesFreshParserStateForSequentialEvaluations(): void
+    {
+        $fixtureRoot = realpath(__DIR__ . '/../fixtures');
+        self::assertNotFalse($fixtureRoot);
+        $analyzer = new Analyzer(new SourceGraphBuilder(
+            new FilesystemSourceLoader(new PathPolicy([$fixtureRoot])),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        ));
+        $evaluator = new DotinkEvaluator($analyzer);
+        $path = $fixtureRoot . '/evaluation-functions.jin';
+
+        $first = $evaluator->evaluateFile($path, new EvaluationOptions(
+            functions: ['hello' => static fn (string $name): string => 'First ' . $name],
+        ));
+        $second = $evaluator->evaluateFile($path, new EvaluationOptions(
+            functions: ['hello' => static fn (string $name): string => 'Second ' . $name],
+        ));
+
+        self::assertSame('First World', $first->resolvedData()['greeting']);
+        self::assertSame('Second World', $second->resolvedData()['greeting']);
+    }
 }
