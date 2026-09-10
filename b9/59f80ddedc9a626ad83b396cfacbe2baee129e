@@ -1,0 +1,31 @@
+src/JinDistill/Formatting/Normalizer.php
+  s_672ac1cdfe526c::t_e3f7fdf559026b 23-42
+tests/Formatting/NormalizerTest.php
+  s_672ac1cdfe526c::t_a42359052c96df 10-11,32-38,40-48
+  s_672ac1cdfe526c::t_f09bac298bc684 39
+  s_f7772e6a9b8368::t_8199ec87d31f91 49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b959f80ddedc9a626ad83b396cfacbe2baee129e",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    },
+    "s_f7772e6a9b8368": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "81a10225-9517-4e2b-84de-2f729b375a63",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
