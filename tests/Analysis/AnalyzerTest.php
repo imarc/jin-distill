@@ -48,4 +48,24 @@ final class AnalyzerTest extends TestCase
             $lineage?->overridden() ?? [],
         ));
     }
+
+    public function testItRetainsWithoutDirectivesAsLineageRemovals(): void
+    {
+        $parent = new SourceId('/project/base.jin', 'base.jin');
+        $child = new SourceId('/project/child.jin', 'child.jin');
+        $analyzer = new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([new LoadedSource($parent, 'name = Base' . "\n" . 'age = 10')]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        ));
+
+        $result = $analyzer->analyze('--extends = base.jin' . "\n" . '--without = age', $child);
+        $lineage = $result->provenance()->lineage(\JinDistill\Source\Path::fromSegments(['age']));
+
+        self::assertSame('/project/base.jin', $lineage?->winner()->source()->canonicalPath());
+        self::assertSame(['/project/child.jin'], array_map(
+            static fn ($definition): string => $definition->source()->canonicalPath(),
+            $lineage?->removals() ?? [],
+        ));
+    }
 }
