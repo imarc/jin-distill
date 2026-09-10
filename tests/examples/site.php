@@ -1,0 +1,106 @@
+<?php
+
+return array(
+	'form' =>
+	array(
+		'name' => 'Professional Affiliate',
+		'fields' =>
+		array(
+			'firm' => NULL,
+			'person' =>
+			array(
+				'avatar' => NULL,
+				'firstName' => true,
+				'middleName' => NULL,
+				'lastName' => true,
+				'suffix' => NULL,
+				'preferredName' => NULL,
+				'priorName' => NULL,
+				'spouse' => false,
+				'birthDate' => true,
+				'ethnicity' => true,
+				'gender' => true,
+				'pronoun' => NULL,
+				'email' => NULL,
+				'emailType' => false,
+				'alternateEmail' => NULL,
+				'alternateEmailType' => false,
+				'emailExclude' => false,
+				'phone' => true,
+				'homePhone' => NULL,
+				'mobilePhone' => true,
+				'textExclude' => true,
+				'officePhone' => NULL,
+				'officeExtension' => NULL,
+				'officeFax' => false,
+				'address' =>
+				array(
+					'line1' => NULL,
+					'line2' => false,
+					'city' => NULL,
+					'state' => NULL,
+					'postalCode' => NULL,
+					'country' => NULL,
+				),
+				'poAddress' =>
+				array(
+					'line1' => NULL,
+					'postalCode' => NULL,
+				),
+				'contactPreferences' => false,
+				'preferences' => false,
+				'publicRegistration' => false,
+				'social' => NULL,
+				'links' =>
+				array(
+					'facebook' => NULL,
+					'instagram' => NULL,
+					'linkedin' => NULL,
+					'twitter' => NULL,
+				),
+				'educational' => false,
+				'school' => false,
+				'schoolName' => false,
+				'graduationDate' => false,
+				'professional' => false,
+				'firm' => false,
+				'title' => NULL,
+				'position' => true,
+				'preferredChapter' => false,
+				'credentials' => NULL,
+				'aicpaNumber' => false,
+				'certification' => false,
+				'inStateCertificationNumber' => false,
+				'inStateCertificationDate' => false,
+				'outStateCertificationState' => false,
+				'outStateCertificationNumber' => false,
+				'outStateCertificationDate' => false,
+				'directoryExclude' => false,
+				'membership' => false,
+				'sponsor' => true,
+				'groupMemberships' => false,
+				'interests' => false,
+				'skills' => false,
+				'specialNeeds' => false,
+				'survey' => false,
+				'memberSource' => false,
+				'account' =>
+				array(
+					'preface' => NULL,
+					'addendum' => NULL,
+					'password' => true,
+					'passwordConfirmation' => true,
+				),
+			),
+			'agreements' =>
+			array(
+				'bylaws' => true,
+				'terms' => false,
+				'informationRelease' => false,
+				'dataRelease' => false,
+				'verify' => false,
+			),
+		),
+	),
+	'--extends' => 'local/forms/application/standard.jin',
+);

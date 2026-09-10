@@ -1,0 +1,16 @@
+--extends = file(local/forms/application/standard.jin)
+
+[form] 
+
+	name = CPA
+
+	fields = {
+		"person": {
+			"inStateCertificationNumber": true,
+			"inStateCertificationDate": true,
+			"outStateCertificationState": null,
+			"outStateCertificationNumber": null,
+			"interests": true,
+			"specialNeeds": true,
+		},
+	}
