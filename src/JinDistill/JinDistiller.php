@@ -11,6 +11,7 @@ use JinDistill\Evaluation\DotinkEvaluator;
 use JinDistill\Evaluation\EvaluationOptions;
 use JinDistill\Evaluation\SemanticVerifier;
 use JinDistill\Evaluation\VerificationResult;
+use JinDistill\Formatting\Normalizer;
 use JinDistill\Source\FilesystemSourceLoader;
 use JinDistill\Source\FunctionExtendsResolver;
 use JinDistill\Source\PathPolicy;
@@ -54,7 +55,11 @@ class JinDistiller
 
     public function normalizeFile(string $path, bool $extensions = true): string
     {
-        return $this->format->encodeDocument($this->decodeFile($path), $extensions);
+        if (!$extensions) {
+            return $this->format->encodeDocument($this->decodeFile($path), false);
+        }
+
+        return (new Normalizer($this->analyzerForFile($path)))->normalizeFile($path)->content();
     }
 
     public function flattenFile(string $path): string

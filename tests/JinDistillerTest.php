@@ -14,6 +14,7 @@ final class JinDistillerTest extends TestCase
         self::assertStringContainsString('--extends = file(base.jin)', $output);
         self::assertStringContainsString('--without = [', $output);
         self::assertStringContainsString('"birthDate": true,', $output);
+        self::assertStringContainsString("\tname = CPA\n", $output);
     }
 
     public function testItFlattensToStandaloneJin(): void
