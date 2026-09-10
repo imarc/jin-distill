@@ -5,6 +5,8 @@ namespace JinDistill\Composition;
 use JinDistill\Analysis\AnalysisResult;
 use JinDistill\Syntax\Assignment;
 use JinDistill\Syntax\Document;
+use JinDistill\Syntax\Value;
+use JinDistill\Syntax\ValueKind;
 
 final class DefinitionComposer
 {
@@ -37,7 +39,10 @@ final class DefinitionComposer
                 }
                 $path = $statement->path()->toJsonPointer();
                 if (isset($positions[$path])) {
-                    $statements[$positions[$path]] = $statement;
+                    $existing = $statements[$positions[$path]];
+                    $statements[$positions[$path]] = $existing instanceof Assignment
+                        ? $this->merge($existing, $statement)
+                        : $statement;
                     continue;
                 }
                 $positions[$path] = count($statements);
@@ -46,5 +51,28 @@ final class DefinitionComposer
         }
         $source ??= new \JinDistill\Source\SourceId('memory://composed.jin', 'composed.jin');
         return new ComposedDocument(new Document(array_values(array_filter($statements)), $source), $analysis->provenance());
+    }
+
+    private function merge(Assignment $parent, Assignment $child): Assignment
+    {
+        $left = $parent->value()->staticValue();
+        $right = $child->value()->staticValue();
+        if (!$parent->value()->isStaticallyKnown()
+            || !$child->value()->isStaticallyKnown()
+            || !is_array($left)
+            || !is_array($right)
+            || array_is_list($left)
+            || array_is_list($right)) {
+            return $child;
+        }
+
+        $value = array_replace_recursive($left, $right);
+        return new Assignment(
+            $child->path(),
+            new Value(json_encode($value, JSON_THROW_ON_ERROR), ValueKind::Json, $value, true),
+            $child->comments(),
+            $child->inlineComment(),
+            $child->span(),
+        );
     }
 }

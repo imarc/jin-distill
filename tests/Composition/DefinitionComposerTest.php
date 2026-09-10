@@ -48,4 +48,21 @@ final class DefinitionComposerTest extends TestCase
 
         self::assertSame(['name'], array_map(static fn (Assignment $node): string => $node->path()->segments()[0], $assignments));
     }
+
+    public function testItMergesStaticObjectAssignments(): void
+    {
+        $parent = new SourceId('/project/base.jin', 'base.jin');
+        $child = new SourceId('/project/child.jin', 'child.jin');
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([new LoadedSource($parent, 'fields = {"first": true, "last": true}')]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze("--extends = base.jin\nfields = {\"last\": false, \"email\": true}", $child);
+
+        $document = (new DefinitionComposer())->compose($analysis)->document();
+        $assignment = $document->statements()[0];
+
+        self::assertInstanceOf(Assignment::class, $assignment);
+        self::assertSame(['first' => true, 'last' => false, 'email' => true], $assignment->value()->staticValue());
+    }
 }
