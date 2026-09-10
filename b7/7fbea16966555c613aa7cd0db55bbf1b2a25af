@@ -1,0 +1,27 @@
+src/JinDistill/Exceptions/UnrepresentableValueException.php
+  s_672ac1cdfe526c::t_d8cee38dd8db9c 1-18
+src/JinDistill/Formatting/ExtendsRenderer.php
+  s_672ac1cdfe526c::t_d8cee38dd8db9c 1-27
+tests/Formatting/JinRendererTest.php
+  s_672ac1cdfe526c::t_f2becfc98031ec 25-37
+  s_672ac1cdfe526c::t_23183e32aeab66 1-24,38-63
+src/JinDistill/Formatting/JinRenderer.php
+  s_672ac1cdfe526c::t_d8cee38dd8db9c 1-87,96-97,99-109,113-127,129-135,137,139-167
+  s_672ac1cdfe526c::t_07535c4e2d4a17 88-95,98,110-112,128,136,138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b77fbea16966555c613aa7cd0db55bbf1b2a25af",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": null
+    }
+  }
+}
