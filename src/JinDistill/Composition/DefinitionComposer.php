@@ -40,7 +40,9 @@ final class DefinitionComposer
                 }
                 foreach ($opaque as $ancestor) {
                     if ($this->isAncestor($ancestor->path()->segments(), $statement->path()->segments())) {
-                        throw new \JinDistill\Exceptions\UnflattenableDefinitionException();
+                        throw new \JinDistill\Exceptions\UnflattenableDefinitionException([
+                            new CompositionConflict($ancestor->path()->toJsonPointer(), $statement->path()->toJsonPointer()),
+                        ]);
                     }
                 }
                 $path = $statement->path()->toJsonPointer();

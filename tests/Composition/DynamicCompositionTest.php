@@ -25,7 +25,12 @@ final class DynamicCompositionTest extends TestCase
             [new RelativeExtendsResolver()],
         )))->analyze("--extends = base.jin\nfields.required = true", $child);
 
-        $this->expectException(UnflattenableDefinitionException::class);
-        (new DefinitionComposer())->compose($analysis);
+        try {
+            (new DefinitionComposer())->compose($analysis);
+            self::fail('Expected dynamic composition conflict.');
+        } catch (UnflattenableDefinitionException $error) {
+            self::assertSame('/fields', $error->conflicts()[0]->parentPath());
+            self::assertSame('/fields/required', $error->conflicts()[0]->childPath());
+        }
     }
 }
