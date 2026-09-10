@@ -1,0 +1,25 @@
+src/JinDistill/Analysis/SourceGraphBuilder.php
+  s_672ac1cdfe526c::t_098d8414ee0c8f 37-43
+tests/Analysis/SourceGraphBuilderTest.php
+  s_672ac1cdfe526c::t_a18bd6547f93be 63
+  s_672ac1cdfe526c::t_22d32a6d49a89c 12,14,55-62,64-68
+  s_672ac1cdfe526c::t_dddd179b0f46c9 69
+  s_672ac1cdfe526c::t_677e27f9d8c13d 13
+  s_672ac1cdfe526c::t_974f8ff6017347 70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "696eb907491e783d0d3bbedde219c8430c32d5d4",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
