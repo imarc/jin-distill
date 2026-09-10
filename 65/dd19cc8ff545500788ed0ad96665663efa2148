@@ -1,0 +1,25 @@
+tests/Source/MemorySourceLoaderTest.php
+  s_672ac1cdfe526c::t_e33fc776be47fa 1-26
+src/JinDistill/Source/SourceLoader.php
+  s_672ac1cdfe526c::t_4fe309d049d446 1-8
+src/JinDistill/Source/MemorySourceLoader.php
+  s_672ac1cdfe526c::t_4fe309d049d446 1-29
+src/JinDistill/Source/LoadedSource.php
+  s_672ac1cdfe526c::t_4fe309d049d446 1-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "65dd19cc8ff545500788ed0ad96665663efa2148",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
