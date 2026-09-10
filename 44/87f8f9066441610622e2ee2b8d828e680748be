@@ -1,0 +1,23 @@
+src/JinDistill/Source/FilesystemSourceLoader.php
+  s_672ac1cdfe526c::t_2f131fd9485b13 1-38
+tests/Source/FilesystemSourceLoaderTest.php
+  s_672ac1cdfe526c::t_0c9059edcd0616 1-35
+src/JinDistill/Source/PathPolicy.php
+  s_672ac1cdfe526c::t_2f131fd9485b13 1-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "4487f8f9066441610622e2ee2b8d828e680748be",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
