@@ -1,0 +1,25 @@
+src/JinDistill/Analysis/Lineage.php
+  s_672ac1cdfe526c::t_28a2134c8cdc13 1-28
+tests/Analysis/ProvenanceIndexTest.php
+  s_672ac1cdfe526c::t_cdf103725aa335 1-35
+src/JinDistill/Analysis/ProvenanceIndex.php
+  s_672ac1cdfe526c::t_28a2134c8cdc13 1-24
+src/JinDistill/Analysis/Definition.php
+  s_672ac1cdfe526c::t_28a2134c8cdc13 1-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b001a3ca4c9f7514f488bb5ac1edfb534fada8b9",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
