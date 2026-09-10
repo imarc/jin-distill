@@ -6,6 +6,8 @@ use JinDistill\Analysis\Analyzer;
 use JinDistill\Analysis\SourceGraphBuilder;
 use JinDistill\Decoders\JinDecoder;
 use JinDistill\Formatting\Normalizer;
+use JinDistill\Evaluation\SemanticVerifier;
+use JinDistill\Evaluation\EvaluationOptions;
 use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\FilesystemSourceLoader;
 use JinDistill\Source\PathPolicy;
@@ -62,5 +64,18 @@ final class NormalizerTest extends TestCase
 
         self::assertSame($first, $second);
         self::assertStringContainsString('run( keep  this )', $second);
+    }
+
+    public function testItsOutputCanBeExplicitlyVerifiedForSemanticEquivalence(): void
+    {
+        $normalizer = new Normalizer(new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )));
+        $original = "name=CPA\n[form]\nenabled=true";
+        $normalized = $normalizer->normalize($original, new SourceId('memory://input.jin', 'input.jin'))->content();
+
+        self::assertTrue((new SemanticVerifier())->verify($original, $normalized, new EvaluationOptions())->isEquivalent());
     }
 }
