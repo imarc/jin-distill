@@ -5,13 +5,14 @@ namespace JinDistill\Validation;
 use JinDistill\Analysis\AnalysisResult;
 use JinDistill\Diagnostics\Diagnostic;
 use JinDistill\Diagnostics\Severity;
+use JinDistill\Evaluation\EvaluationOptions;
 use JinDistill\Syntax\Assignment;
 use JinDistill\Syntax\Section;
 
 final class Validator
 {
     /** @return list<Diagnostic> */
-    public function validate(AnalysisResult $analysis, ?ValidationRules $rules = null): array
+    public function validate(AnalysisResult $analysis, ?ValidationRules $rules = null, ?EvaluationOptions $evaluation = null): array
     {
         $rules ??= ValidationRules::imarcV1();
         $diagnostics = [];
@@ -29,7 +30,23 @@ final class Validator
                     );
                     continue;
                 }
-                if (!$statement instanceof Assignment || str_starts_with($statement->path()->segments()[0], '--')) {
+                if (!$statement instanceof Assignment) {
+                    continue;
+                }
+                if ($statement->path()->segments() === ['--extends']
+                    && preg_match('/^file\\s*\\(/', $statement->value()->raw()) === 1
+                    && $evaluation !== null
+                    && !array_key_exists('file', $evaluation->functions())) {
+                    $diagnostics[] = new Diagnostic(
+                        'jin.style.extends-function',
+                        $rules->severity('jin.style.extends-function'),
+                        'Hiraeth file() inheritance requires a registered file evaluation function.',
+                        $statement->path(),
+                        $statement->span(),
+                        'Register file() before evaluation.',
+                    );
+                }
+                if (str_starts_with($statement->path()->segments()[0], '--')) {
                     continue;
                 }
                 $path = $statement->path()->toJsonPointer();

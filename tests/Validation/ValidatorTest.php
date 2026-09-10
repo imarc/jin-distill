@@ -9,6 +9,7 @@ use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\RelativeExtendsResolver;
 use JinDistill\Source\SourceId;
 use JinDistill\Diagnostics\Severity;
+use JinDistill\Evaluation\EvaluationOptions;
 use JinDistill\Validation\ValidationRules;
 use JinDistill\Validation\Validator;
 use PHPUnit\Framework\TestCase;
@@ -51,5 +52,20 @@ final class ValidatorTest extends TestCase
         self::assertSame('jin.style.section-reference', $diagnostics[0]->toArray()['rule']);
         self::assertSame('/form/fields', $diagnostics[0]->toArray()['path']);
         self::assertSame('Rewrite as [form.fields].', $diagnostics[0]->toArray()['suggestion']);
+    }
+
+    public function testItReportsFileExtendsWhenEvaluationDoesNotRegisterFile(): void
+    {
+        $analyzer = new Analyzer(new SourceGraphBuilder(new MemorySourceLoader([]), new JinDecoder(), []));
+        $analysis = $analyzer->analyze('--extends = file(base.jin)', new SourceId('memory://input.jin', 'input.jin'));
+
+        self::assertSame(
+            'jin.style.extends-function',
+            (new Validator())->validate($analysis, evaluation: new EvaluationOptions())[0]->toArray()['rule'],
+        );
+        self::assertSame(
+            [],
+            (new Validator())->validate($analysis, evaluation: new EvaluationOptions(functions: ['file' => static fn (): string => 'base.jin'])),
+        );
     }
 }

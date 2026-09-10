@@ -16,6 +16,7 @@ final class ValidationRules
         return new self([
             'jin.style.duplicate-path' => Severity::Error,
             'jin.style.section-reference' => Severity::Warning,
+            'jin.style.extends-function' => Severity::Warning,
         ]);
     }
 
