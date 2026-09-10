@@ -10,8 +10,9 @@ use JinDistill\Syntax\Assignment;
 final class Validator
 {
     /** @return list<Diagnostic> */
-    public function validate(AnalysisResult $analysis): array
+    public function validate(AnalysisResult $analysis, ?ValidationRules $rules = null): array
     {
+        $rules ??= ValidationRules::imarcV1();
         $diagnostics = [];
         foreach ($analysis->sourceGraph()->documents() as $document) {
             $seen = [];
@@ -23,7 +24,7 @@ final class Validator
                 if (isset($seen[$path])) {
                     $diagnostics[] = new Diagnostic(
                         'jin.style.duplicate-path',
-                        Severity::Error,
+                        $rules->severity('jin.style.duplicate-path'),
                         sprintf('Duplicate declaration for %s in one source file.', $path),
                         $statement->path(),
                         $statement->span(),
