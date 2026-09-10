@@ -13,7 +13,10 @@ final class ValidationRules
 
     public static function imarcV1(): self
     {
-        return new self(['jin.style.duplicate-path' => Severity::Error]);
+        return new self([
+            'jin.style.duplicate-path' => Severity::Error,
+            'jin.style.section-reference' => Severity::Warning,
+        ]);
     }
 
     public function severity(string $ruleId): Severity

@@ -6,6 +6,7 @@ use JinDistill\Analysis\AnalysisResult;
 use JinDistill\Diagnostics\Diagnostic;
 use JinDistill\Diagnostics\Severity;
 use JinDistill\Syntax\Assignment;
+use JinDistill\Syntax\Section;
 
 final class Validator
 {
@@ -17,6 +18,17 @@ final class Validator
         foreach ($analysis->sourceGraph()->documents() as $document) {
             $seen = [];
             foreach ($document->statements() as $statement) {
+                if ($statement instanceof Section && str_starts_with($statement->lexeme(), '&')) {
+                    $diagnostics[] = new Diagnostic(
+                        'jin.style.section-reference',
+                        $rules->severity('jin.style.section-reference'),
+                        'Relative section references are not canonical.',
+                        $statement->path(),
+                        $statement->span(),
+                        sprintf('Rewrite as [%s].', implode('.', $statement->path()->segments())),
+                    );
+                    continue;
+                }
                 if (!$statement instanceof Assignment || str_starts_with($statement->path()->segments()[0], '--')) {
                     continue;
                 }

@@ -40,4 +40,16 @@ final class ValidatorTest extends TestCase
 
         self::assertSame('warning', $diagnostics[0]->toArray()['severity']);
     }
+
+    public function testItReportsRelativeSectionReferencesAsNoncanonical(): void
+    {
+        $analyzer = new Analyzer(new SourceGraphBuilder(new MemorySourceLoader([]), new JinDecoder(), [new RelativeExtendsResolver()]));
+        $analysis = $analyzer->analyze("[form]\n[&.fields]\nname = CPA", new SourceId('memory://input.jin', 'input.jin'));
+
+        $diagnostics = (new Validator())->validate($analysis);
+
+        self::assertSame('jin.style.section-reference', $diagnostics[0]->toArray()['rule']);
+        self::assertSame('/form/fields', $diagnostics[0]->toArray()['path']);
+        self::assertSame('Rewrite as [form.fields].', $diagnostics[0]->toArray()['suggestion']);
+    }
 }
