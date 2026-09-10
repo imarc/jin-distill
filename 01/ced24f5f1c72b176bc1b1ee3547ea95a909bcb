@@ -1,0 +1,22 @@
+tests/JinDistillerTest.php
+  s_672ac1cdfe526c::t_0a0806c22d5f97 42-48
+src/JinDistill/JinDistiller.php
+  s_672ac1cdfe526c::t_ccb6d8b9236278 12-13,75-77
+  s_672ac1cdfe526c::t_8042bbddc6b56d 78-79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "01ced24f5f1c72b176bc1b1ee3547ea95a909bcb",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
