@@ -68,4 +68,25 @@ final class AnalyzerTest extends TestCase
             $lineage?->removals() ?? [],
         ));
     }
+
+    public function testItKeepsSameSourceDeclarationsInResolutionOrder(): void
+    {
+        $source = new SourceId('memory://input.jin', 'input.jin');
+        $analyzer = new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        ));
+
+        $result = $analyzer->analyze('name = First' . "\n" . 'name = Second', $source);
+        $lineage = $result->provenance()->lineage(\JinDistill\Source\Path::fromSegments(['name']));
+
+        self::assertSame('memory://input.jin', $lineage?->winner()->source()->canonicalPath());
+        self::assertCount(1, $lineage?->overridden() ?? []);
+        self::assertSame(
+            1,
+            $lineage?->overridden()[0]->span()->toArray()['start']['line'],
+        );
+        self::assertSame(2, $lineage?->winner()->span()->toArray()['start']['line']);
+    }
 }
