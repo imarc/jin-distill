@@ -4,6 +4,7 @@ namespace JinDistill\Tests\Analysis;
 
 use JinDistill\Analysis\SourceGraphBuilder;
 use JinDistill\Decoders\JinDecoder;
+use JinDistill\Exceptions\CircularInheritanceException;
 use JinDistill\Source\LoadedSource;
 use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\RelativeExtendsResolver;
@@ -29,5 +30,23 @@ final class SourceGraphBuilderTest extends TestCase
         self::assertSame('/project/child.jin', $graph->edges()[0]->child()->canonicalPath());
         self::assertSame('/project/base.jin', $graph->edges()[0]->parent()->canonicalPath());
         self::assertSame('base.jin', $graph->edges()[0]->reference());
+    }
+
+    public function testItRejectsCircularInheritance(): void
+    {
+        $child = new SourceId('/project/child.jin', 'child.jin');
+        $parent = new SourceId('/project/base.jin', 'base.jin');
+        $builder = new SourceGraphBuilder(
+            new MemorySourceLoader([
+                new LoadedSource($parent, '--extends = child.jin'),
+                new LoadedSource($child, '--extends = base.jin'),
+            ]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        );
+
+        $this->expectException(CircularInheritanceException::class);
+
+        $builder->build('--extends = base.jin', $child);
     }
 }

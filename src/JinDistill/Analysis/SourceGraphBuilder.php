@@ -3,6 +3,7 @@
 namespace JinDistill\Analysis;
 
 use JinDistill\Decoders\JinDecoder;
+use JinDistill\Exceptions\CircularInheritanceException;
 use JinDistill\Source\ExtendsResolver;
 use JinDistill\Source\SourceId;
 use JinDistill\Source\SourceLoader;
@@ -13,6 +14,8 @@ final class SourceGraphBuilder
 {
     /** @var array<string, Document> */
     private array $documents = [];
+    /** @var array<string, true> */
+    private array $visiting = [];
     /** @var list<SourceGraphEdge> */
     private array $edges = [];
 
@@ -24,6 +27,7 @@ final class SourceGraphBuilder
     public function build(string $contents, SourceId $source): SourceGraph
     {
         $this->documents = [];
+        $this->visiting = [];
         $this->edges = [];
         $this->visit($this->decoder->decode($contents, $source));
 
@@ -33,9 +37,13 @@ final class SourceGraphBuilder
     private function visit(Document $document): void
     {
         $source = $document->source();
+        if (isset($this->visiting[$source->canonicalPath()])) {
+            throw new CircularInheritanceException(sprintf('Circular Jin inheritance detected at %s.', $source->canonicalPath()));
+        }
         if (isset($this->documents[$source->canonicalPath()])) {
             return;
         }
+        $this->visiting[$source->canonicalPath()] = true;
         $this->documents[$source->canonicalPath()] = $document;
         foreach ($document->statements() as $statement) {
             if (!$statement instanceof Assignment || $statement->path()->segments() !== ['--extends']) {
@@ -53,5 +61,6 @@ final class SourceGraphBuilder
                 break;
             }
         }
+        unset($this->visiting[$source->canonicalPath()]);
     }
 }
