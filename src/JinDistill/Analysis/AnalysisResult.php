@@ -17,6 +17,12 @@ final class AnalysisResult
         return new self(AnalysisMode::SourceOnly, $sourceGraph, $diagnostics, null, $provenance ?? new ProvenanceIndex([]));
     }
 
+    /** @param list<object> $diagnostics */
+    public static function evaluated(SourceGraph $sourceGraph, array $diagnostics, mixed $resolvedData, ?ProvenanceIndex $provenance = null): self
+    {
+        return new self(AnalysisMode::Evaluated, $sourceGraph, $diagnostics, $resolvedData, $provenance ?? new ProvenanceIndex([]));
+    }
+
     public function mode(): AnalysisMode
     {
         return $this->mode;
