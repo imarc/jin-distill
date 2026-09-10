@@ -27,4 +27,16 @@ final class JinDistillerTest extends TestCase
         self::assertStringNotContainsString('"avatar"', $output);
         self::assertStringContainsString('"birthDate": true,', $output);
     }
+
+    public function testItExposesExplicitSafeAnalysisAndEvaluationWorkflows(): void
+    {
+        $path = __DIR__ . '/fixtures/base.jin';
+        $distiller = new JinDistiller();
+
+        self::assertSame(
+            \JinDistill\Analysis\AnalysisMode::SourceOnly,
+            $distiller->analyzeFile($path)->mode(),
+        );
+        self::assertSame('Default', $distiller->evaluateFile($path)->resolvedData()['form']['name']);
+    }
 }

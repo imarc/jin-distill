@@ -4,6 +4,15 @@ namespace JinDistill;
 
 use JinDistill\Decoders\JinDecoder;
 use JinDistill\Formats\JinFormat;
+use JinDistill\Analysis\AnalysisResult;
+use JinDistill\Analysis\Analyzer;
+use JinDistill\Analysis\SourceGraphBuilder;
+use JinDistill\Evaluation\DotinkEvaluator;
+use JinDistill\Evaluation\EvaluationOptions;
+use JinDistill\Source\FilesystemSourceLoader;
+use JinDistill\Source\FunctionExtendsResolver;
+use JinDistill\Source\PathPolicy;
+use JinDistill\Source\RelativeExtendsResolver;
 
 class JinDistiller
 {
@@ -49,5 +58,29 @@ class JinDistiller
     public function flattenFile(string $path): string
     {
         return $this->format->encodeDocument($this->resolveFile($path), false);
+    }
+
+    public function analyzeFile(string $path): AnalysisResult
+    {
+        return $this->analyzerForFile($path)->analyzeFile($path);
+    }
+
+    public function evaluateFile(string $path, ?EvaluationOptions $options = null): AnalysisResult
+    {
+        return (new DotinkEvaluator($this->analyzerForFile($path)))->evaluateFile($path, $options);
+    }
+
+    private function analyzerForFile(string $path): Analyzer
+    {
+        $root = realpath(dirname($path));
+        if ($root === false) {
+            throw new \RuntimeException(sprintf('Cannot resolve Jin source directory: %s', $path));
+        }
+
+        return new Analyzer(new SourceGraphBuilder(
+            new FilesystemSourceLoader(new PathPolicy([$root])),
+            $this->decoder,
+            [new RelativeExtendsResolver(), new FunctionExtendsResolver('file', $root)],
+        ));
     }
 }
