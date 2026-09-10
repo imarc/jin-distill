@@ -1,0 +1,32 @@
+--extends = base.jin
+--without = ["complex.arrayValue",]
+
+hexValue = 0xD
+binValue = 0b1101
+octValue = 015
+quotedValue = "literal ""quote"""
+multiValue = This continues
+on a second line.
+
+[complex]
+    objectValue = {
+        "handler": "App\Middleware\ResponseHandler",
+    }
+    envValue = env(VALUE, FALSE)
+    runValue = run(md5('value'))
+    customValue = hello(Matt)
+    template = def(value) {
+        {"value": $value}
+    }
+    include = inc(template) {
+        one
+    }
+    mapping = map(template) {
+        one two
+    }
+
+[reference]
+    [&.sub]
+        value = one
+        [&&.nested]
+            value = two
