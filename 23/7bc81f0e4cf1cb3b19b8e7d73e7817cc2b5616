@@ -1,0 +1,21 @@
+tests/Source/FunctionExtendsResolverTest.php
+  s_672ac1cdfe526c::t_390a9008d62e7d 1-32
+src/JinDistill/Source/FunctionExtendsResolver.php
+  s_672ac1cdfe526c::t_adf218a5912d69 1-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "237bc81f0e4cf1cb3b19b8e7d73e7817cc2b5616",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
