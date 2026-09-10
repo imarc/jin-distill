@@ -1,0 +1,30 @@
+tests/examples/cpa.jin
+  h_b44430a3281f44 1-16
+tests/examples/cpa.php
+  h_b44430a3281f44 1-18
+tests/examples/default.csv
+  h_b44430a3281f44 1-77
+tests/examples/default.php
+  h_b44430a3281f44 1-105
+tests/examples/example.jin
+  h_b44430a3281f44 1-75
+tests/examples/example.php
+  h_b44430a3281f44 1-37
+tests/examples/site.php
+  h_b44430a3281f44 1-106
+tests/examples/test.jin
+  h_b44430a3281f44 1-43
+tests/test.php
+  h_b44430a3281f44 1-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "3c2bbb2fbfd0a53f01eb196dac27a6d2e3c1451b",
+  "prompts": {},
+  "humans": {
+    "h_b44430a3281f44": {
+      "author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
