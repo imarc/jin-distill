@@ -1,0 +1,24 @@
+src/JinDistill/Analysis/SourceGraphBuilder.php
+  s_672ac1cdfe526c::t_8405512caa19c1 6,17-18,30,40-42,46,64
+src/JinDistill/Exceptions/CircularInheritanceException.php
+  s_672ac1cdfe526c::t_8405512caa19c1 1-7
+tests/Analysis/SourceGraphBuilderTest.php
+  s_672ac1cdfe526c::t_cd72bac67ed78d 7,34-50
+  s_672ac1cdfe526c::t_06e3645a4b40fe 51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "8f54f01a9c4d35eb7ccff5529a9b62f020769149",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
