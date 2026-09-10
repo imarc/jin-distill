@@ -1,0 +1,23 @@
+tests/Composition/DynamicCompositionTest.php
+  s_672ac1cdfe526c::t_03623f1430bfc3 28-34
+src/JinDistill/Composition/CompositionConflict.php
+  s_672ac1cdfe526c::t_8fe9dfe2598918 7-12
+src/JinDistill/Composition/DefinitionComposer.php
+  s_672ac1cdfe526c::t_8fe9dfe2598918 43-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "3e3472da38013b5bb0627377197dfe7de3877056",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
