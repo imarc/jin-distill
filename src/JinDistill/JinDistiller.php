@@ -9,6 +9,8 @@ use JinDistill\Analysis\Analyzer;
 use JinDistill\Analysis\SourceGraphBuilder;
 use JinDistill\Evaluation\DotinkEvaluator;
 use JinDistill\Evaluation\EvaluationOptions;
+use JinDistill\Evaluation\SemanticVerifier;
+use JinDistill\Evaluation\VerificationResult;
 use JinDistill\Source\FilesystemSourceLoader;
 use JinDistill\Source\FunctionExtendsResolver;
 use JinDistill\Source\PathPolicy;
@@ -68,6 +70,11 @@ class JinDistiller
     public function evaluateFile(string $path, ?EvaluationOptions $options = null): AnalysisResult
     {
         return (new DotinkEvaluator($this->analyzerForFile($path)))->evaluateFile($path, $options);
+    }
+
+    public function verifySemantics(string $original, string $generated, ?EvaluationOptions $options = null): VerificationResult
+    {
+        return (new SemanticVerifier())->verify($original, $generated, $options ?? new EvaluationOptions());
     }
 
     private function analyzerForFile(string $path): Analyzer

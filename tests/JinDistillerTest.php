@@ -39,4 +39,11 @@ final class JinDistillerTest extends TestCase
         );
         self::assertSame('Default', $distiller->evaluateFile($path)->resolvedData()['form']['name']);
     }
+
+    public function testItExposesOptInSemanticVerification(): void
+    {
+        $result = (new JinDistiller())->verifySemantics('name = CPA', 'name=CPA');
+
+        self::assertTrue($result->isEquivalent());
+    }
 }
