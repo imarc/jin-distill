@@ -9,6 +9,9 @@ use JinDistill\Source\LoadedSource;
 use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\RelativeExtendsResolver;
 use JinDistill\Source\SourceId;
+use JinDistill\Source\FilesystemSourceLoader;
+use JinDistill\Source\FunctionExtendsResolver;
+use JinDistill\Source\PathPolicy;
 use PHPUnit\Framework\TestCase;
 
 final class SourceGraphBuilderTest extends TestCase
@@ -48,5 +51,21 @@ final class SourceGraphBuilderTest extends TestCase
         $this->expectException(CircularInheritanceException::class);
 
         $builder->build('--extends = base.jin', $child);
+    }
+
+    public function testItBuildsAGraphFromAFile(): void
+    {
+        $fixtureRoot = realpath(__DIR__ . '/../fixtures');
+        self::assertNotFalse($fixtureRoot);
+        $builder = new SourceGraphBuilder(
+            new FilesystemSourceLoader(new PathPolicy([$fixtureRoot])),
+            new JinDecoder(),
+            [new RelativeExtendsResolver(), new FunctionExtendsResolver('file', $fixtureRoot)],
+        );
+
+        $graph = $builder->buildFile($fixtureRoot . '/child.jin');
+
+        self::assertCount(2, $graph->documents());
+        self::assertSame('file(base.jin)', $graph->edges()[0]->reference());
     }
 }

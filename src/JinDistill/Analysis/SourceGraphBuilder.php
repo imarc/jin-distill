@@ -34,6 +34,13 @@ final class SourceGraphBuilder
         return new SourceGraph($this->documents, $this->edges);
     }
 
+    public function buildFile(string $path): SourceGraph
+    {
+        $loaded = $this->loader->load($path);
+
+        return $this->build($loaded->contents(), $loaded->source());
+    }
+
     private function visit(Document $document): void
     {
         $source = $document->source();
