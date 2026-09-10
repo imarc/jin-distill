@@ -3,6 +3,7 @@
 namespace JinDistill\Tests\Syntax;
 
 use JinDistill\Decoders\JinDecoder;
+use JinDistill\Exceptions\InvalidStructureException;
 use JinDistill\Source\SourceId;
 use JinDistill\Syntax\Assignment;
 use JinDistill\Syntax\BlankLine;
@@ -151,6 +152,32 @@ JIN);
             self::assertFalse($statement->value()->isStaticallyKnown());
             self::assertNull($statement->value()->staticValue());
             self::assertNotSame('', $statement->value()->raw());
+        }
+    }
+
+    public function testItReportsMultipleSyntaxDiagnosticsWithThePartialDocument(): void
+    {
+        try {
+            (new JinDecoder())->decode(<<<'JIN'
+this is not an assignment
+name = valid
+[&&.orphan]
+enabled = true
+JIN);
+            self::fail('Expected malformed Jin to throw.');
+        } catch (InvalidStructureException $exception) {
+            self::assertCount(2, $exception->diagnostics());
+            self::assertSame('jin.syntax.assignment', $exception->diagnostics()[0]->toArray()['rule']);
+            self::assertSame('jin.syntax.section-reference', $exception->diagnostics()[1]->toArray()['rule']);
+
+            $assignments = array_filter(
+                $exception->document()->statements(),
+                static fn (mixed $statement): bool => $statement instanceof Assignment,
+            );
+            self::assertSame(['name', 'enabled'], array_values(array_map(
+                static fn (Assignment $assignment): string => $assignment->path()->segments()[0],
+                $assignments,
+            )));
         }
     }
 }

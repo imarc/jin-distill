@@ -3,6 +3,8 @@
 namespace JinDistill\Decoders;
 
 use JinDistill\Exceptions\InvalidStructureException;
+use JinDistill\Diagnostics\Diagnostic;
+use JinDistill\Diagnostics\Severity;
 use JinDistill\Source\Path;
 use JinDistill\Source\SourceId;
 use JinDistill\Source\SourceSpan;
@@ -17,12 +19,16 @@ use JinDistill\Syntax\ValueKind;
 
 final class JinDecoder implements DecoderInterface
 {
+    /** @var list<Diagnostic> */
+    private array $diagnostics = [];
+
     public function __construct(private bool $strict = true)
     {
     }
 
     public function decode(string $contents, SourceId|string|null $source = null): Document
     {
+        $this->diagnostics = [];
         $contents = str_replace(["\r\n", "\r"], "\n", $contents);
         $source = $source instanceof SourceId ? $source : new SourceId($source ?? 'memory://jin', $source ?? 'memory://jin');
         $lines = explode("\n", $contents);
@@ -67,7 +73,7 @@ final class JinDecoder implements DecoderInterface
             }
 
             if (preg_match('/^\s*([A-Za-z0-9_.:\\-]+|--[A-Za-z0-9_.:\\-]+)\s*=\s*(.*)$/', $line, $matches) !== 1) {
-                $this->fail(sprintf('Malformed Jin line %d: %s', $lineNumber, $line));
+                $this->fail(sprintf('Malformed Jin line %d: %s', $lineNumber, $line), 'jin.syntax.assignment');
                 continue;
             }
 
@@ -95,7 +101,12 @@ final class JinDecoder implements DecoderInterface
             $pendingComments = [];
         }
 
-        return new Document($statements, $source, $data, $directives, $metadata);
+        $document = new Document($statements, $source, $data, $directives, $metadata);
+        if ($this->diagnostics !== []) {
+            throw new InvalidStructureException('Invalid Jin structure.', $this->diagnostics, $document);
+        }
+
+        return $document;
     }
 
     public function decodeFile(string $path): Document
@@ -119,8 +130,8 @@ final class JinDecoder implements DecoderInterface
                     return $resolved;
                 }
             }
-            $this->fail(sprintf('Invalid section reference: %s', $lexeme));
-            return explode('.', $matches[2]);
+            $this->fail(sprintf('Invalid section reference: %s', $lexeme), 'jin.syntax.section-reference');
+            return [];
         }
 
         $resolved = explode('.', $lexeme);
@@ -235,7 +246,7 @@ final class JinDecoder implements DecoderInterface
         $value = preg_replace_callback('/"((?:""|[^"])*)"/s', static fn(array $matches): string => json_encode(str_replace('""', '"', $matches[1]), JSON_THROW_ON_ERROR), $value) ?? $value;
         $decoded = json_decode($value, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->fail(sprintf('Error parsing JSON-like value: %s', json_last_error_msg()));
+            $this->fail(sprintf('Error parsing JSON-like value: %s', json_last_error_msg()), 'jin.syntax.json');
             return null;
         }
         return $decoded;
@@ -318,10 +329,8 @@ final class JinDecoder implements DecoderInterface
         return new SourceSpan($source, $startLine, $startColumn, $endLine, $endColumn);
     }
 
-    private function fail(string $message): void
+    private function fail(string $message, string $rule = 'jin.syntax.structure'): void
     {
-        if ($this->strict) {
-            throw new InvalidStructureException($message);
-        }
+        $this->diagnostics[] = new Diagnostic($rule, Severity::Error, $message);
     }
 }
