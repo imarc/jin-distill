@@ -1,0 +1,23 @@
+src/JinDistill/Source/ExtendsResolver.php
+  s_672ac1cdfe526c::t_f36c1391cd5135 1-12
+src/JinDistill/Source/RelativeExtendsResolver.php
+  s_672ac1cdfe526c::t_f36c1391cd5135 1-24
+tests/Source/RelativeExtendsResolverTest.php
+  s_672ac1cdfe526c::t_94dba95ac9c203 1-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "beabbb3bb267fe384421f52c313a8e07869c0faf",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
