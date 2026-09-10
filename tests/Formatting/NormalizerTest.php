@@ -47,4 +47,20 @@ final class NormalizerTest extends TestCase
         self::assertStringContainsString("\tname = CPA\n", $result->content());
         self::assertSame($before, file_get_contents($parent));
     }
+
+    public function testItIsIdempotentWithoutEvaluatingExpressions(): void
+    {
+        $normalizer = new Normalizer(new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )));
+        $source = new SourceId('memory://input.jin', 'input.jin');
+        $first = $normalizer->normalize("value=run( keep  this )\n[form]\nname=CPA", $source)->content();
+
+        $second = $normalizer->normalize($first, $source)->content();
+
+        self::assertSame($first, $second);
+        self::assertStringContainsString('run( keep  this )', $second);
+    }
 }
