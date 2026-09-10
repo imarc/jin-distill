@@ -1,0 +1,35 @@
+tests/JinFormatTest.php
+  s_bddf737e764599::t_51f73e4436d8b1 3-4,8,10,12-35,37,41,45-98
+.gitignore
+  s_bddf737e764599::t_973d7a26d90a4a 2
+phpunit.xml.dist
+  s_bddf737e764599::t_973d7a26d90a4a 1-12
+tests/JinResolverTest.php
+  s_bddf737e764599::t_8b809c18958c13 3-4,8,10,12-14,16-23,25-27,29-30
+tests/JinDecoderTest.php
+  s_bddf737e764599::t_51f73e4436d8b1 3-4,7,9,11,13-16,18-20,37-43,45-47,59-62,64-66,68-69,71-73,75-85,93-95,97-99,106-107,109-111,113-114,116-118,128-130
+tests/JinDistillerTest.php
+  s_bddf737e764599::t_8b809c18958c13 3-4,6,8,10-12,14-17,19-21,23-29
+composer.json
+  s_bddf737e764599::t_973d7a26d90a4a 3,11-17,22-29
+tests/JinDocumentTest.php
+  s_bddf737e764599::t_8b809c18958c13 3-4,7,9,11-35,38,40,42,44-50,53,55-58
+composer.lock
+  s_bddf737e764599::t_49fce582b997e9 1-1777
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d36d90eedb3e5885dd915564d579182df9e6eff1",
+  "prompts": {},
+  "sessions": {
+    "s_bddf737e764599": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcb894fc1ffeN0FrOHLYxbP8VK",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
