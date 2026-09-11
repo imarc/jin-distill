@@ -11,7 +11,7 @@ final class ExtendsReference
     public static function forOutput(string $parentPath, string $outputPath): self
     {
         $parent = explode('/', trim(str_replace('\\', '/', $parentPath), '/'));
-        $output = explode('/', trim(str_replace('\\', '/', dirname($outputPath)), '/'));
+        $output = explode('/', trim(dirname(str_replace('\\', '/', $outputPath)), '/'));
         while ($parent !== [] && $output !== [] && $parent[0] === $output[0]) {
             array_shift($parent);
             array_shift($output);

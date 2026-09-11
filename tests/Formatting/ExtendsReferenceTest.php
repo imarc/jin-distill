@@ -20,4 +20,9 @@ final class ExtendsReferenceTest extends TestCase
 
         self::assertSame('../base.jin', $reference->relativePath());
     }
+
+    public function testItNormalizesWindowsSeparators(): void
+    {
+        self::assertSame('base.jin', ExtendsReference::forOutput('C:\\project\\base.jin', 'C:\\project\\diff.jin')->relativePath());
+    }
 }
