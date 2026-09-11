@@ -18,7 +18,7 @@ final class Differ {
   foreach($differences->all() as $d) if(in_array($d->kind(),[DifferenceKind::Added,DifferenceKind::Changed,DifferenceKind::MetadataChanged],true)) {
    $assignment=$d->target(); $next=count($assignment->path()->segments())>1?array_slice($assignment->path()->segments(),0,-1):[];
    if($next!==[]&&$next!==$section) $nodes[]=new Section(Path::fromSegments($next),implode('.',$next),$assignment->span());
-   $section=$next; $nodes[]=$assignment;
+   $section=$next; foreach($assignment->comments() as $comment) $nodes[]=$comment; $nodes[]=$assignment;
   }
   return new DiffResult((new JinRenderer())->render(new Document($nodes,$source)),$differences,$removals);
  }

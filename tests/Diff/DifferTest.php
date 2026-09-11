@@ -38,6 +38,13 @@ final class DifferTest extends TestCase
         self::assertStringContainsString("[form]\n\tname = Child\n", $result->content());
     }
 
+    public function testItPreservesTargetLeadingComments(): void
+    {
+        $result = (new Differ())->diff($this->compose('name = Base'), $this->compose("; Public name\nname = Child"), 'base.jin');
+
+        self::assertStringContainsString("; Public name\nname = Child\n", $result->content());
+    }
+
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument
     {
         $analysis = (new Analyzer(new SourceGraphBuilder(new MemorySourceLoader([]), new JinDecoder(), [new RelativeExtendsResolver()])))
