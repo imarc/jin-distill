@@ -1,0 +1,21 @@
+tests/Diff/DifferTest.php
+  s_672ac1cdfe526c::t_090c2e0f565981 34-40
+src/JinDistill/Diff/Differ.php
+  s_672ac1cdfe526c::t_596f7e3a4f4578 10,17-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "70a0e9ad2cf1b83744622aac2df6a37405fb86d0",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
