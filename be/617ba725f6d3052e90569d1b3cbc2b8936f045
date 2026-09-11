@@ -1,0 +1,21 @@
+tests/Composition/FlattenerTest.php
+  s_672ac1cdfe526c::t_e209a7ad080da5 65-76
+src/JinDistill/Composition/DefinitionComposer.php
+  s_672ac1cdfe526c::t_3f962444942f9f 152,159-174
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "be617ba725f6d3052e90569d1b3cbc2b8936f045",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
