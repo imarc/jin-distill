@@ -31,6 +31,13 @@ final class DifferTest extends TestCase
         self::assertStringContainsString("--without = [\n\t\"enabled\",\n]\n", $result->content());
     }
 
+    public function testItRendersChangedNestedPathsInSections(): void
+    {
+        $result = (new Differ())->diff($this->compose("[form]\nname = Base"), $this->compose("[form]\nname = Child"), 'base.jin');
+
+        self::assertStringContainsString("[form]\n\tname = Child\n", $result->content());
+    }
+
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument
     {
         $analysis = (new Analyzer(new SourceGraphBuilder(new MemorySourceLoader([]), new JinDecoder(), [new RelativeExtendsResolver()])))
