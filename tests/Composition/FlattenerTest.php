@@ -28,4 +28,15 @@ final class FlattenerTest extends TestCase
         self::assertSame("name = Child\nenabled = true\n", $result->content());
         self::assertStringNotContainsString('--extends', $result->content());
     }
+
+    public function testItRendersNestedPathsUnderExplicitSections(): void
+    {
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze("[form]\nname = CPA", new SourceId('/project/child.jin', 'child.jin'));
+
+        self::assertSame("[form]\n\tname = CPA\n", (new Flattener())->flatten($analysis)->content());
+    }
 }

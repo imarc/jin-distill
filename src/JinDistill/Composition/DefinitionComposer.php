@@ -7,6 +7,8 @@ use JinDistill\Syntax\Assignment;
 use JinDistill\Syntax\Document;
 use JinDistill\Syntax\Value;
 use JinDistill\Syntax\ValueKind;
+use JinDistill\Syntax\Section;
+use JinDistill\Source\Path;
 
 final class DefinitionComposer
 {
@@ -84,7 +86,22 @@ final class DefinitionComposer
             }
         }
         $source ??= new \JinDistill\Source\SourceId('memory://composed.jin', 'composed.jin');
-        return new ComposedDocument(new Document(array_values(array_filter($statements)), $source), $analysis->provenance());
+        $renderable = [];
+        $section = [];
+        foreach (array_values(array_filter($statements)) as $statement) {
+            $segments = $statement->path()->segments();
+            $nextSection = count($segments) > 1 ? [$segments[0]] : [];
+            if ($nextSection !== $section && $nextSection !== []) {
+                $renderable[] = new Section(
+                    Path::fromSegments($nextSection),
+                    implode('.', $nextSection),
+                    $statement->span(),
+                );
+            }
+            $section = $nextSection;
+            $renderable[] = $statement;
+        }
+        return new ComposedDocument(new Document($renderable, $source), $analysis->provenance());
     }
 
     /** @param list<string> $ancestor @param list<string> $path */
