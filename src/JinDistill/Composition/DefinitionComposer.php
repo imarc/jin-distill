@@ -29,6 +29,14 @@ final class DefinitionComposer
                         if (!is_string($removedPath) || $removedPath === '') {
                             continue;
                         }
+                        $removedSegments = explode('.', $removedPath);
+                        foreach ($opaque as $ancestor) {
+                            if ($this->isAncestor($ancestor->path()->segments(), $removedSegments)) {
+                                throw new \JinDistill\Exceptions\UnflattenableDefinitionException([
+                                    new CompositionConflict($ancestor->path()->toJsonPointer(), '/' . implode('/', $removedSegments)),
+                                ]);
+                            }
+                        }
                         $path = '/' . str_replace('.', '/', $removedPath);
                         if (isset($positions[$path])) {
                             $statements[$positions[$path]] = null;

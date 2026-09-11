@@ -48,4 +48,18 @@ final class DynamicCompositionTest extends TestCase
 
         self::assertSame('run(child())', $assignment->value()->raw());
     }
+
+    public function testItRejectsNestedRemovalsBelowOpaqueAssignments(): void
+    {
+        $parent = new SourceId('/project/base.jin', 'base.jin');
+        $child = new SourceId('/project/child.jin', 'child.jin');
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([new LoadedSource($parent, 'fields = run(buildFields())')]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze("--extends = base.jin\n--without = fields.required", $child);
+
+        $this->expectException(UnflattenableDefinitionException::class);
+        (new DefinitionComposer())->compose($analysis);
+    }
 }
