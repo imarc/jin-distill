@@ -24,6 +24,13 @@ final class DifferTest extends TestCase
         self::assertSame("--extends = file(base.jin)\nname = Child\n", $result->content());
     }
 
+    public function testItEmitsOnlyExtendsForIdenticalDefinitions(): void
+    {
+        $result = (new Differ())->diff($this->compose('name = Base'), $this->compose('name = Base'), 'base.jin');
+
+        self::assertSame("--extends = file(base.jin)\n", $result->content());
+    }
+
     public function testItEmitsPlannedRemovals(): void
     {
         $result = (new Differ())->diff($this->compose("name = Base\nenabled = true"), $this->compose('name = Base'), 'base.jin');
