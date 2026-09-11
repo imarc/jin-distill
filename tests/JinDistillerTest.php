@@ -47,4 +47,13 @@ final class JinDistillerTest extends TestCase
 
         self::assertTrue($result->isEquivalent());
     }
+
+    public function testItGeneratesDiffContentWithoutWritingOutput(): void
+    {
+        $output = __DIR__ . '/fixtures/generated-diff.jin';
+        $result = (new JinDistiller())->diffFiles(__DIR__ . '/fixtures/base.jin', __DIR__ . '/fixtures/child.jin', $output);
+
+        self::assertStringContainsString('--extends = file(base.jin)', $result->content());
+        self::assertFileDoesNotExist($output);
+    }
 }

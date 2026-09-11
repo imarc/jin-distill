@@ -8,6 +8,10 @@ use JinDistill\Analysis\AnalysisResult;
 use JinDistill\Analysis\Analyzer;
 use JinDistill\Analysis\SourceGraphBuilder;
 use JinDistill\Composition\Flattener;
+use JinDistill\Composition\DefinitionComposer;
+use JinDistill\Diff\Differ;
+use JinDistill\Diff\DiffResult;
+use JinDistill\Formatting\ExtendsReference;
 use JinDistill\Evaluation\DotinkEvaluator;
 use JinDistill\Evaluation\EvaluationOptions;
 use JinDistill\Evaluation\SemanticVerifier;
@@ -66,6 +70,15 @@ class JinDistiller
     public function flattenFile(string $path): string
     {
         return (new Flattener())->flatten($this->analyzerForFile($path)->analyzeFile($path))->content();
+    }
+
+    public function diffFiles(string $parentPath, string $targetPath, string $outputPath): DiffResult
+    {
+        $parent = (new DefinitionComposer())->compose($this->analyzerForFile($parentPath)->analyzeFile($parentPath));
+        $target = (new DefinitionComposer())->compose($this->analyzerForFile($targetPath)->analyzeFile($targetPath));
+        $reference = ExtendsReference::forOutput($parentPath, $outputPath)->relativePath();
+
+        return (new Differ())->diff($parent, $target, $reference);
     }
 
     public function analyzeFile(string $path): AnalysisResult
