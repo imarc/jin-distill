@@ -41,6 +41,13 @@ final class DefinitionDifferTest extends TestCase
         self::assertSame([], (new DefinitionDiffer())->compare($parent, $target, new DiffOptions(false))->all());
     }
 
+    public function testItClassifiesOpaqueExpressionChangesWithoutEvaluation(): void
+    {
+        $difference = (new DefinitionDiffer())->compare($this->compose('value = run(parent())'), $this->compose('value = run(target())'))->all()[0];
+
+        self::assertSame(DifferenceKind::Changed, $difference->kind());
+    }
+
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument
     {
         $analysis = (new Analyzer(new SourceGraphBuilder(

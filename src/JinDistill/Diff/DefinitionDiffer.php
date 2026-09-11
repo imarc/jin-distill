@@ -18,7 +18,10 @@ final class DefinitionDiffer
                 $differences[] = new Difference(DifferenceKind::Removed, $assignment->path(), $assignment, null);
                 continue;
             }
-            if ($assignment->value()->staticValue() !== $targets[$path]->value()->staticValue()) {
+            if (($assignment->value()->isStaticallyKnown() && $targets[$path]->value()->isStaticallyKnown()
+                    && $assignment->value()->staticValue() !== $targets[$path]->value()->staticValue())
+                || (!$assignment->value()->isStaticallyKnown() || !$targets[$path]->value()->isStaticallyKnown())
+                    && $assignment->value()->raw() !== $targets[$path]->value()->raw()) {
                 $differences[] = new Difference(DifferenceKind::Changed, $assignment->path(), $assignment, $targets[$path]);
             } elseif ($options->metadataSensitive() && $this->metadata($assignment) !== $this->metadata($targets[$path])) {
                 $differences[] = new Difference(DifferenceKind::MetadataChanged, $assignment->path(), $assignment, $targets[$path]);
