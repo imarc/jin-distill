@@ -107,6 +107,9 @@ final class DefinitionComposer
                 );
             }
             $section = $nextSection;
+            foreach ($statement->comments() as $comment) {
+                $renderable[] = $comment;
+            }
             $renderable[] = $statement;
         }
         return new ComposedDocument(new Document($renderable, $source), $analysis->provenance());

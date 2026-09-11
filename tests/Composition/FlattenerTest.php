@@ -51,4 +51,15 @@ final class FlattenerTest extends TestCase
 
         self::assertSame("[form.fields]\n\tname = CPA\n", (new Flattener())->flatten($analysis)->content());
     }
+
+    public function testItRendersWinningLeadingComments(): void
+    {
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze("; Public name\nname = CPA", new SourceId('/project/child.jin', 'child.jin'));
+
+        self::assertSame("; Public name\nname = CPA\n", (new Flattener())->flatten($analysis)->content());
+    }
 }
