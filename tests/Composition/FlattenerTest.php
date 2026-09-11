@@ -62,4 +62,16 @@ final class FlattenerTest extends TestCase
 
         self::assertSame("; Public name\nname = CPA\n", (new Flattener())->flatten($analysis)->content());
     }
+
+    public function testItUsesParentLeadingCommentWhenOverrideHasNone(): void
+    {
+        $parent = new SourceId('/project/base.jin', 'base.jin');
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([new LoadedSource($parent, "; Base name\nname = Base")]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze("--extends = base.jin\nname = Child", new SourceId('/project/child.jin', 'child.jin'));
+
+        self::assertSame("; Base name\nname = Child\n", (new Flattener())->flatten($analysis)->content());
+    }
 }

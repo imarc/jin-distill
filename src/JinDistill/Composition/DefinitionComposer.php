@@ -149,14 +149,29 @@ final class DefinitionComposer
             || !is_array($right)
             || array_is_list($left)
             || array_is_list($right)) {
-            return $child;
+            return $this->inheritLeadingComments($parent, $child);
         }
 
         $value = array_replace_recursive($left, $right);
         return new Assignment(
             $child->path(),
             new Value(json_encode($value, JSON_THROW_ON_ERROR), ValueKind::Json, $value, true),
-            $child->comments(),
+            $child->comments() === [] ? $parent->comments() : $child->comments(),
+            $child->inlineComment(),
+            $child->span(),
+        );
+    }
+
+    private function inheritLeadingComments(Assignment $parent, Assignment $child): Assignment
+    {
+        if ($child->comments() !== [] || $parent->comments() === []) {
+            return $child;
+        }
+
+        return new Assignment(
+            $child->path(),
+            $child->value(),
+            $parent->comments(),
             $child->inlineComment(),
             $child->span(),
         );
