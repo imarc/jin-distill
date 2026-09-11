@@ -33,4 +33,19 @@ final class DynamicCompositionTest extends TestCase
             self::assertSame('/fields/required', $error->conflicts()[0]->childPath());
         }
     }
+
+    public function testItAllowsWholeOpaqueAssignmentOverrides(): void
+    {
+        $parent = new SourceId('/project/base.jin', 'base.jin');
+        $child = new SourceId('/project/child.jin', 'child.jin');
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([new LoadedSource($parent, 'value = run(parent())')]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze("--extends = base.jin\nvalue = run(child())", $child);
+
+        $assignment = (new DefinitionComposer())->compose($analysis)->document()->statements()[0];
+
+        self::assertSame('run(child())', $assignment->value()->raw());
+    }
 }
