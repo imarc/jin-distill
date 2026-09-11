@@ -1,0 +1,21 @@
+tests/Formatting/ExtendsReferenceTest.php
+  s_672ac1cdfe526c::t_aa15a75b24cb68 1-16
+src/JinDistill/Formatting/ExtendsReference.php
+  s_672ac1cdfe526c::t_094a19614d424c 1-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "2e89171e8c75a83c07e97c08c5d7eba92af29e6b",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
