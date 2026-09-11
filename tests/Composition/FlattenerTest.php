@@ -27,6 +27,7 @@ final class FlattenerTest extends TestCase
 
         self::assertSame("name = Child\nenabled = true\n", $result->content());
         self::assertStringNotContainsString('--extends', $result->content());
+        self::assertSame([], $result->diagnostics());
     }
 
     public function testItRendersNestedPathsUnderExplicitSections(): void
