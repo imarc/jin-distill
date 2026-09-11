@@ -1,0 +1,27 @@
+src/JinDistill/Diff/DifferenceSet.php
+  s_672ac1cdfe526c::t_76a5ae9aa7e38b 1-14
+tests/Diff/DefinitionDifferTest.php
+  s_672ac1cdfe526c::t_c0304a4a47ba48 1-42
+src/JinDistill/Diff/DifferenceKind.php
+  s_672ac1cdfe526c::t_76a5ae9aa7e38b 1-11
+src/JinDistill/Diff/Difference.php
+  s_672ac1cdfe526c::t_76a5ae9aa7e38b 1-18
+src/JinDistill/Diff/DefinitionDiffer.php
+  s_672ac1cdfe526c::t_76a5ae9aa7e38b 1-43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "e51a91f3519b21596dadc56ea3181266e0ef4705",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
