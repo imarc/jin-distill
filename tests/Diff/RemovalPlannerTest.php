@@ -26,6 +26,17 @@ final class RemovalPlannerTest extends TestCase
         self::assertSame(['/enabled'], array_map(static fn ($path): string => $path->toJsonPointer(), $paths));
     }
 
+    public function testItRemovesChangedListsBeforeOverlayingTarget(): void
+    {
+        $parent = $this->compose('items = [1, 2]');
+        $target = $this->compose('items = [3]');
+        $differences = (new DefinitionDiffer())->compare($parent, $target);
+
+        $paths = (new RemovalPlanner())->plan($parent, $target, $differences);
+
+        self::assertSame(['/items'], array_map(static fn ($path): string => $path->toJsonPointer(), $paths));
+    }
+
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument
     {
         $analysis = (new Analyzer(new SourceGraphBuilder(

@@ -11,7 +11,10 @@ final class RemovalPlanner
     {
         $paths = [];
         foreach ($differences->all() as $difference) {
-            if ($difference->kind() === DifferenceKind::Removed) {
+            if ($difference->kind() === DifferenceKind::Removed
+                || ($difference->kind() === DifferenceKind::Changed
+                    && is_array($difference->parent()?->value()->staticValue())
+                    && array_is_list($difference->parent()?->value()->staticValue()))) {
                 $paths[] = $difference->path();
             }
         }
