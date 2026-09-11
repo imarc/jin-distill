@@ -1,0 +1,21 @@
+tests/Diff/RemovalPlannerTest.php
+  s_672ac1cdfe526c::t_26b44f29feac14 1-39
+src/JinDistill/Diff/RemovalPlanner.php
+  s_672ac1cdfe526c::t_76e8aae9dd9546 1-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "34db6d6262c87561b0630b7bf3dfb6f52f9003b7",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
