@@ -7,8 +7,9 @@ use JinDistill\Syntax\Assignment;
 
 final class DefinitionDiffer
 {
-    public function compare(ComposedDocument $parent, ComposedDocument $target): DifferenceSet
+    public function compare(ComposedDocument $parent, ComposedDocument $target, ?DiffOptions $options = null): DifferenceSet
     {
+        $options ??= new DiffOptions();
         $parents = $this->assignments($parent);
         $targets = $this->assignments($target);
         $differences = [];
@@ -19,7 +20,7 @@ final class DefinitionDiffer
             }
             if ($assignment->value()->staticValue() !== $targets[$path]->value()->staticValue()) {
                 $differences[] = new Difference(DifferenceKind::Changed, $assignment->path(), $assignment, $targets[$path]);
-            } elseif ($this->metadata($assignment) !== $this->metadata($targets[$path])) {
+            } elseif ($options->metadataSensitive() && $this->metadata($assignment) !== $this->metadata($targets[$path])) {
                 $differences[] = new Difference(DifferenceKind::MetadataChanged, $assignment->path(), $assignment, $targets[$path]);
             }
         }

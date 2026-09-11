@@ -8,6 +8,7 @@ use JinDistill\Composition\DefinitionComposer;
 use JinDistill\Decoders\JinDecoder;
 use JinDistill\Diff\DefinitionDiffer;
 use JinDistill\Diff\DifferenceKind;
+use JinDistill\Diff\DiffOptions;
 use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\RelativeExtendsResolver;
 use JinDistill\Source\SourceId;
@@ -37,6 +38,7 @@ final class DefinitionDifferTest extends TestCase
         $difference = (new DefinitionDiffer())->compare($parent, $target)->all()[0];
 
         self::assertSame(DifferenceKind::MetadataChanged, $difference->kind());
+        self::assertSame([], (new DefinitionDiffer())->compare($parent, $target, new DiffOptions(false))->all());
     }
 
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument
