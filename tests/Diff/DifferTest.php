@@ -24,6 +24,13 @@ final class DifferTest extends TestCase
         self::assertSame("--extends = file(base.jin)\nname = Child\n", $result->content());
     }
 
+    public function testItEmitsPlannedRemovals(): void
+    {
+        $result = (new Differ())->diff($this->compose("name = Base\nenabled = true"), $this->compose('name = Base'), 'base.jin');
+
+        self::assertStringContainsString("--without = [\n\t\"enabled\",\n]\n", $result->content());
+    }
+
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument
     {
         $analysis = (new Analyzer(new SourceGraphBuilder(new MemorySourceLoader([]), new JinDecoder(), [new RelativeExtendsResolver()])))
