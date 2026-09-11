@@ -18,6 +18,29 @@ final class RemovalPlanner
                 $paths[] = $difference->path();
             }
         }
+        $groups = [];
+        foreach ($paths as $path) {
+            $segments = $path->segments();
+            if (count($segments) > 1) {
+                $groups[implode('/', array_slice($segments, 0, -1))][] = $path;
+            }
+        }
+        foreach ($groups as $prefix => $children) {
+            $allRemoved = true;
+            foreach ($parent->document()->statements() as $statement) {
+                if (!$statement instanceof \JinDistill\Syntax\Assignment) {
+                    continue;
+                }
+                if (array_slice($statement->path()->segments(), 0, count(explode('/', $prefix))) === explode('/', $prefix)
+                    && !in_array($statement->path()->toJsonPointer(), array_map(static fn ($path): string => $path->toJsonPointer(), $children), true)) {
+                    $allRemoved = false;
+                }
+            }
+            if ($allRemoved && count($children) > 1) {
+                $paths = array_values(array_filter($paths, static fn ($path): bool => !in_array($path, $children, true)));
+                $paths[] = \JinDistill\Source\Path::fromSegments(explode('/', $prefix));
+            }
+        }
         return $paths;
     }
 }

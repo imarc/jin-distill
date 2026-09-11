@@ -37,6 +37,17 @@ final class RemovalPlannerTest extends TestCase
         self::assertSame(['/items'], array_map(static fn ($path): string => $path->toJsonPointer(), $paths));
     }
 
+    public function testItCollapsesRemovedSiblingPaths(): void
+    {
+        $parent = $this->compose("[form]\na = true\nb = true");
+        $target = $this->compose('');
+        $differences = (new DefinitionDiffer())->compare($parent, $target);
+
+        $paths = (new RemovalPlanner())->plan($parent, $target, $differences);
+
+        self::assertSame(['/form'], array_map(static fn ($path): string => $path->toJsonPointer(), $paths));
+    }
+
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument
     {
         $analysis = (new Analyzer(new SourceGraphBuilder(
