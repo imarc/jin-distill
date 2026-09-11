@@ -29,6 +29,16 @@ final class DefinitionDifferTest extends TestCase
         self::assertSame(['/name', '/enabled', '/extra'], array_map(static fn ($difference): string => $difference->path()->toJsonPointer(), $differences));
     }
 
+    public function testItClassifiesLeadingCommentChangesAsMetadataChanges(): void
+    {
+        $parent = $this->compose("; Base name\nname = CPA");
+        $target = $this->compose("; Public name\nname = CPA");
+
+        $difference = (new DefinitionDiffer())->compare($parent, $target)->all()[0];
+
+        self::assertSame(DifferenceKind::MetadataChanged, $difference->kind());
+    }
+
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument
     {
         $analysis = (new Analyzer(new SourceGraphBuilder(

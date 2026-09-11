@@ -19,6 +19,8 @@ final class DefinitionDiffer
             }
             if ($assignment->value()->staticValue() !== $targets[$path]->value()->staticValue()) {
                 $differences[] = new Difference(DifferenceKind::Changed, $assignment->path(), $assignment, $targets[$path]);
+            } elseif ($this->metadata($assignment) !== $this->metadata($targets[$path])) {
+                $differences[] = new Difference(DifferenceKind::MetadataChanged, $assignment->path(), $assignment, $targets[$path]);
             }
         }
         foreach ($targets as $path => $assignment) {
@@ -39,5 +41,13 @@ final class DefinitionDiffer
             }
         }
         return $assignments;
+    }
+
+    private function metadata(Assignment $assignment): array
+    {
+        return [
+            array_map(static fn ($comment): string => $comment->text(), $assignment->comments()),
+            $assignment->inlineComment()?->text(),
+        ];
     }
 }
