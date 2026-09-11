@@ -40,4 +40,15 @@ final class FlattenerTest extends TestCase
 
         self::assertSame("[form]\n\tname = CPA\n", (new Flattener())->flatten($analysis)->content());
     }
+
+    public function testItRendersDeepPathsUnderNestedSections(): void
+    {
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze("[form.fields]\nname = CPA", new SourceId('/project/child.jin', 'child.jin'));
+
+        self::assertSame("[form.fields]\n\tname = CPA\n", (new Flattener())->flatten($analysis)->content());
+    }
 }

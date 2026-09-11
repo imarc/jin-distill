@@ -90,7 +90,7 @@ final class DefinitionComposer
         $section = [];
         foreach (array_values(array_filter($statements)) as $statement) {
             $segments = $statement->path()->segments();
-            $nextSection = count($segments) > 1 ? [$segments[0]] : [];
+            $nextSection = count($segments) > 1 ? array_slice($segments, 0, -1) : [];
             if ($nextSection !== $section && $nextSection !== []) {
                 $renderable[] = new Section(
                     Path::fromSegments($nextSection),
