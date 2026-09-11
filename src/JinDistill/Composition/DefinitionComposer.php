@@ -31,6 +31,29 @@ final class DefinitionComposer
                         if (isset($positions[$path])) {
                             $statements[$positions[$path]] = null;
                             unset($positions[$path]);
+                            continue;
+                        }
+                        foreach ($positions as $definedPath => $position) {
+                            $defined = $statements[$position] ?? null;
+                            if (!$defined instanceof Assignment || !$defined->value()->isStaticallyKnown()) {
+                                continue;
+                            }
+                            $prefix = $defined->path()->toJsonPointer();
+                            if (!str_starts_with($path, $prefix . '/')) {
+                                continue;
+                            }
+                            $value = $defined->value()->staticValue();
+                            $segments = explode('/', ltrim(substr($path, strlen($prefix)), '/'));
+                            if (!is_array($value) || !$this->removeNested($value, $segments)) {
+                                continue;
+                            }
+                            $statements[$position] = new Assignment(
+                                $defined->path(),
+                                new Value(json_encode($value, JSON_THROW_ON_ERROR), ValueKind::Json, $value, true),
+                                $defined->comments(),
+                                $defined->inlineComment(),
+                                $defined->span(),
+                            );
                         }
                     }
                     continue;
@@ -69,6 +92,23 @@ final class DefinitionComposer
     {
         return count($ancestor) < count($path)
             && array_slice($path, 0, count($ancestor)) === $ancestor;
+    }
+
+    /** @param list<string> $segments */
+    private function removeNested(array &$value, array $segments): bool
+    {
+        $key = array_shift($segments);
+        if ($key === null || !array_key_exists($key, $value)) {
+            return false;
+        }
+        if ($segments === []) {
+            unset($value[$key]);
+            return true;
+        }
+        if (!is_array($value[$key])) {
+            return false;
+        }
+        return $this->removeNested($value[$key], $segments);
     }
 
     private function merge(Assignment $parent, Assignment $child): Assignment

@@ -65,4 +65,19 @@ final class DefinitionComposerTest extends TestCase
         self::assertInstanceOf(Assignment::class, $assignment);
         self::assertSame(['first' => true, 'last' => false, 'email' => true], $assignment->value()->staticValue());
     }
+
+    public function testItRemovesNestedStaticObjectMembers(): void
+    {
+        $parent = new SourceId('/project/base.jin', 'base.jin');
+        $child = new SourceId('/project/child.jin', 'child.jin');
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([new LoadedSource($parent, 'fields = {"person": {"avatar": true, "name": true}}')]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze("--extends = base.jin\n--without = fields.person.avatar", $child);
+
+        $assignment = (new DefinitionComposer())->compose($analysis)->document()->statements()[0];
+
+        self::assertSame(['person' => ['name' => true]], $assignment->value()->staticValue());
+    }
 }
