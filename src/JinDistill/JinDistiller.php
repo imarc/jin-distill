@@ -7,6 +7,7 @@ use JinDistill\Formats\JinFormat;
 use JinDistill\Analysis\AnalysisResult;
 use JinDistill\Analysis\Analyzer;
 use JinDistill\Analysis\SourceGraphBuilder;
+use JinDistill\Composition\Flattener;
 use JinDistill\Evaluation\DotinkEvaluator;
 use JinDistill\Evaluation\EvaluationOptions;
 use JinDistill\Evaluation\SemanticVerifier;
@@ -64,7 +65,7 @@ class JinDistiller
 
     public function flattenFile(string $path): string
     {
-        return $this->format->encodeDocument($this->resolveFile($path), false);
+        return (new Flattener())->flatten($this->analyzerForFile($path)->analyzeFile($path))->content();
     }
 
     public function analyzeFile(string $path): AnalysisResult
