@@ -8,8 +8,11 @@ use JinDistill\Syntax\Document;
 use JinDistill\Syntax\Value;
 use JinDistill\Syntax\ValueKind;
 use JinDistill\Syntax\Section;
+use JinDistill\Composition\CompositionConflict;
+use JinDistill\Exceptions\UndiffableDefinitionException;
 final class Differ {
  public function diff(ComposedDocument $parent, ComposedDocument $target, string $reference): DiffResult {
+  $this->guardOpaqueOverrides($parent,$target);
   $differences=(new DefinitionDiffer())->compare($parent,$target); $removals=(new RemovalPlanner())->plan($parent,$target,$differences);
   $first=$target->document()->statements()[0]; $span=$first->span(); $source=$target->document()->source();
   $nodes=[new Assignment(Path::fromSegments(['--extends']),new Value($reference,ValueKind::Scalar,$reference,true),[],null,$span)];
@@ -21,5 +24,44 @@ final class Differ {
    $section=$next; foreach($assignment->comments() as $comment) $nodes[]=$comment; $nodes[]=$assignment;
   }
   return new DiffResult((new JinRenderer())->render(new Document($nodes,$source)),$differences,$removals);
+ }
+
+ private function guardOpaqueOverrides(ComposedDocument $parent, ComposedDocument $target): void
+ {
+  $conflicts = [];
+  foreach ($this->assignments($parent) as $ancestor) {
+   if ($ancestor->value()->isStaticallyKnown()) {
+    continue;
+   }
+   foreach ($this->assignments($target) as $descendant) {
+    if ($this->isAncestor($ancestor->path()->segments(), $descendant->path()->segments())) {
+     $conflicts[] = new CompositionConflict($ancestor->path()->toJsonPointer(), $descendant->path()->toJsonPointer());
+    }
+   }
+  }
+  if ($conflicts !== []) {
+   throw new UndiffableDefinitionException($conflicts);
+  }
+ }
+
+ /** @return list<Assignment> */
+ private function assignments(ComposedDocument $document): array
+ {
+  $assignments = [];
+  foreach ($document->document()->statements() as $statement) {
+   if ($statement instanceof Assignment && !str_starts_with($statement->path()->segments()[0], '--')) {
+    $assignments[] = $statement;
+   }
+  }
+  return $assignments;
+ }
+
+ /**
+  * @param list<string> $ancestor
+  * @param list<string> $descendant
+  */
+ private function isAncestor(array $ancestor, array $descendant): bool
+ {
+  return count($descendant) > count($ancestor) && array_slice($descendant, 0, count($ancestor)) === $ancestor;
  }
 }

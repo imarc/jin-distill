@@ -7,6 +7,7 @@ use JinDistill\Analysis\SourceGraphBuilder;
 use JinDistill\Composition\DefinitionComposer;
 use JinDistill\Decoders\JinDecoder;
 use JinDistill\Diff\Differ;
+use JinDistill\Exceptions\UndiffableDefinitionException;
 use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\RelativeExtendsResolver;
 use JinDistill\Source\SourceId;
@@ -50,6 +51,20 @@ final class DifferTest extends TestCase
         $result = (new Differ())->diff($this->compose('name = Base'), $this->compose("; Public name\nname = Child"), 'base.jin');
 
         self::assertStringContainsString("; Public name\nname = Child\n", $result->content());
+    }
+
+    public function testItRejectsNestedOverridesOfOpaqueParentAssignments(): void
+    {
+        $parent = $this->compose('fields = run(build())');
+        $target = $this->compose("[fields]\nrequired = true");
+
+        try {
+            (new Differ())->diff($parent, $target, 'base.jin');
+            self::fail('Expected UndiffableDefinitionException.');
+        } catch (UndiffableDefinitionException $exception) {
+            self::assertSame('/fields', $exception->conflicts()[0]->parentPath());
+            self::assertSame('/fields/required', $exception->conflicts()[0]->childPath());
+        }
     }
 
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument
