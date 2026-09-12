@@ -60,4 +60,18 @@ final class JinRendererTest extends TestCase
         self::assertSame("--extends = file(base.jin)\n", $renderer->render($document, ImarcStyle::v1()));
         self::assertSame("--extends = base.jin\n", $renderer->render($document, DotinkStyle::v1()));
     }
+
+    public function testItEscapesQuotesTheWayJinReadsThem(): void
+    {
+        $document = (new JinDecoder())->decode("quoted = \"literal \"\"quote\"\"\"\nlist = [\n\t\"q\"\"q\",\n]");
+
+        $rendered = (new JinRenderer())->render($document);
+
+        self::assertStringContainsString('quoted = "literal ""quote"""', $rendered);
+        self::assertStringContainsString('"q""q",', $rendered);
+        self::assertSame(
+            (new \Dotink\Jin\Parser())->parse($document->contents())->all(),
+            (new \Dotink\Jin\Parser())->parse($rendered)->all(),
+        );
+    }
 }

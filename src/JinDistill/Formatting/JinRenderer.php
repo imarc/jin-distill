@@ -107,9 +107,7 @@ final class JinRenderer
             return (string) $value;
         }
         if (is_string($value)) {
-            return $json
-                ? json_encode($value, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR)
-                : $this->quoteStringIfNeeded($value);
+            return $json ? $this->quote($value) : $this->quoteStringIfNeeded($value);
         }
         if ($value instanceof \stdClass) {
             $value = get_object_vars($value);
@@ -134,7 +132,7 @@ final class JinRenderer
         $lines = ['{'];
         foreach ($value as $key => $item) {
                 $lines[] = $this->indentDepth($depth + 1, $options)
-                . json_encode((string) $key, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR)
+                . $this->quote((string) $key)
                 . ': ' . $this->renderStaticValue($item, $depth + 1, $path->append((string) $key), $document, $options, true) . ',';
         }
         $lines[] = $this->indentDepth($depth, $options) . '}';
@@ -162,6 +160,12 @@ final class JinRenderer
             return $value;
         }
 
-        return json_encode($value, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+        return $this->quote($value);
+    }
+
+    /** Jin escapes a quote by doubling it; backslashes stay literal. */
+    private function quote(string $value): string
+    {
+        return '"' . str_replace('"', '""', $value) . '"';
     }
 }
