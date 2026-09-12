@@ -1,0 +1,21 @@
+tests/Formatting/JinRendererTest.php
+  s_b9d710f7250aa5::t_202f6316ff7640 63-76
+src/JinDistill/Formatting/JinRenderer.php
+  s_b9d710f7250aa5::t_b670dc438c8fb9 110,135,163-169
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "27171972f18e9e640693cd269dbd58f8cee59c9e",
+  "prompts": {},
+  "sessions": {
+    "s_b9d710f7250aa5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de426d8d-770d-4e23-9988-2a7d73151c42",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
