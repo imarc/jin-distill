@@ -20,8 +20,13 @@ final class SourceGraphBuilder
     private array $edges = [];
 
     /** @param list<ExtendsResolver> $resolvers */
-    public function __construct(private SourceLoader $loader, private JinDecoder $decoder, private array $resolvers)
-    {
+    public function __construct(
+        private SourceLoader $loader,
+        private JinDecoder $decoder,
+        private array $resolvers,
+        private ?AnalysisLimits $limits = null,
+    ) {
+        $this->limits ??= new AnalysisLimits();
     }
 
     public function build(string $contents, SourceId $source): SourceGraph
@@ -29,7 +34,8 @@ final class SourceGraphBuilder
         $this->documents = [];
         $this->visiting = [];
         $this->edges = [];
-        $this->visit($this->decoder->decode($contents, $source));
+        $this->limits->guardBytes(strlen($contents));
+        $this->visit($this->decoder->decode($contents, $source), 0);
 
         return new SourceGraph($this->documents, $this->edges);
     }
@@ -41,8 +47,9 @@ final class SourceGraphBuilder
         return $this->build($loaded->contents(), $loaded->source());
     }
 
-    private function visit(Document $document): void
+    private function visit(Document $document, int $depth): void
     {
+        $this->limits->guardInheritanceDepth($depth);
         $source = $document->source();
         if (isset($this->visiting[$source->canonicalPath()])) {
             throw new CircularInheritanceException(sprintf('Circular Jin inheritance detected at %s.', $source->canonicalPath()));
@@ -62,9 +69,10 @@ final class SourceGraphBuilder
                 }
                 $reference = $resolver->resolve($statement->value(), $source);
                 $loaded = $this->loader->load($reference, $source);
+                $this->limits->guardBytes(strlen($loaded->contents()));
                 $parent = $this->decoder->decode($loaded->contents(), $loaded->source());
                 $this->edges[] = new SourceGraphEdge($source, $parent->source(), $statement->value()->raw());
-                $this->visit($parent);
+                $this->visit($parent, $depth + 1);
                 break;
             }
         }

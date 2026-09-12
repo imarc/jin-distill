@@ -31,6 +31,10 @@ final class Validator
         foreach ($analysis->sourceGraph()->documents() as $document) {
             foreach ($this->rules as $rule) {
                 foreach ($rule->check($document, $rules, $evaluation) as $diagnostic) {
+                    if (count($diagnostics) >= $rules->maxDiagnostics()) {
+                        return $diagnostics;
+                    }
+
                     $diagnostics[] = $diagnostic;
                 }
             }

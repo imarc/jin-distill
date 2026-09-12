@@ -8,13 +8,27 @@ use JinDistill\Syntax\Assignment;
 
 final class Analyzer
 {
-    public function __construct(private SourceGraphBuilder $graphs)
-    {
+    public function __construct(
+        private SourceGraphBuilder $graphs,
+        private ?AnalysisLimits $limits = null,
+        private ?AnalysisCache $cache = null,
+    ) {
+        $this->limits ??= new AnalysisLimits();
     }
 
     public function analyze(string $contents, SourceId $source): AnalysisResult
     {
-        return $this->result($this->graphs->build($contents, $source));
+        $key = AnalysisCacheKey::for($contents, $source);
+        $cached = $this->cache?->get($key);
+
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        $result = $this->result($this->graphs->build($contents, $source));
+        $this->cache?->put($key, $result);
+
+        return $result;
     }
 
     public function analyzeFile(string $path): AnalysisResult
@@ -24,6 +38,8 @@ final class Analyzer
 
     private function result(SourceGraph $graph): AnalysisResult
     {
+        $this->guard($graph);
+
         $definitions = [];
         $removals = [];
         foreach (array_reverse($graph->documents()) as $document) {
@@ -56,5 +72,16 @@ final class Analyzer
         }
 
         return AnalysisResult::sourceOnly($graph, [], new ProvenanceIndex($lineages));
+    }
+
+    private function guard(SourceGraph $graph): void
+    {
+        foreach ($graph->documents() as $document) {
+            foreach ($document->statements() as $statement) {
+                if ($statement instanceof Assignment) {
+                    $this->limits->guardSyntaxDepth(count($statement->path()->segments()));
+                }
+            }
+        }
     }
 }

@@ -7,7 +7,7 @@ use JinDistill\Diagnostics\Severity;
 final class ValidationRules
 {
     /** @param array<string, Severity> $severities */
-    private function __construct(private array $severities)
+    private function __construct(private array $severities, private int $maxDiagnostics = \JinDistill\Analysis\AnalysisLimits::DEFAULT_DIAGNOSTICS)
     {
     }
 
@@ -27,8 +27,18 @@ final class ValidationRules
         return $this->severities[$ruleId] ?? Severity::Warning;
     }
 
+    public function maxDiagnostics(): int
+    {
+        return $this->maxDiagnostics;
+    }
+
     public function withSeverity(string $ruleId, Severity $severity): self
     {
-        return new self([...$this->severities, $ruleId => $severity]);
+        return new self([...$this->severities, $ruleId => $severity], $this->maxDiagnostics);
+    }
+
+    public function withMaxDiagnostics(int $maxDiagnostics): self
+    {
+        return new self($this->severities, $maxDiagnostics);
     }
 }
