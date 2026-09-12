@@ -1,0 +1,35 @@
+src/JinDistill/JinDistiller.php
+  s_b9d710f7250aa5::t_fb4c49f9f2b99b 10,22,65,67,70,72
+src/JinDistill/Reporting/ReportSerializer.php
+  s_b9d710f7250aa5::t_a894dddc49364e 1-190
+src/JinDistill/Analysis/ProvenanceIndex.php
+  s_b9d710f7250aa5::t_a894dddc49364e 20-25
+src/JinDistill/Reporting/SchemaVersion.php
+  s_b9d710f7250aa5::t_a894dddc49364e 1-12
+tests/Reporting/ReportSerializerTest.php
+  s_b9d710f7250aa5::t_cb1a7aae22febc 1-22,24-49,51-92
+  s_b9d710f7250aa5::t_fb4c49f9f2b99b 50
+  s_b9d710f7250aa5::t_c74c5e03424ea7 23
+src/JinDistill/Reporting/ReportOptions.php
+  s_b9d710f7250aa5::t_a894dddc49364e 1-18
+tests/JinDistillerTest.php
+  s_b9d710f7250aa5::t_fb4c49f9f2b99b 12,22
+docs/report-schema-v1.md
+  s_b9d710f7250aa5::t_b5d875ed0ca331 1-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "4834a9046920666bcb1fb3fc2cb03f958753a1c0",
+  "prompts": {},
+  "sessions": {
+    "s_b9d710f7250aa5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de426d8d-770d-4e23-9988-2a7d73151c42",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
