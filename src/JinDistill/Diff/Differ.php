@@ -11,6 +11,7 @@ use JinDistill\Formatting\FormatOptions;
 use JinDistill\Formatting\JinRenderer;
 use JinDistill\Source\Path;
 use JinDistill\Syntax\Assignment;
+use JinDistill\Syntax\BlankLine;
 use JinDistill\Syntax\Document;
 use JinDistill\Syntax\Section;
 use JinDistill\Syntax\Statement;
@@ -70,6 +71,7 @@ final class Differ
         }
 
         $section = [];
+        $emitted = false;
         foreach ($differences->all() as $difference) {
             if (!in_array($difference->kind(), [DifferenceKind::Added, DifferenceKind::Changed, DifferenceKind::MetadataChanged], true)) {
                 continue;
@@ -79,11 +81,16 @@ final class Differ
             $segments = $assignment->path()->segments();
             $owner = count($segments) > 1 ? array_slice($segments, 0, -1) : [];
 
+            if (!$emitted || ($owner !== [] && $owner !== $section)) {
+                $nodes[] = new BlankLine($span);
+            }
+
             if ($owner !== [] && $owner !== $section) {
                 $nodes[] = new Section(Path::fromSegments($owner), implode('.', $owner), $assignment->span());
             }
 
             $section = $owner;
+            $emitted = true;
 
             foreach ($assignment->comments() as $comment) {
                 $nodes[] = $comment;

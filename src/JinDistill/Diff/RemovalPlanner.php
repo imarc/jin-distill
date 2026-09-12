@@ -36,9 +36,19 @@ final class RemovalPlanner
                     $allRemoved = false;
                 }
             }
-            if ($allRemoved && count($children) > 1) {
-                $paths = array_values(array_filter($paths, static fn ($path): bool => !in_array($path, $children, true)));
-                $paths[] = \JinDistill\Source\Path::fromSegments(explode('/', $prefix));
+            if ($allRemoved) {
+                $owner = \JinDistill\Source\Path::fromSegments(explode('/', $prefix));
+                $collapsed = [];
+                foreach ($paths as $path) {
+                    if (!in_array($path, $children, true)) {
+                        $collapsed[] = $path;
+                        continue;
+                    }
+                    if ($path === $children[0]) {
+                        $collapsed[] = $owner;
+                    }
+                }
+                $paths = $collapsed;
             }
         }
         return $paths;

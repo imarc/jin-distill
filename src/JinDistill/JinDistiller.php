@@ -9,9 +9,11 @@ use JinDistill\Analysis\Analyzer;
 use JinDistill\Analysis\SourceGraphBuilder;
 use JinDistill\Composition\Flattener;
 use JinDistill\Composition\DefinitionComposer;
+use JinDistill\Diff\DiffOptions;
 use JinDistill\Diff\Differ;
 use JinDistill\Diff\DiffResult;
 use JinDistill\Formatting\ExtendsReference;
+use JinDistill\Formatting\FormatOptions;
 use JinDistill\Evaluation\DotinkEvaluator;
 use JinDistill\Evaluation\EvaluationOptions;
 use JinDistill\Evaluation\SemanticVerifier;
@@ -72,13 +74,19 @@ class JinDistiller
         return (new Flattener())->flatten($this->analyzerForFile($path)->analyzeFile($path))->content();
     }
 
-    public function diffFiles(string $parentPath, string $targetPath, string $outputPath): DiffResult
-    {
+    public function diffFiles(
+        string $parentPath,
+        string $targetPath,
+        string $outputPath,
+        ?DiffOptions $options = null,
+        ?FormatOptions $format = null,
+        ?string $applicationRoot = null,
+    ): DiffResult {
         $parent = (new DefinitionComposer())->compose($this->analyzerForFile($parentPath)->analyzeFile($parentPath));
         $target = (new DefinitionComposer())->compose($this->analyzerForFile($targetPath)->analyzeFile($targetPath));
-        $reference = ExtendsReference::forOutput($parentPath, $outputPath)->relativePath();
+        $reference = ExtendsReference::forOutput($parentPath, $outputPath, $applicationRoot)->toSource($format);
 
-        return (new Differ())->diff($parent, $target, $reference);
+        return (new Differ())->diff($parent, $target, $reference, $options, $format);
     }
 
     public function analyzeFile(string $path): AnalysisResult

@@ -31,4 +31,15 @@ final class SemanticVerifierTest extends TestCase
         self::assertFalse($result->isEquivalent());
         self::assertSame(['/name'], $result->differences());
     }
+
+    public function testItIgnoresInheritanceDirectivesLeftInResolvedData(): void
+    {
+        $result = (new SemanticVerifier())->verify(
+            'name = CPA',
+            "--without = []\nname = CPA",
+            new EvaluationOptions(),
+        );
+
+        self::assertSame([], $result->differences());
+    }
 }

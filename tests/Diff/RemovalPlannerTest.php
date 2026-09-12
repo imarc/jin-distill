@@ -48,6 +48,17 @@ final class RemovalPlannerTest extends TestCase
         self::assertSame(['/form'], array_map(static fn ($path): string => $path->toJsonPointer(), $paths));
     }
 
+    public function testItCollapsesSoleRemovedChildToItsOwner(): void
+    {
+        $parent = $this->compose("[cancellation]\npolicies = [1]");
+        $target = $this->compose('');
+        $differences = (new DefinitionDiffer())->compare($parent, $target);
+
+        $paths = (new RemovalPlanner())->plan($parent, $target, $differences);
+
+        self::assertSame(['/cancellation'], array_map(static fn ($path): string => $path->toJsonPointer(), $paths));
+    }
+
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument
     {
         $analysis = (new Analyzer(new SourceGraphBuilder(

@@ -71,8 +71,15 @@ final class OverlayVerifier
     {
         $pointer = $path->toJsonPointer();
 
-        if (array_key_exists($pointer, $state)) {
-            unset($state[$pointer]);
+        $removed = false;
+        foreach (array_keys($state) as $key) {
+            if ($key === $pointer || str_starts_with($key, $pointer . '/')) {
+                unset($state[$key]);
+                $removed = true;
+            }
+        }
+
+        if ($removed) {
             return;
         }
 

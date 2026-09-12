@@ -8,12 +8,28 @@ final class SemanticVerifier
 {
     public function verify(string $original, string $generated, EvaluationOptions $options): VerificationResult
     {
-        $before = $this->evaluate($original, $options);
-        $after = $this->evaluate($generated, $options);
+        $before = $this->withoutDirectives($this->evaluate($original, $options));
+        $after = $this->withoutDirectives($this->evaluate($generated, $options));
         $differences = [];
         $this->compare($before, $after, '', $differences);
 
         return new VerificationResult($differences);
+    }
+
+    /** Inheritance directives describe composition, never resolved configuration. */
+    private function withoutDirectives(mixed $data): mixed
+    {
+        if (!is_array($data)) {
+            return $data;
+        }
+
+        foreach (array_keys($data) as $key) {
+            if (is_string($key) && str_starts_with($key, '--')) {
+                unset($data[$key]);
+            }
+        }
+
+        return $data;
     }
 
     private function evaluate(string $contents, EvaluationOptions $options): mixed

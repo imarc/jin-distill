@@ -24,7 +24,7 @@ final class DifferTest extends TestCase
 
         $result = (new Differ())->diff($parent, $target, 'base.jin');
 
-        self::assertSame("--extends = file(base.jin)\nname = Child\n", $result->content());
+        self::assertSame("--extends = file(base.jin)\n\nname = Child\n", $result->content());
     }
 
     public function testItEmitsOnlyExtendsForIdenticalDefinitions(): void

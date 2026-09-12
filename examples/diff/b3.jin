@@ -1,0 +1,17 @@
+--extends = file(b1.jin)
+--without = [
+	"search.parameters",
+	"cancellation",
+	"tracker.context_selector",
+]
+
+; Child search form
+name = Child Form
+
+[search]
+	price = {
+		"step": 10,
+		"min": 0,
+		"max": 100,
+		"level": "basic",
+	}
