@@ -17,6 +17,12 @@ final class ProvenanceIndex
         }
     }
 
+    /** @return list<Lineage> */
+    public function lineages(): array
+    {
+        return array_values($this->lineages);
+    }
+
     public function lineage(Path $path): ?Lineage
     {
         return $this->lineages[$path->toJsonPointer()] ?? null;

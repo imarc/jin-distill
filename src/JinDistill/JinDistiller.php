@@ -7,6 +7,7 @@ use JinDistill\Formats\JinFormat;
 use JinDistill\Analysis\AnalysisResult;
 use JinDistill\Analysis\Analyzer;
 use JinDistill\Analysis\SourceGraphBuilder;
+use JinDistill\Composition\FlattenResult;
 use JinDistill\Composition\Flattener;
 use JinDistill\Composition\DefinitionComposer;
 use JinDistill\Diff\DiffOptions;
@@ -18,6 +19,7 @@ use JinDistill\Evaluation\DotinkEvaluator;
 use JinDistill\Evaluation\EvaluationOptions;
 use JinDistill\Evaluation\SemanticVerifier;
 use JinDistill\Evaluation\VerificationResult;
+use JinDistill\Formatting\NormalizeResult;
 use JinDistill\Formatting\Normalizer;
 use JinDistill\Source\FilesystemSourceLoader;
 use JinDistill\Source\FunctionExtendsResolver;
@@ -60,18 +62,14 @@ class JinDistiller
         return $this->format->encodeDocument($this->decode($contents, $path), $extensions);
     }
 
-    public function normalizeFile(string $path, bool $extensions = true): string
+    public function normalizeFile(string $path, ?FormatOptions $format = null): NormalizeResult
     {
-        if (!$extensions) {
-            return $this->format->encodeDocument($this->decodeFile($path), false);
-        }
-
-        return (new Normalizer($this->analyzerForFile($path)))->normalizeFile($path)->content();
+        return (new Normalizer($this->analyzerForFile($path)))->normalizeFile($path, $format);
     }
 
-    public function flattenFile(string $path): string
+    public function flattenFile(string $path, ?FormatOptions $format = null): FlattenResult
     {
-        return (new Flattener())->flatten($this->analyzerForFile($path)->analyzeFile($path))->content();
+        return (new Flattener())->flatten($this->analyzerForFile($path)->analyzeFile($path), $format);
     }
 
     public function diffFiles(

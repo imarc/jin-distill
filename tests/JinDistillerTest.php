@@ -9,7 +9,7 @@ final class JinDistillerTest extends TestCase
 {
     public function testItNormalizesWithoutResolvingExtends(): void
     {
-        $output = (new JinDistiller())->normalizeFile(__DIR__ . '/fixtures/child.jin');
+        $output = (new JinDistiller())->normalizeFile(__DIR__ . '/fixtures/child.jin')->content();
 
         self::assertStringContainsString('--extends = file(base.jin)', $output);
         self::assertStringContainsString('--without = [', $output);
@@ -19,7 +19,7 @@ final class JinDistillerTest extends TestCase
 
     public function testItFlattensToStandaloneJin(): void
     {
-        $output = (new JinDistiller())->flattenFile(__DIR__ . '/fixtures/child.jin');
+        $output = (new JinDistiller())->flattenFile(__DIR__ . '/fixtures/child.jin')->content();
 
         self::assertStringNotContainsString('--extends', $output);
         self::assertStringNotContainsString('--without', $output);
