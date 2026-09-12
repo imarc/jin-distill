@@ -1,0 +1,60 @@
+src/JinDistill/Exceptions/InvalidPathException.php
+  s_b9d710f7250aa5::t_8612284faba584 1-13
+tests/Diff/DifferTest.php
+  s_b9d710f7250aa5::t_ab0a2e4256baec 27
+examples/diff/a3.jin
+  s_b9d710f7250aa5::t_987358e1463585 1
+examples/diff/b2.jin
+  s_b9d710f7250aa5::t_1afa4be0b58013 1-13
+src/JinDistill/Diff/Differ.php
+  s_b9d710f7250aa5::t_423d9360928b4a 14,74,84,86-87,93
+  s_b9d710f7250aa5::t_9b12323313d754 85
+tests/Diff/DiffExamplesTest.php
+  s_b9d710f7250aa5::t_a525b5e080a5b9 1-29,31-98
+  s_b9d710f7250aa5::t_f9d590a496a565 30
+examples/diff/b1.jin
+  s_b9d710f7250aa5::t_1afa4be0b58013 1-24
+src/JinDistill/JinDistiller.php
+  s_b9d710f7250aa5::t_ef13ff0ff708dd 12,16,77-84,87,89
+src/JinDistill/Diff/OverlayVerifier.php
+  s_b9d710f7250aa5::t_c27340b9a5f4d6 74-82
+examples/diff/b3.jin
+  s_b9d710f7250aa5::t_c27340b9a5f4d6 4
+  s_b9d710f7250aa5::t_987358e1463585 1-3,5-17
+tests/Formatting/ExtendsReferenceTest.php
+  s_b9d710f7250aa5::t_dece4e24253af4 5,7-8,31-58
+tests/Diff/RemovalPlannerTest.php
+  s_b9d710f7250aa5::t_3a361f1da0cc59 51-61
+src/JinDistill/Diff/RemovalPlanner.php
+  s_b9d710f7250aa5::t_c27340b9a5f4d6 40-51
+  s_b9d710f7250aa5::t_037b0193809dae 39
+src/JinDistill/Formatting/ExtendsReference.php
+  s_b9d710f7250aa5::t_54bc0a0e5334f9 26,44
+  s_b9d710f7250aa5::t_8612284faba584 5-6,9,13,15-20,23-25,27,31-43,45-67
+examples/diff/a1.jin
+  s_b9d710f7250aa5::t_1afa4be0b58013 1-5
+examples/diff/a2.jin
+  s_b9d710f7250aa5::t_1afa4be0b58013 1-5
+tests/Evaluation/SemanticVerifierTest.php
+  s_b9d710f7250aa5::t_037b0193809dae 39-40
+  s_b9d710f7250aa5::t_3a361f1da0cc59 34-38,41-44
+src/JinDistill/Evaluation/SemanticVerifier.php
+  s_b9d710f7250aa5::t_037b0193809dae 11-12,19-32
+  s_b9d710f7250aa5::t_01cf8b25e062f7 33-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "0cd4a48701ec0b05cd217083dc5ddd670996a35b",
+  "prompts": {},
+  "sessions": {
+    "s_b9d710f7250aa5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de426d8d-770d-4e23-9988-2a7d73151c42",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
