@@ -1,0 +1,39 @@
+src/JinDistill/Validation/Validator.php
+  s_b9d710f7250aa5::t_a87aebf6110f34 8-10,14-24,30,32-34,38
+src/JinDistill/Decoders/JinDecoder.php
+  s_b9d710f7250aa5::t_387e0b689c26d0 32,105
+src/JinDistill/Syntax/Document.php
+  s_b9d710f7250aa5::t_387e0b689c26d0 11,16-19
+  s_b9d710f7250aa5::t_a6666adc8a40bd 20-21
+tests/Validation/ValidatorTest.php
+  s_b9d710f7250aa5::t_551a53bd1c81ad 71-83,85-113
+  s_b9d710f7250aa5::t_a87aebf6110f34 84
+src/JinDistill/Validation/ValidationRules.php
+  s_b9d710f7250aa5::t_a87aebf6110f34 20-21
+tests/Formatting/NormalizerTest.php
+  s_b9d710f7250aa5::t_a3a3921568f219 32-33
+src/JinDistill/Validation/Rules/CanonicalLayoutRule.php
+  s_b9d710f7250aa5::t_a87aebf6110f34 1-123
+src/JinDistill/Validation/Rules/DuplicatePathRule.php
+  s_b9d710f7250aa5::t_387e0b689c26d0 1-42
+src/JinDistill/Validation/Rules/ExtendsFunctionRule.php
+  s_b9d710f7250aa5::t_387e0b689c26d0 1-41
+src/JinDistill/Validation/Rule.php
+  s_b9d710f7250aa5::t_387e0b689c26d0 1-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ce5ae3f030f20d15d06d0491ac4dfa92dd91e93e",
+  "prompts": {},
+  "sessions": {
+    "s_b9d710f7250aa5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de426d8d-770d-4e23-9988-2a7d73151c42",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
