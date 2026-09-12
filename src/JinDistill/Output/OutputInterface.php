@@ -4,5 +4,5 @@ namespace JinDistill\Output;
 
 interface OutputInterface
 {
-	public function write(string $data);
+    public function write(string $data): void;
 }

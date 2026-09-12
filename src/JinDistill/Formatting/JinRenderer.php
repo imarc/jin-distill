@@ -14,9 +14,11 @@ use JinDistill\Syntax\ValueKind;
 
 final class JinRenderer
 {
-    public function __construct(private ?ExtendsRenderer $extendsRenderer = null)
+    private ExtendsRenderer $extendsRenderer;
+
+    public function __construct(?ExtendsRenderer $extendsRenderer = null)
     {
-        $this->extendsRenderer ??= new ExtendsRenderer();
+        $this->extendsRenderer = $extendsRenderer ?? new ExtendsRenderer();
     }
 
     public function render(Document $document, ?FormatOptions $options = null): string
@@ -69,7 +71,10 @@ final class JinRenderer
         return $indentation . $key . ' = ' . $value . ($inlineComment === null ? '' : ' ; ' . $inlineComment->text());
     }
 
-    /** @param list<string> $segments @param list<string> $section */
+    /**
+     * @param list<string> $segments
+     * @param list<string> $section
+     */
     private function assignmentKey(array $segments, array $section): string
     {
         if ($section !== [] && array_slice($segments, 0, count($section)) === $section) {
@@ -116,7 +121,7 @@ final class JinRenderer
             throw new UnrepresentableValueException($path->toJsonPointer(), $document->source()->canonicalPath(), $value);
         }
         if ($value === []) {
-            return array_is_list($value) ? '[]' : '{}';
+            return $json ? '[]' : '{}';
         }
 
         if (array_is_list($value)) {
@@ -131,9 +136,9 @@ final class JinRenderer
 
         $lines = ['{'];
         foreach ($value as $key => $item) {
-                $lines[] = $this->indentDepth($depth + 1, $options)
-                . $this->quote((string) $key)
-                . ': ' . $this->renderStaticValue($item, $depth + 1, $path->append((string) $key), $document, $options, true) . ',';
+            $lines[] = $this->indentDepth($depth + 1, $options)
+            . $this->quote((string) $key)
+            . ': ' . $this->renderStaticValue($item, $depth + 1, $path->append((string) $key), $document, $options, true) . ',';
         }
         $lines[] = $this->indentDepth($depth, $options) . '}';
         return implode($options->lineEnding(), $lines);

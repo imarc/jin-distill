@@ -9,7 +9,10 @@ final class ReportOptions
     }
 
     /** Evaluated values stay redacted unless the caller explicitly opts in. */
-    public function includeValues(): bool { return $this->includeValues; }
+    public function includeValues(): bool
+    {
+        return $this->includeValues;
+    }
 
     public function withValues(bool $includeValues): self
     {

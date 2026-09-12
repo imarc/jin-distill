@@ -8,13 +8,16 @@ use JinDistill\Validation\Validator;
 
 final class Normalizer
 {
+    private Validator $validator;
+    private JinRenderer $renderer;
+
     public function __construct(
         private Analyzer $analyzer,
-        private ?Validator $validator = null,
-        private ?JinRenderer $renderer = null,
+        ?Validator $validator = null,
+        ?JinRenderer $renderer = null,
     ) {
-        $this->validator ??= new Validator();
-        $this->renderer ??= new JinRenderer();
+        $this->validator = $validator ?? new Validator();
+        $this->renderer = $renderer ?? new JinRenderer();
     }
 
     public function normalize(string $contents, SourceId $source, ?FormatOptions $options = null): NormalizeResult

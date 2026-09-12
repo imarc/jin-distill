@@ -4,6 +4,7 @@ namespace JinDistill\Support;
 
 class Arr
 {
+    /** @param array<array-key, mixed> $data */
     public static function set(array &$data, string $path, mixed $value): void
     {
         $segments = explode('.', $path);
@@ -20,6 +21,7 @@ class Arr
         $target = $value;
     }
 
+    /** @param array<array-key, mixed> $data */
     public static function has(array $data, string $path): bool
     {
         $segments = explode('.', $path);
@@ -35,6 +37,7 @@ class Arr
         return true;
     }
 
+    /** @param array<array-key, mixed> $data */
     public static function delete(array &$data, string $path): void
     {
         $segments = explode('.', $path);
@@ -52,6 +55,11 @@ class Arr
         unset($target[$last]);
     }
 
+    /**
+     * @param array<array-key, mixed> $parent
+     * @param array<array-key, mixed> $child
+     * @return array<array-key, mixed>
+     */
     public static function mergeDistinct(array $parent, array $child): array
     {
         foreach ($child as $key => $value) {

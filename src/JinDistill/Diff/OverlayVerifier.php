@@ -28,6 +28,11 @@ final class OverlayVerifier
             }
 
             $assignment = $difference->target();
+
+            if ($assignment === null) {
+                continue;
+            }
+
             $state[$assignment->path()->toJsonPointer()] = $this->comparable($assignment);
         }
 

@@ -19,14 +19,16 @@ final class SourceGraphBuilder
     /** @var list<SourceGraphEdge> */
     private array $edges = [];
 
+    private AnalysisLimits $limits;
+
     /** @param list<ExtendsResolver> $resolvers */
     public function __construct(
         private SourceLoader $loader,
         private JinDecoder $decoder,
         private array $resolvers,
-        private ?AnalysisLimits $limits = null,
+        ?AnalysisLimits $limits = null,
     ) {
-        $this->limits ??= new AnalysisLimits();
+        $this->limits = $limits ?? new AnalysisLimits();
     }
 
     public function build(string $contents, SourceId $source): SourceGraph

@@ -37,6 +37,6 @@ final class FunctionExtendsResolver implements ExtendsResolver
             return null;
         }
 
-        return str_replace('""', '"', $matches[1] !== '' ? $matches[1] : $matches[2]);
+        return str_replace('""', '"', $matches[1] !== '' ? $matches[1] : ($matches[2] ?? ''));
     }
 }

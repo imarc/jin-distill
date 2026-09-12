@@ -2,18 +2,20 @@
 
 namespace JinDistill\Analysis;
 
-use JinDistill\Source\SourceId;
 use JinDistill\Source\Path;
+use JinDistill\Source\SourceId;
 use JinDistill\Syntax\Assignment;
 
 final class Analyzer
 {
+    private AnalysisLimits $limits;
+
     public function __construct(
         private SourceGraphBuilder $graphs,
-        private ?AnalysisLimits $limits = null,
+        ?AnalysisLimits $limits = null,
         private ?AnalysisCache $cache = null,
     ) {
-        $this->limits ??= new AnalysisLimits();
+        $this->limits = $limits ?? new AnalysisLimits();
     }
 
     public function analyze(string $contents, SourceId $source): AnalysisResult

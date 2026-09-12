@@ -11,9 +11,21 @@ final class FlattenResult
     {
     }
 
-    public function content(): string { return $this->content; }
-    public function analysis(): AnalysisResult { return $this->analysis; }
-    public function provenance(): ProvenanceIndex { return $this->provenance; }
+    public function content(): string
+    {
+        return $this->content;
+    }
+    public function analysis(): AnalysisResult
+    {
+        return $this->analysis;
+    }
+    public function provenance(): ProvenanceIndex
+    {
+        return $this->provenance;
+    }
     /** @return list<object> */
-    public function diagnostics(): array { return $this->analysis->diagnostics(); }
+    public function diagnostics(): array
+    {
+        return $this->analysis->diagnostics();
+    }
 }

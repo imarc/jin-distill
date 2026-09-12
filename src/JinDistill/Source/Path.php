@@ -6,10 +6,12 @@ use InvalidArgumentException;
 
 final class Path
 {
+    /** @param list<string> $segments */
     private function __construct(private array $segments)
     {
     }
 
+    /** @param array<int, mixed> $segments */
     public static function fromSegments(array $segments): self
     {
         foreach ($segments as $segment) {
@@ -21,6 +23,7 @@ final class Path
         return new self(array_values($segments));
     }
 
+    /** @return list<string> */
     public function segments(): array
     {
         return $this->segments;
@@ -34,7 +37,7 @@ final class Path
     public function toJsonPointer(): string
     {
         return implode('', array_map(
-            static fn(string $segment): string => '/' . str_replace(['~', '/'], ['~0', '~1'], $segment),
+            static fn (string $segment): string => '/' . str_replace(['~', '/'], ['~0', '~1'], $segment),
             $this->segments
         ));
     }

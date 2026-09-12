@@ -10,7 +10,6 @@ use JinDistill\Analysis\ProvenanceIndex;
 use JinDistill\Composition\FlattenResult;
 use JinDistill\Diagnostics\Diagnostic;
 use JinDistill\Diff\DiffResult;
-use JinDistill\Diff\Difference;
 use JinDistill\Evaluation\VerificationResult;
 use JinDistill\Formatting\NormalizeResult;
 use JinDistill\Source\Path;
@@ -141,7 +140,13 @@ final class ReportSerializer
      */
     private function diagnostics(array $diagnostics): array
     {
-        return array_map(static fn (object $diagnostic): array => $diagnostic->toArray(), $diagnostics);
+        $reports = [];
+
+        foreach ($diagnostics as $diagnostic) {
+            $reports[] = $diagnostic instanceof Diagnostic ? $diagnostic->toArray() : ['message' => $diagnostic::class];
+        }
+
+        return $reports;
     }
 
     /** @return list<array<string, mixed>> */

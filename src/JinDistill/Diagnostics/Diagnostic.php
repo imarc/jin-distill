@@ -17,12 +17,30 @@ final class Diagnostic
     ) {
     }
 
-    public function ruleId(): string { return $this->ruleId; }
-    public function severity(): Severity { return $this->severity; }
-    public function message(): string { return $this->message; }
-    public function path(): ?Path { return $this->path; }
-    public function span(): ?SourceSpan { return $this->span; }
-    public function suggestion(): ?string { return $this->suggestion; }
+    public function ruleId(): string
+    {
+        return $this->ruleId;
+    }
+    public function severity(): Severity
+    {
+        return $this->severity;
+    }
+    public function message(): string
+    {
+        return $this->message;
+    }
+    public function path(): ?Path
+    {
+        return $this->path;
+    }
+    public function span(): ?SourceSpan
+    {
+        return $this->span;
+    }
+    public function suggestion(): ?string
+    {
+        return $this->suggestion;
+    }
 
     /** @return array<string, mixed> */
     public function toArray(): array

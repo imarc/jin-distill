@@ -8,6 +8,7 @@ use JinDistill\JinDocument;
 class JinFormat implements FormatInterface
 {
     protected string $data = '';
+    /** @var array<string, mixed> */
     protected array $metadata = [];
     protected bool $comments = false;
 
@@ -50,13 +51,14 @@ class JinFormat implements FormatInterface
         return rtrim($this->data) . "\n";
     }
 
+    /** @param array<string, mixed> $directives */
     protected function writeDirectives(array $directives): void
     {
         $wrote = false;
 
         if (!empty($directives['extends'])) {
             $this->writeComments('--extends', 0);
-            $this->write(sprintf('--extends = file(%s)', $directives['extends']));
+            $this->write(sprintf('--extends = file(%s)', is_scalar($directives['extends']) ? $directives['extends'] : ''));
             $this->writeInlineComment('--extends');
             $this->write("\n");
             $wrote = true;
@@ -69,7 +71,7 @@ class JinFormat implements FormatInterface
             $this->write("--without = [\n");
             foreach ($without as $path) {
                 $this->writeTabs(1);
-                $this->write(sprintf("%s,\n", $this->quoteJsonString($path)));
+                $this->write(sprintf("%s,\n", $this->quoteJsonString(is_scalar($path) ? (string) $path : '')));
             }
             $this->write("]\n");
 
@@ -81,6 +83,7 @@ class JinFormat implements FormatInterface
         }
     }
 
+    /** @param array<array-key, mixed> $data */
     protected function writeTopLevel(array $data): void
     {
         $first = true;
@@ -110,6 +113,7 @@ class JinFormat implements FormatInterface
         }
     }
 
+    /** @param array<array-key, mixed> $fields */
     protected function writeIniFields(array $fields, int $depth, string $path): void
     {
         $first = true;
@@ -173,7 +177,7 @@ class JinFormat implements FormatInterface
             return $output . ']';
         }
 
-        if ($value === []) {
+        if (count($value) === 0) {
             return '{}';
         }
 
@@ -204,7 +208,7 @@ class JinFormat implements FormatInterface
             return (string) $value;
         }
 
-        return $this->quoteJsonString((string) $value);
+        return $this->quoteJsonString(is_scalar($value) ? (string) $value : '');
     }
 
     protected function encodeIniValue(mixed $value): string
@@ -221,7 +225,7 @@ class JinFormat implements FormatInterface
             return (string) $value;
         }
 
-        $value = (string) $value;
+        $value = is_scalar($value) ? (string) $value : '';
 
         if ($this->shouldQuoteIniString($value)) {
             return $this->quoteJsonString($value);
@@ -246,23 +250,50 @@ class JinFormat implements FormatInterface
 
     protected function writeComments(string $path, int $depth): void
     {
-        if (!$this->comments || empty($this->metadata[$path]['leadingComments'])) {
-            return;
-        }
-
-        foreach ($this->metadata[$path]['leadingComments'] as $comment) {
+        foreach ($this->leadingComments($path) as $comment) {
             $this->writeTabs($depth);
             $this->write('; ' . $comment . "\n");
         }
     }
 
+    /** @return list<string> */
+    protected function leadingComments(string $path): array
+    {
+        $metadata = $this->metadata[$path] ?? null;
+
+        if (!$this->comments || !is_array($metadata) || !is_array($metadata['leadingComments'] ?? null)) {
+            return [];
+        }
+
+        $comments = [];
+
+        foreach ($metadata['leadingComments'] as $comment) {
+            $comments[] = is_scalar($comment) ? (string) $comment : '';
+        }
+
+        return $comments;
+    }
+
+    protected function inlineComment(string $path): ?string
+    {
+        $metadata = $this->metadata[$path] ?? null;
+
+        if (!$this->comments || !is_array($metadata) || !is_scalar($metadata['inlineComment'] ?? null)) {
+            return null;
+        }
+
+        return (string) $metadata['inlineComment'];
+    }
+
     protected function writeInlineComment(string $path): void
     {
-        if (!$this->comments || !isset($this->metadata[$path]['inlineComment']) || $this->metadata[$path]['inlineComment'] === null) {
+        $comment = $this->inlineComment($path);
+
+        if ($comment === null) {
             return;
         }
 
-        $this->write(' ; ' . $this->metadata[$path]['inlineComment']);
+        $this->write(' ; ' . $comment);
     }
 
     protected function writeTabs(int $depth): void
@@ -277,11 +308,7 @@ class JinFormat implements FormatInterface
 
     protected function appendCommentsTo(string &$output, string $path, int $depth): void
     {
-        if (!$this->comments || empty($this->metadata[$path]['leadingComments'])) {
-            return;
-        }
-
-        foreach ($this->metadata[$path]['leadingComments'] as $comment) {
+        foreach ($this->leadingComments($path) as $comment) {
             $this->appendTabsTo($output, $depth);
             $output .= '; ' . $comment . "\n";
         }
@@ -289,11 +316,13 @@ class JinFormat implements FormatInterface
 
     protected function appendInlineCommentTo(string &$output, string $path): void
     {
-        if (!$this->comments || !isset($this->metadata[$path]['inlineComment']) || $this->metadata[$path]['inlineComment'] === null) {
+        $comment = $this->inlineComment($path);
+
+        if ($comment === null) {
             return;
         }
 
-        $output .= ' ; ' . $this->metadata[$path]['inlineComment'];
+        $output .= ' ; ' . $comment;
     }
 
     protected function write(string $string): void

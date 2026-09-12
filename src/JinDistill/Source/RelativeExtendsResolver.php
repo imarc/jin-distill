@@ -18,7 +18,9 @@ final class RelativeExtendsResolver implements ExtendsResolver
             throw new InvalidArgumentException('Relative extends values must be static strings.');
         }
 
-        $path = $value->staticValue();
+        $static = $value->staticValue();
+        $path = is_string($static) ? $static : '';
+
         return str_starts_with($path, '/') ? $path : dirname($from->canonicalPath()) . '/' . $path;
     }
 }

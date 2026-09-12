@@ -5,13 +5,13 @@ namespace JinDistill\Tests\Analysis;
 use JinDistill\Analysis\SourceGraphBuilder;
 use JinDistill\Decoders\JinDecoder;
 use JinDistill\Exceptions\CircularInheritanceException;
-use JinDistill\Source\LoadedSource;
-use JinDistill\Source\MemorySourceLoader;
-use JinDistill\Source\RelativeExtendsResolver;
-use JinDistill\Source\SourceId;
 use JinDistill\Source\FilesystemSourceLoader;
 use JinDistill\Source\FunctionExtendsResolver;
+use JinDistill\Source\LoadedSource;
+use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\PathPolicy;
+use JinDistill\Source\RelativeExtendsResolver;
+use JinDistill\Source\SourceId;
 use PHPUnit\Framework\TestCase;
 
 final class SourceGraphBuilderTest extends TestCase

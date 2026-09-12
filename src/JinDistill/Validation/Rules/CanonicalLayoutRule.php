@@ -21,10 +21,13 @@ use JinDistill\Validation\ValidationRules;
  */
 final class CanonicalLayoutRule implements Rule
 {
-    public function __construct(private ?JinRenderer $renderer = null, private ?FormatOptions $options = null)
+    private JinRenderer $renderer;
+    private FormatOptions $options;
+
+    public function __construct(?JinRenderer $renderer = null, ?FormatOptions $options = null)
     {
-        $this->renderer ??= new JinRenderer();
-        $this->options ??= new FormatOptions();
+        $this->renderer = $renderer ?? new JinRenderer();
+        $this->options = $options ?? new FormatOptions();
     }
 
     public function check(Document $document, ValidationRules $rules, ?EvaluationOptions $evaluation): array

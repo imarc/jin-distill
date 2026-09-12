@@ -8,6 +8,12 @@ final class CompositionConflict
     {
     }
 
-    public function parentPath(): string { return $this->parentPath; }
-    public function childPath(): string { return $this->childPath; }
+    public function parentPath(): string
+    {
+        return $this->parentPath;
+    }
+    public function childPath(): string
+    {
+        return $this->childPath;
+    }
 }

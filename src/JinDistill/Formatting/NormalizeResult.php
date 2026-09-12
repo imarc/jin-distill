@@ -11,8 +11,17 @@ final class NormalizeResult
     {
     }
 
-    public function content(): string { return $this->content; }
-    public function analysis(): AnalysisResult { return $this->analysis; }
+    public function content(): string
+    {
+        return $this->content;
+    }
+    public function analysis(): AnalysisResult
+    {
+        return $this->analysis;
+    }
     /** @return list<object> */
-    public function diagnostics(): array { return $this->diagnostics; }
+    public function diagnostics(): array
+    {
+        return $this->diagnostics;
+    }
 }

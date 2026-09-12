@@ -47,7 +47,7 @@ final class Differ
 
     /**
      * @param list<Path> $removals
-     * @return list<Statement>
+     * @return non-empty-list<Statement>
      */
     private function nodes(ComposedDocument $target, string $reference, DifferenceSet $differences, array $removals): array
     {
@@ -78,6 +78,11 @@ final class Differ
             }
 
             $assignment = $difference->target();
+
+            if ($assignment === null) {
+                continue;
+            }
+
             $segments = $assignment->path()->segments();
             $owner = count($segments) > 1 ? array_slice($segments, 0, -1) : [];
 

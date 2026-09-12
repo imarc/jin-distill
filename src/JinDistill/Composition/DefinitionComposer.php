@@ -3,12 +3,12 @@
 namespace JinDistill\Composition;
 
 use JinDistill\Analysis\AnalysisResult;
+use JinDistill\Source\Path;
 use JinDistill\Syntax\Assignment;
 use JinDistill\Syntax\Document;
+use JinDistill\Syntax\Section;
 use JinDistill\Syntax\Value;
 use JinDistill\Syntax\ValueKind;
-use JinDistill\Syntax\Section;
-use JinDistill\Source\Path;
 
 final class DefinitionComposer
 {
@@ -116,6 +116,10 @@ final class DefinitionComposer
     }
 
     /** @param list<string> $ancestor @param list<string> $path */
+    /**
+     * @param list<string> $ancestor
+     * @param list<string> $path
+     */
     private function isAncestor(array $ancestor, array $path): bool
     {
         return count($ancestor) < count($path)
@@ -123,6 +127,10 @@ final class DefinitionComposer
     }
 
     /** @param list<string> $segments */
+    /**
+     * @param array<array-key, mixed> $value
+     * @param list<string> $segments
+     */
     private function removeNested(array &$value, array $segments): bool
     {
         $key = array_shift($segments);

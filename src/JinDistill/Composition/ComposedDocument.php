@@ -12,8 +12,17 @@ final class ComposedDocument
     {
     }
 
-    public function document(): Document { return $this->document; }
-    public function provenance(): ProvenanceIndex { return $this->provenance; }
+    public function document(): Document
+    {
+        return $this->document;
+    }
+    public function provenance(): ProvenanceIndex
+    {
+        return $this->provenance;
+    }
     /** @return list<CompositionConflict> */
-    public function conflicts(): array { return $this->conflicts; }
+    public function conflicts(): array
+    {
+        return $this->conflicts;
+    }
 }

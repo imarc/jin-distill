@@ -23,10 +23,22 @@ final class AnalysisLimits
     ) {
     }
 
-    public function bytes(): int { return $this->bytes; }
-    public function syntaxDepth(): int { return $this->syntaxDepth; }
-    public function inheritanceDepth(): int { return $this->inheritanceDepth; }
-    public function diagnostics(): int { return $this->diagnostics; }
+    public function bytes(): int
+    {
+        return $this->bytes;
+    }
+    public function syntaxDepth(): int
+    {
+        return $this->syntaxDepth;
+    }
+    public function inheritanceDepth(): int
+    {
+        return $this->inheritanceDepth;
+    }
+    public function diagnostics(): int
+    {
+        return $this->diagnostics;
+    }
 
     public function guardBytes(int $actual): void
     {

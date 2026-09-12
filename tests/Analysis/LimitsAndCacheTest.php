@@ -23,7 +23,7 @@ final class LimitsAndCacheTest extends TestCase
         $this->expectException(AnalysisLimitException::class);
         $this->expectExceptionMessage('bytes');
 
-        $this->analyzer(new AnalysisLimits(bytes: 8))->analyze("name = a value too long", $this->source());
+        $this->analyzer(new AnalysisLimits(bytes: 8))->analyze('name = a value too long', $this->source());
     }
 
     public function testItRejectsSyntaxDeeperThanTheConfiguredLimit(): void

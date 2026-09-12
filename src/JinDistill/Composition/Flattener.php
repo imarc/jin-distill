@@ -8,10 +8,13 @@ use JinDistill\Formatting\JinRenderer;
 
 final class Flattener
 {
-    public function __construct(private ?DefinitionComposer $composer = null, private ?JinRenderer $renderer = null)
+    private DefinitionComposer $composer;
+    private JinRenderer $renderer;
+
+    public function __construct(?DefinitionComposer $composer = null, ?JinRenderer $renderer = null)
     {
-        $this->composer ??= new DefinitionComposer();
-        $this->renderer ??= new JinRenderer();
+        $this->composer = $composer ?? new DefinitionComposer();
+        $this->renderer = $renderer ?? new JinRenderer();
     }
 
     public function flatten(AnalysisResult $analysis, ?FormatOptions $options = null): FlattenResult

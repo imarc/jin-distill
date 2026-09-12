@@ -47,6 +47,7 @@ final class DefinitionDiffer
         return $assignments;
     }
 
+    /** @return array{list<string>, string|null} */
     private function metadata(Assignment $assignment): array
     {
         return [

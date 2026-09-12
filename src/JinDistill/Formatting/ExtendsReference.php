@@ -27,8 +27,14 @@ final class ExtendsReference
         );
     }
 
-    public function relativePath(): string { return $this->relativePath; }
-    public function applicationPath(): ?string { return $this->applicationPath; }
+    public function relativePath(): string
+    {
+        return $this->relativePath;
+    }
+    public function applicationPath(): ?string
+    {
+        return $this->applicationPath;
+    }
 
     public function toSource(?FormatOptions $options = null): string
     {

@@ -11,8 +11,20 @@ final class Difference
     {
     }
 
-    public function kind(): DifferenceKind { return $this->kind; }
-    public function path(): Path { return $this->path; }
-    public function parent(): ?Assignment { return $this->parent; }
-    public function target(): ?Assignment { return $this->target; }
+    public function kind(): DifferenceKind
+    {
+        return $this->kind;
+    }
+    public function path(): Path
+    {
+        return $this->path;
+    }
+    public function parent(): ?Assignment
+    {
+        return $this->parent;
+    }
+    public function target(): ?Assignment
+    {
+        return $this->target;
+    }
 }

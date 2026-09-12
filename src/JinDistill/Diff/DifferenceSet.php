@@ -10,5 +10,8 @@ final class DifferenceSet
     }
 
     /** @return list<Difference> */
-    public function all(): array { return $this->differences; }
+    public function all(): array
+    {
+        return $this->differences;
+    }
 }

@@ -2,9 +2,9 @@
 
 namespace JinDistill\Decoders;
 
-use JinDistill\Exceptions\InvalidStructureException;
 use JinDistill\Diagnostics\Diagnostic;
 use JinDistill\Diagnostics\Severity;
+use JinDistill\Exceptions\InvalidStructureException;
 use JinDistill\Source\Path;
 use JinDistill\Source\SourceId;
 use JinDistill\Source\SourceSpan;
@@ -22,7 +22,7 @@ final class JinDecoder implements DecoderInterface
     /** @var list<Diagnostic> */
     private array $diagnostics = [];
 
-    public function __construct(private bool $strict = true)
+    public function __construct(protected bool $strict = true)
     {
     }
 
@@ -64,7 +64,7 @@ final class JinDecoder implements DecoderInterface
                 $section = $this->resolveSection($lexeme, $sectionStack);
                 $statements[] = new Section(Path::fromSegments($section), $lexeme, $this->span($source, $lineNumber, 1, $lineNumber, strlen($line)));
                 $metadata[implode('.', $section)] = [
-                    'leadingComments' => array_map(static fn(Comment $comment): string => $comment->text(), $pendingComments),
+                    'leadingComments' => array_map(static fn (Comment $comment): string => $comment->text(), $pendingComments),
                     'inlineComment' => null,
                     'line' => $lineNumber,
                     'source' => $source->canonicalPath(),
@@ -102,12 +102,27 @@ final class JinDecoder implements DecoderInterface
             $pendingComments = [];
         }
 
-        $document = new Document($statements, $source, $data, $directives, $metadata, $original);
+        $document = new Document($statements, $source, $data, $this->stringKeyed($directives), $this->stringKeyed($metadata), $original);
         if ($this->diagnostics !== []) {
             throw new InvalidStructureException('Invalid Jin structure.', $this->diagnostics, $document);
         }
 
         return $document;
+    }
+
+    /**
+     * @param array<array-key, mixed> $values
+     * @return array<string, mixed>
+     */
+    private function stringKeyed(array $values): array
+    {
+        $keyed = [];
+
+        foreach ($values as $key => $value) {
+            $keyed[(string) $key] = $value;
+        }
+
+        return $keyed;
     }
 
     public function decodeFile(string $path): Document
@@ -119,7 +134,10 @@ final class JinDecoder implements DecoderInterface
         return $this->decode($contents, new SourceId($path, $path));
     }
 
-    /** @param list<array{int, list<string>}> $stack @return list<string> */
+    /**
+     * @param list<array{int, list<string>}> $stack
+     * @return list<string>
+     */
     private function resolveSection(string $lexeme, array &$stack): array
     {
         if (preg_match('/^(&+)\.(.+)$/', $lexeme, $matches) === 1) {
@@ -229,14 +247,30 @@ final class JinDecoder implements DecoderInterface
     private function parseScalar(string $value): mixed
     {
         $lower = strtolower($value);
-        if ($lower === 'null') return null;
-        if ($lower === 'true') return true;
-        if ($lower === 'false') return false;
-        if (preg_match('/^0b[01]+$/', $value) === 1) return bindec(substr($value, 2));
-        if (preg_match('/^0x[0-9a-f]+$/i', $value) === 1) return hexdec(substr($value, 2));
-        if (preg_match('/^0[0-7]+$/', $value) === 1) return octdec($value);
-        if (is_numeric($value)) return str_contains($value, '.') ? (float) $value : (int) $value;
-        if (str_starts_with($value, '"') && str_ends_with($value, '"')) return str_replace('""', '"', substr($value, 1, -1));
+        if ($lower === 'null') {
+            return null;
+        }
+        if ($lower === 'true') {
+            return true;
+        }
+        if ($lower === 'false') {
+            return false;
+        }
+        if (preg_match('/^0b[01]+$/', $value) === 1) {
+            return bindec(substr($value, 2));
+        }
+        if (preg_match('/^0x[0-9a-f]+$/i', $value) === 1) {
+            return hexdec(substr($value, 2));
+        }
+        if (preg_match('/^0[0-7]+$/', $value) === 1) {
+            return octdec($value);
+        }
+        if (is_numeric($value)) {
+            return str_contains($value, '.') ? (float) $value : (int) $value;
+        }
+        if (str_starts_with($value, '"') && str_ends_with($value, '"')) {
+            return str_replace('""', '"', substr($value, 1, -1));
+        }
         return $value;
     }
 
@@ -244,7 +278,7 @@ final class JinDecoder implements DecoderInterface
     {
         $value = $this->stripJsonComments($value);
         $value = preg_replace('/,\s*([}\]])/', '$1', $value) ?? $value;
-        $value = preg_replace_callback('/"((?:""|[^"])*)"/s', static fn(array $matches): string => json_encode(str_replace('""', '"', $matches[1]), JSON_THROW_ON_ERROR), $value) ?? $value;
+        $value = preg_replace_callback('/"((?:""|[^"])*)"/s', static fn (array $matches): string => json_encode(str_replace('""', '"', $matches[1]), JSON_THROW_ON_ERROR), $value) ?? $value;
         $decoded = json_decode($value, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             $this->fail(sprintf('Error parsing JSON-like value: %s', json_last_error_msg()), 'jin.syntax.json');
@@ -272,25 +306,29 @@ final class JinDecoder implements DecoderInterface
         }, explode("\n", $value)));
     }
 
-    /** @param array<string, mixed> $data @param array<string, mixed> $directives @param array<string, mixed> $metadata */
+    /**
+     * @param array<array-key, mixed> $data
+     * @param array<string, mixed> $directives
+     * @param array<string, mixed> $metadata
+     */
     private function recordLegacyData(Assignment $assignment, string $key, array &$data, array &$directives, array &$metadata): void
     {
         $path = implode('.', $assignment->path()->segments());
         $metadata[$path] = [
-            'leadingComments' => array_map(static fn(Comment $comment): string => $comment->text(), $assignment->comments()),
+            'leadingComments' => array_map(static fn (Comment $comment): string => $comment->text(), $assignment->comments()),
             'inlineComment' => $assignment->inlineComment()?->text(),
-            'line' => $assignment->span()->toArray()['start']['line'],
-            'source' => $assignment->span()->toArray()['source'],
+            'line' => $assignment->span()->startLine(),
+            'source' => $assignment->span()->source()->canonicalPath(),
         ];
         $value = $assignment->value()->staticValue();
         if ($key === '--extends') {
             $directives['extends'] = preg_match('/^file\((.*)\)$/s', $assignment->value()->raw(), $matches) === 1 ? trim($matches[1], " \t\n\r\0\x0B\"") : $value;
         } elseif ($key === '--without') {
-            $directives['without'] = is_array($value) ? array_values($value) : [(string) $value];
+            $directives['without'] = is_array($value) ? array_values($value) : [is_scalar($value) ? (string) $value : ''];
         } else {
             Arr::set($data, $path, $value);
             if ($assignment->value()->kind() === ValueKind::Json) {
-                $this->recordJsonMetadata($assignment->value()->raw(), $path, $metadata, $assignment->span()->toArray()['start']['line'], $assignment->span()->toArray()['source']);
+                $this->recordJsonMetadata($assignment->value()->raw(), $path, $metadata, $assignment->span()->startLine(), $assignment->span()->source()->canonicalPath());
             }
         }
     }

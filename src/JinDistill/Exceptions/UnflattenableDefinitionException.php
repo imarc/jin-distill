@@ -13,5 +13,8 @@ final class UnflattenableDefinitionException extends RuntimeException
     }
 
     /** @return list<object> */
-    public function conflicts(): array { return $this->conflicts; }
+    public function conflicts(): array
+    {
+        return $this->conflicts;
+    }
 }

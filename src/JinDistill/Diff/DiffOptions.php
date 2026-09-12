@@ -8,8 +8,14 @@ final class DiffOptions
     {
     }
 
-    public function metadataSensitive(): bool { return $this->metadataSensitive; }
-    public function verifies(): bool { return $this->verifies; }
+    public function metadataSensitive(): bool
+    {
+        return $this->metadataSensitive;
+    }
+    public function verifies(): bool
+    {
+        return $this->verifies;
+    }
 
     public function withMetadataSensitivity(bool $metadataSensitive): self
     {

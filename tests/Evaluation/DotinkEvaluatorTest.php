@@ -4,13 +4,13 @@ namespace JinDistill\Tests\Evaluation;
 
 use JinDistill\Analysis\Analyzer;
 use JinDistill\Analysis\SourceGraphBuilder;
+use JinDistill\Decoders\JinDecoder;
 use JinDistill\Evaluation\DotinkEvaluator;
 use JinDistill\Evaluation\EvaluationOptions;
 use JinDistill\Source\FilesystemSourceLoader;
 use JinDistill\Source\FunctionExtendsResolver;
 use JinDistill\Source\PathPolicy;
 use JinDistill\Source\RelativeExtendsResolver;
-use JinDistill\Decoders\JinDecoder;
 use PHPUnit\Framework\TestCase;
 
 final class DotinkEvaluatorTest extends TestCase
