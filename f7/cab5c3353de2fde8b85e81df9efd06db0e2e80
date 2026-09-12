@@ -1,0 +1,24 @@
+tests/fixtures/formatting/all-constructs.input.jin
+  s_b9d710f7250aa5::t_03e38a9e7a331e 1-42
+tests/fixtures/formatting/all-constructs.expected.jin
+  s_b9d710f7250aa5::t_76125061bee563 9,15
+  s_b9d710f7250aa5::t_871312b0615366 1-8,10-14,16-51
+tests/Formatting/GoldenFormattingTest.php
+  s_b9d710f7250aa5::t_e4bfc3fef453d7 1-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "f7cab5c3353de2fde8b85e81df9efd06db0e2e80",
+  "prompts": {},
+  "sessions": {
+    "s_b9d710f7250aa5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de426d8d-770d-4e23-9988-2a7d73151c42",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
