@@ -10,6 +10,7 @@ use JinDistill\Diff\DiffOptions;
 use JinDistill\Diff\Differ;
 use JinDistill\Source\Path;
 use JinDistill\Exceptions\UndiffableDefinitionException;
+use JinDistill\Source\LoadedSource;
 use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\RelativeExtendsResolver;
 use JinDistill\Source\SourceId;
@@ -100,6 +101,38 @@ final class DifferTest extends TestCase
 
         self::assertTrue($result->verification()?->isEquivalent());
         self::assertSame([], $result->verification()->differences());
+    }
+
+    public function testItComparesEffectiveDefinitionsFromInheritedInputs(): void
+    {
+        $parent = $this->composeInherited('parent', "name = Base\nenabled = true", "--extends = parent-base.jin\nenabled = false");
+        $target = $this->composeInherited('target', "name = Base\nenabled = true", "--extends = target-base.jin\nname = Child");
+
+        $result = (new Differ())->diff($parent, $target, 'parent.jin', (new DiffOptions())->withVerification(true));
+
+        self::assertStringContainsString("enabled = true\n", $result->content());
+        self::assertStringContainsString("name = Child\n", $result->content());
+        self::assertSame([], $result->verification()?->differences());
+        self::assertSame(
+            '/project/target.jin',
+            $result->provenance()->lineage(Path::fromSegments(['name']))?->winner()->source()->canonicalPath(),
+        );
+        self::assertSame(
+            '/project/target-base.jin',
+            $result->provenance()->lineage(Path::fromSegments(['enabled']))?->winner()->source()->canonicalPath(),
+        );
+    }
+
+    private function composeInherited(string $name, string $base, string $child): \JinDistill\Composition\ComposedDocument
+    {
+        $baseId = new SourceId('/project/' . $name . '-base.jin', $name . '-base.jin');
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([new LoadedSource($baseId, $base)]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze($child, new SourceId('/project/' . $name . '.jin', $name . '.jin'));
+
+        return (new DefinitionComposer())->compose($analysis);
     }
 
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument
