@@ -6,7 +6,9 @@ use JinDistill\Analysis\Analyzer;
 use JinDistill\Analysis\SourceGraphBuilder;
 use JinDistill\Composition\DefinitionComposer;
 use JinDistill\Decoders\JinDecoder;
+use JinDistill\Diff\DiffOptions;
 use JinDistill\Diff\Differ;
+use JinDistill\Source\Path;
 use JinDistill\Exceptions\UndiffableDefinitionException;
 use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\RelativeExtendsResolver;
@@ -65,6 +67,39 @@ final class DifferTest extends TestCase
             self::assertSame('/fields', $exception->conflicts()[0]->parentPath());
             self::assertSame('/fields/required', $exception->conflicts()[0]->childPath());
         }
+    }
+
+    public function testItReportsProvenanceForEmittedAssignments(): void
+    {
+        $result = (new Differ())->diff($this->compose('name = Base'), $this->compose('name = Child'), 'base.jin');
+
+        self::assertNotNull($result->provenance()->lineage(Path::fromSegments(['name'])));
+    }
+
+    public function testItDiagnosesCopiedOpaqueExpressions(): void
+    {
+        $result = (new Differ())->diff($this->compose('name = Base'), $this->compose("name = Base\nfields = run(build())"), 'base.jin');
+
+        self::assertSame(['jin.diff.opaque-copy'], array_map(static fn ($diagnostic): string => $diagnostic->ruleId(), $result->diagnostics()));
+        self::assertSame('/fields', $result->diagnostics()[0]->path()?->toJsonPointer());
+    }
+
+    public function testItOmitsVerificationUnlessRequested(): void
+    {
+        $result = (new Differ())->diff($this->compose('name = Base'), $this->compose('name = Child'), 'base.jin');
+
+        self::assertNull($result->verification());
+    }
+
+    public function testItVerifiesGeneratedOverlayAgainstTarget(): void
+    {
+        $parent = $this->compose("name = Base\nenabled = true\n[form]\nlabel = Parent");
+        $target = $this->compose("name = Child\n[form]\nlabel = Child");
+
+        $result = (new Differ())->diff($parent, $target, 'base.jin', (new DiffOptions())->withVerification(true));
+
+        self::assertTrue($result->verification()?->isEquivalent());
+        self::assertSame([], $result->verification()->differences());
     }
 
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument
