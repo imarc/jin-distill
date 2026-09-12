@@ -61,6 +61,7 @@
     "minimum-stability": "stable",
     "archive": {
         "exclude": [
+            "/vendor",
             "/tests",
             "/examples",
             "/docs",
@@ -68,7 +69,11 @@
             "/phpunit.xml.dist",
             "/phpstan.neon.dist",
             "/.php-cs-fixer.dist.php",
-            "/mise.toml"
+            "/.php-cs-fixer.cache",
+            "/.phpunit.cache",
+            "/mise.toml",
+            "/.gitignore",
+            ".DS_Store"
         ]
     }
 }
