@@ -1,0 +1,21 @@
+.github/workflows/ci.yml
+  s_b9d710f7250aa5::t_79213c209adc6e 1-74
+docs/private-corpus.md
+  s_b9d710f7250aa5::t_79213c209adc6e 1-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c362948242e6cc9824c077656bbef9e0c1cee9a6",
+  "prompts": {},
+  "sessions": {
+    "s_b9d710f7250aa5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de426d8d-770d-4e23-9988-2a7d73151c42",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
