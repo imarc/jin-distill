@@ -1,78 +1,125 @@
-# jin-distill
+# JinDistill
 
-Utilities for decoding, resolving, normalizing, and exporting Jin configuration.
+Analyze, normalize, flatten, and diff [Dotink/Jin](https://github.com/dotink/jin)
+configuration. Every workflow above is **static**: JinDistill parses Jin source
+into a syntax model and never executes `run()`, `env()`, or any other Jin
+function unless you explicitly ask it to.
 
-## Encode PHP Data As Jin
+- PHP 8.1 – 8.4
+- `dotink/jin` ^4.9
+- MIT licensed
 
-```php
-use JinDistill\Formats\JinFormat;
-
-$format = new JinFormat(boundary: 1, tabs: "\t", strict: true);
-
-echo $format->encode([
-    '--extends' => 'local/forms/application/standard.jin',
-    'form' => [
-        'name' => 'CPA',
-        'fields' => [
-            'person' => [
-                'firstName' => true,
-            ],
-        ],
-    ],
-]);
+```bash
+composer require imarc/jin-distill
 ```
 
-## Decode Jin
-
-```php
-use JinDistill\Decoders\JinDecoder;
-
-$decoder = new JinDecoder();
-$document = $decoder->decodeFile(__DIR__ . '/form.jin');
-
-$data = $document->data;
-$directives = $document->directives;
-$metadata = $document->metadata;
-```
-
-## Normalize One File
+## Safe workflows
 
 ```php
 use JinDistill\JinDistiller;
 
 $distiller = new JinDistiller();
-
-echo $distiller->normalizeFile(__DIR__ . '/form.jin');
 ```
 
-Normalization parses one file and writes it back using the formatter rules. It does not resolve `--extends`.
+### Analyze
 
-## Flatten An Extending File
+Builds the inheritance graph and the provenance of every assignment.
 
 ```php
-use JinDistill\JinDistiller;
+$analysis = $distiller->analyzeFile('config/forms/child.jin');
 
-$distiller = new JinDistiller();
-
-echo $distiller->flattenFile(__DIR__ . '/local-form.jin');
+$analysis->mode();                  // AnalysisMode::SourceOnly
+$analysis->sourceGraph()->edges();  // child -> parent inheritance edges
+$analysis->provenance();            // which file won each path
 ```
 
-Flattening resolves `--extends`, applies child `--without` paths to inherited data, merges child values over parent values, and emits standalone Jin without inheritance directives.
+### Normalize
 
-## Comment Metadata
-
-The decoder stores leading and inline comments in `JinDocument::$metadata` so they can be re-emitted later.
-
-```jin
-; Public display name
-name = CPA ; visible label
-```
-
-Becomes metadata for the path `name`:
+Rewrites one file into canonical layout. Parents are analyzed but never
+rewritten, and nothing is written to disk — you get the content back.
 
 ```php
-[
-    'leadingComments' => ['Public display name'],
-    'inlineComment' => 'visible label',
-]
+$result = $distiller->normalizeFile('config/forms/child.jin');
+
+file_put_contents('config/forms/child.jin', $result->content());
+$result->diagnostics();  // style findings with suggested fixes
+```
+
+### Flatten
+
+Composes a file and its ancestors into one standalone document.
+
+```php
+echo $distiller->flattenFile('config/forms/child.jin')->content();
+```
+
+### Diff
+
+Generates the minimum inheritance document whose resolved configuration equals
+the target. The output path is never written; you decide what to do with the
+content.
+
+```php
+use JinDistill\Diff\DiffOptions;
+
+$diff = $distiller->diffFiles(
+    parentPath: 'config/forms/base.jin',
+    targetPath: 'config/forms/full.jin',
+    outputPath: 'config/forms/generated.jin',
+    options: (new DiffOptions())->withVerification(true),
+);
+
+echo $diff->content();
+$diff->removals();              // paths planned for --without
+$diff->verification();          // static proof the overlay equals the target
+```
+
+See `examples/diff/` for the golden inputs and generated output.
+
+## Evaluation (executes PHP)
+
+> [!WARNING]
+> `evaluateFile()` and `verifySemantics()` hand the source to Dotink's parser.
+> Jin's `run()` executes arbitrary PHP and `env()` reads the environment. Only
+> evaluate configuration you trust, and read `docs/security.md` first.
+
+```php
+use JinDistill\Evaluation\EvaluationOptions;
+
+$evaluated = $distiller->evaluateFile('config/app.jin', new EvaluationOptions(
+    context: [],
+    functions: ['file' => static fn (string $path): string => __DIR__ . '/' . $path],
+));
+
+$evaluated->resolvedData();
+```
+
+## Reports
+
+```php
+use JinDistill\Reporting\ReportSerializer;
+
+echo (new ReportSerializer())->toJson($diff);
+```
+
+Evaluated values are redacted unless you pass
+`new ReportOptions(includeValues: true)`. The schema is documented in
+`docs/report-schema-v1.md`.
+
+## Documentation
+
+| Document | Contents |
+| --- | --- |
+| `docs/api.md` | every public facade method and result accessor |
+| `docs/formatting.md` | style profiles, diagnostics, and what stays raw |
+| `docs/compatibility.md` | PHP and Dotink support policy |
+| `docs/security.md` | what executes, what does not, and how reports redact |
+| `docs/report-schema-v1.md` | the V1 report schema |
+| `docs/private-corpus.md` | how a private fixture corpus plugs into CI |
+
+## Development
+
+```bash
+composer install
+composer check   # tests, PHPStan (max), style, manifest validation
 ```

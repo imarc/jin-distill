@@ -1,13 +1,27 @@
 {
     "name": "imarc/jin-distill",
-    "description": "Analyze, normalize, flatten, and diff Dotink/Jin configuration.",
+    "description": "Analyze, normalize, flatten, and diff Dotink/Jin configuration without evaluating it.",
     "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "jin",
+        "dotink",
+        "hiraeth",
+        "configuration",
+        "static-analysis",
+        "formatter",
+        "diff"
+    ],
     "authors": [
         {
             "name": "Austin Fishbaugh",
             "email": "austinfishbaugh@imarc.com"
         }
     ],
+    "support": {
+        "issues": "https://github.com/imarc/jin-distill/issues",
+        "source": "https://github.com/imarc/jin-distill"
+    },
     "require": {
         "php": ">=8.1",
         "dotink/jin": "^4.9"
@@ -39,5 +53,22 @@
             "@validate"
         ],
         "validate": "composer validate --strict"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "prefer-stable": true,
+    "minimum-stability": "stable",
+    "archive": {
+        "exclude": [
+            "/tests",
+            "/examples",
+            "/docs",
+            "/.github",
+            "/phpunit.xml.dist",
+            "/phpstan.neon.dist",
+            "/.php-cs-fixer.dist.php",
+            "/mise.toml"
+        ]
     }
 }
