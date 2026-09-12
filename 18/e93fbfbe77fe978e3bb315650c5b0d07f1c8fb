@@ -1,0 +1,166 @@
+src/JinDistill/Analysis/Lineage.php
+  s_b9d710f7250aa5::t_3f088fc71bd770 7-10
+src/JinDistill/Diff/DiffResult.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 26-33,35-42,44-51
+composer.json
+  s_b9d710f7250aa5::t_2a5a2dec64b870 31-41
+  s_b9d710f7250aa5::t_b153d1d6210b7e 16-18
+src/JinDistill/Encoder.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 2,5,23,32,41
+  s_b9d710f7250aa5::t_681adcd64a44a7 34-35
+tests/Formatting/NormalizerTest.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 9-10,12
+src/JinDistill/Diff/RemovalPlanner.php
+  s_b9d710f7250aa5::t_ea7742fdbf8d85 14-15,17
+src/JinDistill/Source/SourceSpan.php
+  s_b9d710f7250aa5::t_3f088fc71bd770 36-37
+  s_b9d710f7250aa5::t_c8064275dc3d86 16-35
+tests/examples/example.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 3-6,10-12,14,18-20,23-27,30-33,36-37
+src/JinDistill/Diff/DefinitionDiffer.php
+  s_b9d710f7250aa5::t_143ff739af08e6 50
+src/JinDistill/Diff/OverlayVerifier.php
+  s_b9d710f7250aa5::t_143ff739af08e6 31-35
+src/JinDistill/Analysis/AnalysisLimits.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 26-41
+tests/Evaluation/DotinkEvaluatorTest.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 7
+src/JinDistill/Formats/JinFormat.php
+  s_b9d710f7250aa5::t_7582e27a5edc30 11,54,61,74,86,116,180,211,228,253,259-287,290-292,296,311,319-321,325
+tests/examples/default.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 3-105
+src/JinDistill/Composition/FlattenResult.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 14-25,27-30
+src/JinDistill/Decoders/JinDecoder.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 7,67,250-273,281
+  s_b9d710f7250aa5::t_c00611fadb3d63 25,105,113-127,137-140,309-313,318,320-321,327,331
+.php-cs-fixer.cache
+  s_b9d710f7250aa5::t_383b32c21a9e0d 1
+src/JinDistill/Diagnostics/Diagnostic.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 20-43
+src/JinDistill/Formatting/FormatOptions.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 26-65,67-82
+tests/examples/cpa.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 4-18
+phpstan.neon.dist
+  s_b9d710f7250aa5::t_2a5a2dec64b870 1-5
+src/JinDistill/Output/OutputInterface.php
+  s_b9d710f7250aa5::t_ac38d5b9876e7c 7-8
+tests/Validation/ValidatorTest.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 8-9
+src/JinDistill/Reporting/ReportOptions.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 12-15
+src/JinDistill/Composition/Flattener.php
+  s_b9d710f7250aa5::t_7fd21ce9db8739 11-14,16-17
+src/JinDistill/Diff/Differ.php
+  s_b9d710f7250aa5::t_143ff739af08e6 50,81-85
+src/JinDistill/Exceptions/UnflattenableDefinitionException.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 16-19
+src/JinDistill/Formatting/NormalizeResult.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 14-21,23-26
+.php-cs-fixer.dist.php
+  s_b9d710f7250aa5::t_2a5a2dec64b870 1-19
+src/JinDistill/Validation/Rules/CanonicalLayoutRule.php
+  s_b9d710f7250aa5::t_7fd21ce9db8739 24-27,29-30
+src/JinDistill/Support/Arr.php
+  s_b9d710f7250aa5::t_681adcd64a44a7 7,24,40,58-62
+src/JinDistill/Formatting/ExtendsReference.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 30-37
+src/JinDistill/Composition/DefinitionComposer.php
+  s_b9d710f7250aa5::t_ea7742fdbf8d85 119-122,130-133
+  s_b9d710f7250aa5::t_c8064275dc3d86 6,9
+src/JinDistill/Output/StdOutput.php
+  s_b9d710f7250aa5::t_ac38d5b9876e7c 7-11
+src/JinDistill/Source/Path.php
+  s_b9d710f7250aa5::t_3f088fc71bd770 9,14,26
+  s_b9d710f7250aa5::t_c8064275dc3d86 40
+docs/handoffs/2026-09-12-jin-distill-handoff.md
+  s_672ac1cdfe526c::t_35a8f5ad3e29a3 1-94
+src/JinDistill/JinDocument.php
+  s_b9d710f7250aa5::t_681adcd64a44a7 7-11,20
+src/JinDistill/Output/FileOutput.php
+  s_b9d710f7250aa5::t_681adcd64a44a7 5-6,9-32
+src/JinDistill/Diff/DiffOptions.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 11-18
+src/JinDistill/Formatting/Normalizer.php
+  s_b9d710f7250aa5::t_7fd21ce9db8739 11-13,16-17,19-20
+src/JinDistill/Diff/Difference.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 14-29
+src/JinDistill/Composition/CompositionConflict.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 11-18
+src/JinDistill/Source/FunctionExtendsResolver.php
+  s_b9d710f7250aa5::t_ea7742fdbf8d85 40
+src/JinDistill/Reporting/ReportSerializer.php
+  s_b9d710f7250aa5::t_143ff739af08e6 143-149
+src/JinDistill/Formats/FormatInterface.php
+  s_b9d710f7250aa5::t_ac38d5b9876e7c 7-9
+tests/Analysis/SourceGraphBuilderTest.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 8-9,12
+tests/test.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 3,8-19
+tests/Analysis/LimitsAndCacheTest.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 26
+src/JinDistill/Analysis/SourceGraph.php
+  s_b9d710f7250aa5::t_7fd21ce9db8739 9-12
+  s_b9d710f7250aa5::t_3f088fc71bd770 5-6,17
+src/JinDistill/Exceptions/UndiffableDefinitionException.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 16-19
+src/JinDistill/Evaluation/EvaluationOptions.php
+  s_b9d710f7250aa5::t_143ff739af08e6 7-10,21
+src/JinDistill/Formatting/JinRenderer.php
+  s_b9d710f7250aa5::t_7fd21ce9db8739 17-19,21,74-77,124
+  s_b9d710f7250aa5::t_c8064275dc3d86 139-141
+src/JinDistill/Analysis/Analyzer.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 6
+  s_b9d710f7250aa5::t_7fd21ce9db8739 11-12,15,18
+src/JinDistill/Formats/CsvFormat.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 7-135
+src/JinDistill/Diff/DifferenceSet.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 13-16
+tests/Analysis/AnalyzerTest.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 10
+tests/Diff/DifferTest.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 10,14
+src/JinDistill/JinDistiller.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 9-11,13,19-21,23
+tests/examples/site.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 3-106
+src/JinDistill/Analysis/SourceGraphBuilder.php
+  s_b9d710f7250aa5::t_7fd21ce9db8739 22-23,29,31
+src/JinDistill/JinResolver.php
+  s_b9d710f7250aa5::t_618ee0b8e7771b 45-47,76-81
+  s_b9d710f7250aa5::t_ea7742fdbf8d85 22,44
+  s_b9d710f7250aa5::t_c00611fadb3d63 53,58-70
+  s_b9d710f7250aa5::t_26f0942e452206 71-72
+src/JinDistill/Composition/ComposedDocument.php
+  s_b9d710f7250aa5::t_c8064275dc3d86 15-22,24-27
+src/JinDistill/Source/RelativeExtendsResolver.php
+  s_b9d710f7250aa5::t_681adcd64a44a7 23
+  s_b9d710f7250aa5::t_ea7742fdbf8d85 21-22
+composer.lock
+  s_b9d710f7250aa5::t_7c08941d79ab65 7,115-116,119-120,124-125,129-130,133-134,139,146-153,155-160,163-164,168-172,176,179-180,183-184,188-189,193-196,199-202,206-210,212,217,222,226-228,231,233-236,239-240,242-252,255-256,259-260,264-265,269-273,278,282-284,288,292-294,297-299,302-304,307-313,315-317,321-325,329,332-333,336-337,341-342,346-353,357-359,363,367-384,387-388,391-392,395,398-399,402-403,407-408,412,415-429,434-438,442-444,448,452-454,457-458,460-462,464,467-468,471-472,476-477,481,484,488-490,494,498-499,502,504-505,508-509,511,514-515,518-519,523-524,528,531-539,543-545,549,553-554,557,559-560,563-564,568,572,575-576,579-580,584-585,589-614,617-627,629-631,633-636,638-642,647,651-656,659,661-664,667-668,672,676,679-680,683-684,688-689,693-697,700-703,707-712,716,718,720-724,727-728,732,736,739-740,743-744,748-749,754-755,757-759,762,767,771-773,781,784,786-787,790-791,793,796-797,800-801,805-806,810-815,820,833-842,846,849,851-852,856,860,863-864,867-868,872-1066,1078,1097-1102,1104-1106,1114,1117-1118,1121-1122,1126-1127,1134,1137-1139,1143,1158-1159,1162-1166,1168-1169,1177,1180-1181,1184-1185,1189-1190,1194,1197,1202,1217-3112,3115-3528,3531-3532,3535-3536,3538-3540,3543,3547-3548,3551-3552,3555-3556,3559,3563,3566-3567,3570-3571,3575-3576,3580,3582-3586,3590-3592,3596-3601,3605,3609-3614,3617-3624,3626,3630-3638,3640-3643,3646,3649-3650,3653-3654,3658-3659,3663,3665-3666,3670-3672,3676-3681,3685,3689-3690,3693-3694,3697-3698,3700-3705,3708,3712-3720,3722-3725,3728,3731-3732,3735-3736,3740-3741,3745,3748,3752-3754,3758-3763,3765,3770,3774-3779,3782-3783,3785-3790,3793,3797-3801,3803-3810,3813,3816-3817,3820-3821,3825-3826,3830-3831,3833-3837,3841-3843,3847-3852,3856,3860-3861,3864-3865,3868-3869,3871-3875,3878,3882-3883,3886-3887,3890-3891,3894,3898,3901-3902,3905-3906,3910-3911,3915,3919-3921,3925-3930,3932,3937,3941-3950,3953-3954,3956-3959,3962,3966-3974,3976-3979,3982,3985-3986,3989-3990,3994-3995,3999,4003-4005,4009-4014,4016,4021,4025-4030,4033-4040,4042,4046-4054,4056-4059,4062,4065-4066,4069-4070,4074-4075,4079,4083-4085,4089-4094,4096,4101,4105-4110,4113-4120,4122,4126-4130,4132-4139,4142,4145-4146,4149-4150,4154-4155,4163-4167,4172,4176-4181,4184-4185,4187,4191-4199,4201-4204,4207,4210-4211,4214-4215,4219-4220,4224-4226,4228-4229,4233-4236,4238,4242-4246,4251,4255-4256,4259-4260,4263-4272,4274,4278-4279,4282-4283,4286-4287,4290,4294,4297-4298,4301-4302,4306-4307,4311-4312,4316-4320,4325,4329-4334,4337-4338,4340,4344-4352,4354-4357,4360,4363-4364,4367-4368,4372-4373,4377-4381,4383-4384,4386-4392,4394-4401,4406,4410-4415,4418-4427,4429,4433-4441,4443-4446,4449
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "18e93fbfbe77fe978e3bb315650c5b0d07f1c8fb",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    },
+    "s_b9d710f7250aa5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de426d8d-770d-4e23-9988-2a7d73151c42",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
