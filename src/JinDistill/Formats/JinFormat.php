@@ -96,6 +96,11 @@ class JinFormat implements FormatInterface
                 $this->writeInlineComment((string) $key);
                 $this->write("\n\n");
                 $this->writeIniFields($value, 1, (string) $key);
+            } elseif (is_array($value)) {
+                $this->writeComments((string) $key, 0);
+                $this->write(sprintf('%s = %s', $key, $this->encodeJsonValue($value, 0, (string) $key)));
+                $this->writeInlineComment((string) $key);
+                $this->write("\n");
             } else {
                 $this->writeComments((string) $key, 0);
                 $this->writeIniAssignment((string) $key, $value, 0, (string) $key);
@@ -229,14 +234,14 @@ class JinFormat implements FormatInterface
     {
         return $value === ''
             || trim($value) !== $value
-            || preg_match('/[;\n{}\[\]]/', $value)
+            || preg_match('/[;\n{}\[\]"]/', $value)
             || in_array(strtolower($value), ['true', 'false', 'null'], true)
             || is_numeric($value);
     }
 
     protected function quoteJsonString(string $value): string
     {
-        return json_encode($value, JSON_UNESCAPED_SLASHES);
+        return '"' . str_replace('"', '""', $value) . '"';
     }
 
     protected function writeComments(string $path, int $depth): void

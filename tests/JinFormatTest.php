@@ -96,4 +96,16 @@ final class JinFormatTest extends TestCase
             (new JinFormat())->encodeDocument($document, comments: true)
         );
     }
+
+    public function testItEscapesQuotesTheWayJinReadsThem(): void
+    {
+        $encoded = (new JinFormat())->encode(['label' => 'say ""hi""', 'list' => ['a"b']]);
+
+        self::assertStringContainsString('label = "say """"hi"""""', $encoded);
+        self::assertStringContainsString('"a""b",', $encoded);
+        self::assertSame(
+            ['label' => 'say ""hi""', 'list' => ['a"b']],
+            (new \Dotink\Jin\Parser())->parse($encoded)->all(),
+        );
+    }
 }
