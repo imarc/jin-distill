@@ -68,4 +68,47 @@ final class ValidatorTest extends TestCase
             (new Validator())->validate($analysis, evaluation: new EvaluationOptions(functions: ['file' => static fn (): string => 'base.jin'])),
         );
     }
+
+    public function testItReportsNoncanonicalIndentationWithASuggestedFix(): void
+    {
+        $diagnostics = $this->validate("[form]\nname = CPA");
+
+        self::assertSame(['jin.style.canonical-layout'], $this->ruleIds($diagnostics));
+        self::assertSame("\tname = CPA", $diagnostics[0]->suggestion());
+        self::assertSame(2, $diagnostics[0]->span()?->toArray()['start']['line']);
+    }
+
+    public function testItReportsNoncanonicalQuotingAndTrailingCommas(): void
+    {
+        self::assertSame(['jin.style.canonical-layout'], $this->ruleIds($this->validate('name = "CPA"')));
+        self::assertSame(['jin.style.canonical-layout'], $this->ruleIds($this->validate("items = [\n\t\"a\"\n]")));
+    }
+
+    public function testItReportsWindowsLineEndings(): void
+    {
+        self::assertSame(['jin.style.line-ending'], $this->ruleIds($this->validate("name = CPA\r\n")));
+    }
+
+    public function testItReportsNothingForCanonicalSources(): void
+    {
+        self::assertSame([], $this->validate("; Form\nname = CPA\n\n[form]\n\tenabled = true\n"));
+    }
+
+    /** @param list<\JinDistill\Diagnostics\Diagnostic> $diagnostics @return list<string> */
+    private function ruleIds(array $diagnostics): array
+    {
+        return array_map(static fn ($diagnostic): string => $diagnostic->ruleId(), $diagnostics);
+    }
+
+    /** @return list<\JinDistill\Diagnostics\Diagnostic> */
+    private function validate(string $contents): array
+    {
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze($contents, new SourceId('memory://input.jin', 'input.jin'));
+
+        return (new Validator())->validate($analysis);
+    }
 }

@@ -17,6 +17,8 @@ final class ValidationRules
             'jin.style.duplicate-path' => Severity::Error,
             'jin.style.section-reference' => Severity::Warning,
             'jin.style.extends-function' => Severity::Warning,
+            'jin.style.canonical-layout' => Severity::Warning,
+            'jin.style.line-ending' => Severity::Warning,
         ]);
     }
 

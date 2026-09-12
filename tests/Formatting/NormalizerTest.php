@@ -29,7 +29,8 @@ final class NormalizerTest extends TestCase
 
         self::assertSame("name = CPA\n", $result->content());
         self::assertSame('memory://input.jin', array_values($result->analysis()->sourceGraph()->documents())[0]->source()->canonicalPath());
-        self::assertSame([], $result->diagnostics());
+        self::assertSame('jin.style.canonical-layout', $result->diagnostics()[0]->ruleId());
+        self::assertSame('name = CPA', $result->diagnostics()[0]->suggestion());
     }
 
     public function testItNormalizesOnlyTheRequestedFile(): void

@@ -29,6 +29,7 @@ final class JinDecoder implements DecoderInterface
     public function decode(string $contents, SourceId|string|null $source = null): Document
     {
         $this->diagnostics = [];
+        $original = $contents;
         $contents = str_replace(["\r\n", "\r"], "\n", $contents);
         $source = $source instanceof SourceId ? $source : new SourceId($source ?? 'memory://jin', $source ?? 'memory://jin');
         $lines = explode("\n", $contents);
@@ -101,7 +102,7 @@ final class JinDecoder implements DecoderInterface
             $pendingComments = [];
         }
 
-        $document = new Document($statements, $source, $data, $directives, $metadata);
+        $document = new Document($statements, $source, $data, $directives, $metadata, $original);
         if ($this->diagnostics !== []) {
             throw new InvalidStructureException('Invalid Jin structure.', $this->diagnostics, $document);
         }
