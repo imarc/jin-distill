@@ -1,0 +1,20 @@
+tests/Diff/DifferTest.php
+  s_b9d710f7250aa5::t_e477b8248cd698 13,106-136
+  s_b9d710f7250aa5::t_d8f4d7b9fa79be 137
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "3804b26ca08017757ff6642f191a8aa6b9237e9d",
+  "prompts": {},
+  "sessions": {
+    "s_b9d710f7250aa5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de426d8d-770d-4e23-9988-2a7d73151c42",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
