@@ -1,0 +1,24 @@
+tests/Diff/DifferTest.php
+  s_b9d710f7250aa5::t_58b0f95f7afbbe 10,56-67
+  s_b9d710f7250aa5::t_c1fa5f0c39d2bc 68-69
+src/JinDistill/Diff/Differ.php
+  s_b9d710f7250aa5::t_e2c0461908b290 11-12,15,28-66
+src/JinDistill/Exceptions/UndiffableDefinitionException.php
+  s_b9d710f7250aa5::t_e2c0461908b290 1-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c45f2ccc85e6ecfbda53151a5505f5593266635e",
+  "prompts": {},
+  "sessions": {
+    "s_b9d710f7250aa5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de426d8d-770d-4e23-9988-2a7d73151c42",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
