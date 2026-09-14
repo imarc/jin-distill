@@ -50,9 +50,9 @@
             "@test",
             "@analyse",
             "@style",
-            "@validate"
+            "@validate:composer"
         ],
-        "validate": "composer validate --strict"
+        "validate:composer": "composer validate --strict"
     },
     "config": {
         "sort-packages": true
