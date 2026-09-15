@@ -1,0 +1,20 @@
+docs/handoffs/2026-09-12-jin-distill-handoff.md
+  s_672ac1cdfe526c::t_f724121dfcf756 61
+  s_672ac1cdfe526c::t_0146aeb357a539 8-9,57,59-60,63,65,67-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "476c55e3ee221556355fc9dfa30d920ad7f8ecde",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
