@@ -4,8 +4,8 @@ namespace JinDistill\Tests\Formatting;
 
 use Dotink\Jin\Parser;
 use JinDistill\Decoders\JinDecoder;
-use JinDistill\Formatting\JinRenderer;
 use JinDistill\Formatting\FormatOptions;
+use JinDistill\Formatting\JinRenderer;
 use JinDistill\Formatting\SpacingPolicy;
 use PHPUnit\Framework\TestCase;
 
