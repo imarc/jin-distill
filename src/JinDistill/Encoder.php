@@ -5,6 +5,9 @@ namespace JinDistill;
 use JinDistill\Formats\{FormatInterface};
 use JinDistill\Output\OutputInterface;
 
+/**
+ * @deprecated 1.0.0 Use a JinDistiller workflow and explicitly persist its returned content.
+ */
 class Encoder
 {
     /**

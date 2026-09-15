@@ -4,6 +4,9 @@ namespace JinDistill\Output;
 
 use RuntimeException;
 
+/**
+ * @deprecated 1.0.0 Persist returned workflow content explicitly after inspection or verification.
+ */
 class FileOutput implements OutputInterface
 {
     /** @var resource */

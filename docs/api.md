@@ -20,6 +20,12 @@ Everything here is public API under semver. Result objects are immutable.
 No facade method writes a file. `diffFiles()` takes `$outputPath` only to
 compute the `--extends` reference relative to where you intend to save.
 
+## Deprecated output API
+
+Encoder, OutputInterface, FileOutput, and StdOutput are deprecated as of 1.0.0.
+They remain available through 1.x. Use a facade workflow, inspect returned
+content(), then explicitly persist or echo that content.
+
 ## Results
 
 ### `Analysis\AnalysisResult`
