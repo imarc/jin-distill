@@ -1,0 +1,21 @@
+src/JinDistill/Composition/DefinitionComposer.php
+  s_8e2f947885b9ec::t_72f1e2f46fed79 20,24,117
+tests/Composition/FlattenerTest.php
+  s_8e2f947885b9ec::t_a674f3ffb819fa 89-118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "4da7d3bbc40f1a967ba9800b296b5a687dc93261",
+  "prompts": {},
+  "sessions": {
+    "s_8e2f947885b9ec": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0a5a4-40a2-7ea3-addd-3eaf11ea74f8",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
