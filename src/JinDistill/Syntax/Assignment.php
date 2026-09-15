@@ -8,12 +8,14 @@ use JinDistill\Source\SourceSpan;
 final class Assignment extends Statement
 {
     /** @param list<Comment> $comments */
+    /** @param list<Statement> $leadingTrivia */
     public function __construct(
         private Path $path,
         private Value $value,
         private array $comments,
         private ?Comment $inlineComment,
         SourceSpan $span,
+        private array $leadingTrivia = [],
     ) {
         parent::__construct($span);
     }
@@ -37,5 +39,11 @@ final class Assignment extends Statement
     public function inlineComment(): ?Comment
     {
         return $this->inlineComment;
+    }
+
+    /** @return list<Statement> */
+    public function leadingTrivia(): array
+    {
+        return $this->leadingTrivia === [] ? $this->comments : $this->leadingTrivia;
     }
 }

@@ -107,8 +107,8 @@ final class DefinitionComposer
                 );
             }
             $section = $nextSection;
-            foreach ($statement->comments() as $comment) {
-                $renderable[] = $comment;
+            foreach ($statement->leadingTrivia() as $trivia) {
+                $renderable[] = $trivia;
             }
             $renderable[] = $statement;
         }
@@ -167,6 +167,7 @@ final class DefinitionComposer
             $child->comments() === [] ? $parent->comments() : $child->comments(),
             $child->inlineComment(),
             $child->span(),
+            $child->comments() === [] ? $parent->leadingTrivia() : $child->leadingTrivia(),
         );
     }
 
@@ -182,6 +183,7 @@ final class DefinitionComposer
             $parent->comments(),
             $child->inlineComment(),
             $child->span(),
+            $parent->leadingTrivia(),
         );
     }
 }

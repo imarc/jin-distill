@@ -80,6 +80,14 @@ JIN);
         self::assertSame(['Required person fields'], $document->metadata['form.fields']['leadingComments']);
     }
 
+    public function testItKeepsCommentsLeadingAcrossBlankLines(): void
+    {
+        $document = (new JinDecoder())->decode("; Label\n\nname = CPA");
+        $assignment = $document->statements()[2];
+
+        self::assertSame(['Label'], array_map(static fn ($comment): string => $comment->text(), $assignment->comments()));
+    }
+
     public function testItPreservesValuesWhenSectionIsReopened(): void
     {
         $document = (new JinDecoder())->decode(<<<'JIN'
@@ -127,5 +135,22 @@ JIN);
 
         self::assertSame(['First name label'], $document->metadata['form.fields.person.firstName']['leadingComments']);
         self::assertSame('required', $document->metadata['form.fields.person.firstName']['inlineComment']);
+    }
+
+    public function testItKeepsJsonLandCommentsLeadingAcrossBlankLines(): void
+    {
+        $document = (new JinDecoder())->decode(<<<'JIN'
+[form]
+    fields = {
+        "person": {
+
+            ; Personal Information
+
+            "avatar": false,
+        },
+    }
+JIN);
+
+        self::assertSame(['Personal Information'], $document->metadata['form.fields.person.avatar']['leadingComments']);
     }
 }
