@@ -1,0 +1,40 @@
+--extends = file(vendor/imarc/cpa-tech/local/forms/application/default.jin)
+
+[form]
+	fields = {
+		"person": {
+			"middleName": null,
+			"suffix": null,
+			"preferredName": null,
+			"birthDate": true,
+			"gender": true,
+			"phone": null,
+			"homePhone": null,
+			"mobilePhone": null,
+			"officePhone": null,
+			"officeExtension": null,
+
+			"educational": false,
+			"school": false,
+			"graduationDate": false,
+
+			"professional": null,
+			"title": null,
+			"position": null,
+			"credentials": null,
+			"aicpaNumber": null,
+			"inStateCertificationNumber": null,
+			"inStateCertificationDate": null,
+			"outStateCertificationState": null,
+			"outStateCertificationNumber": null,
+			"outStateCertificationDate": null,
+
+			"membership": null,
+			"sponsor": false,
+			"outStateMember": null,
+		},
+
+		"agreements": {
+			"bylaws": true
+		}
+	}

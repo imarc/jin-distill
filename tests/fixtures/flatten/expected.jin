@@ -1,0 +1,179 @@
+[form]
+
+	;
+	; The name of this form
+	;
+
+	name = Default
+
+	;
+	; A list of fields defining FALSE (do not display), NULL (do not require), TRUE (require)
+	;
+
+	fields = {
+
+		;
+		; Whether or not we ask the user to find their firm (required has no meaning here)
+		;
+
+		"firm": null,
+		"person": {
+
+			;
+			; Personal Information
+			;
+
+			"avatar": false,
+			"firstName": true,
+			"middleName": null,
+			"lastName": true,
+			"suffix": null,
+			"preferredName": null,
+			"priorName": false,
+			"spouse": false,
+			"birthDate": true,
+			"ethnicity": false,
+			"gender": true,
+			"pronoun": false,
+
+			;
+			; Contact Info
+			;
+
+			"email": null,
+			"emailType": false,
+			"alternateEmail": false,
+			"alternateEmailType": false,
+			"emailExclude": false,
+			"phone": null,
+			"homePhone": null,
+			"mobilePhone": null,
+			"textExclude": false,
+			"officePhone": null,
+			"officeExtension": null,
+			"officeFax": false,
+
+			"address": {
+				"line1": true,
+				"line2": false,
+				"city": true,
+				"state": true,
+				"postalCode": true,
+				"country": true,
+			},
+
+			"poAddress": {
+				"line1": false,
+				"postalCode": false,
+			},
+
+			"contactPreferences": false,
+
+			;
+			; Preferences
+			;
+
+			"preferences": false,
+
+			"publicRegistration": false,
+
+			;
+			; Social
+			;
+
+			"social": false,
+
+			"links": {
+				"facebook": false,
+				"instagram": false,
+				"linkedin": false,
+				"twitter": false,
+			},
+
+			"educational": false,
+			"school": false,
+			"schoolName": false,
+			"graduationDate": false,
+
+			"professional": null,
+
+			"firm": false,
+			"title": null,
+			"position": null,
+			"preferredChapter": false,
+			"credentials": null,
+			"aicpaNumber": null,
+			"ptinNumber": false,
+			"nasbaNumber": false,
+			"nasbaOptOut": false,
+
+			"certification": false,
+			"inStateCertificationState": false,
+			"inStateCertificationNumber": null,
+			"inStateCertificationDate": null,
+			"outStateCertificationState": null,
+			"outStateCertificationNumber": null,
+			"outStateCertificationDate": null,
+			"directoryExclude": false,
+
+			"membership": null,
+			"sponsor": false,
+			"groupMemberships": false,
+			"excludeFromNewMembers": false,
+
+			;
+			; Interests
+			;
+
+			"interests": false,
+
+			;
+			; Skills
+			;
+
+			"skills": false,
+
+			;
+			; Special Needs
+			;
+
+			"specialNeeds": false,
+
+			;
+			; Volunteering
+			;
+
+			"volunteering": false,
+			"volunteerSkills": false,
+			"volunteerTags": false,
+			"volunteerPreferences": false,
+
+			;
+			; Additional Member Information
+			;
+
+			"survey": false,
+			"memberSource": false,
+
+			;
+			; Account Info
+			;
+
+			"account": {
+				"preface": null,
+				"addendum": null,
+				"password": true,
+				"passwordConfirmation": true,
+			},
+			"outStateMember": null,
+		},
+
+		"agreements": {
+			"affirmation": false,
+			"bylaws": true,
+			"terms": false,
+			"informationRelease": false,
+			"dataRelease": false,
+			"verify": false,
+		},
+	}

@@ -38,7 +38,7 @@ final class JinRenderer
             $pendingBlankLines = 0;
 
             if ($statement instanceof Comment) {
-                $lines[] = $this->indent($section, $options) . '; ' . $statement->text();
+                $lines[] = $this->indent($section, $options) . $this->renderComment($statement->text());
                 continue;
             }
 
@@ -189,12 +189,17 @@ final class JinRenderer
             $this->appendBlankLines($lines, $blankLines, $options);
             $blankLines = 0;
             if ($item['type'] === 'comment' && is_string($item['text'] ?? null)) {
-                $lines[] = $this->indentDepth($depth, $options) . '; ' . $item['text'];
+                $lines[] = $this->indentDepth($depth, $options) . $this->renderComment($item['text']);
             }
         }
         $this->appendBlankLines($lines, $blankLines, $options);
 
         return $lines;
+    }
+
+    private function renderComment(string $text): string
+    {
+        return ';' . ($text === '' ? '' : ' ' . $text);
     }
 
     /** @param list<string> $section */
