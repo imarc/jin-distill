@@ -1,0 +1,19 @@
+tests/Formatting/GoldenFormattingTest.php
+  s_8eb9f2e6b11c9a::t_0ac11854c391de 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b295d05789ee563ebdb0b2e16b4f3d5c8b305379",
+  "prompts": {},
+  "sessions": {
+    "s_8eb9f2e6b11c9a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0a5f6-340e-73e2-b016-46905b41142f",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
