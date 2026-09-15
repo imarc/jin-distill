@@ -1,0 +1,35 @@
+README.md
+  s_8eb9f2e6b11c9a::t_4711786cf2e2e3 82,97-113
+docs/api.md
+  s_8eb9f2e6b11c9a::t_ad586af1879550 19,75-78,97-105
+docs/security.md
+  s_8eb9f2e6b11c9a::t_bbcfc09005218e 13,29-30,72-76
+src/JinDistill/Evaluation/DotinkEvaluator.php
+  s_8eb9f2e6b11c9a::t_e1e16506574627 10,21-23,28
+src/JinDistill/Evaluation/JinEvaluator.php
+  s_8eb9f2e6b11c9a::t_6ef1df5cfbae82 1-34
+src/JinDistill/Evaluation/SemanticVerifier.php
+  s_8eb9f2e6b11c9a::t_fc8e94025995e6 7,9-22
+src/JinDistill/JinDistiller.php
+  s_8eb9f2e6b11c9a::t_d0af91a19cd1a7 18,39,78-85,128,133-143
+tests/Evaluation/SemanticVerifierTest.php
+  s_8eb9f2e6b11c9a::t_6f8b1cf1823d70 5,7,47-61
+tests/JinDistillerTest.php
+  s_8eb9f2e6b11c9a::t_89577cca69749b 5-6,76-120
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "03186bd8f64152ded93a19ab8bacb01a38596441",
+  "prompts": {},
+  "sessions": {
+    "s_8eb9f2e6b11c9a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0a5f6-340e-73e2-b016-46905b41142f",
+        "model": "unknown"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
