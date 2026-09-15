@@ -5,8 +5,8 @@
 - Repository: /Users/austinfishbaugh/Packages/imarc/jin-distill
 - Branch: rebuild
 - Worktree was clean when handoff began.
-- Latest commit: 65c839a test: cover identical jin diffs.
-- Latest verification: composer test passed: 98 tests, 264 assertions.
+- Latest commit: ea92c12 build: fix composer validation gate.
+- Latest verification: composer check passed: 139 tests, 342 assertions; PHPStan; style; strict Composer validation.
 - User wants small atomic commits. Include a short Next line in every completion summary.
 - User enabled $caveman full; retain terse replies until told to stop.
 - Every terminal command starts with rtk; use apply_patch for edits. Stage only named files; commit after focused and full tests plus git diff --check.
@@ -54,35 +54,19 @@ Implemented:
 - JinDistiller::diffFiles(parentPath, targetPath, outputPath) composes both sources, derives output-relative extends path, never writes outputPath.
 - ExtendsReference handles sibling/ancestor refs and Windows slash normalization.
 
-## Gaps / risks
+## Current completion
 
-1. Dynamic diff conflicts unfinished. User asked continue 3 more times; only first completed (65c839a). A failed helper test was deleted before commit; tree should be clean.
-   - Add UndiffableDefinitionException.
-   - Parent opaque assignment vs target nested path must fail before output.
-   - Use direct Analyzer + SourceGraphBuilder + DefinitionComposer test setup; do not reflect another test class.
+- Dynamic diff conflicts, provenance, diagnostics, optional overlay verification, inherited-input diff tests, golden formatter fixtures, canonical-layout diagnostics, reporting, limits/cache, CI, package metadata, documentation, and release gates were completed after the original handoff.
+- Release plan at docs/superpowers/plans/2026-09-09-jin-distill-release.md is fully checked off.
+- Handoff is committed release context; local test scripts remain untracked.
 
-2. Diff/Differ.php was written under pressure and compacted. Refactor only while touching it; preserve behavior/tests.
+## Suggested next task
 
-3. Diff ordering/sections incomplete for all transitions, comments, metadata.
+No known planned implementation remains. Start with a release-readiness review:
 
-4. DiffResult only exposes content, differences, removals. Plan wants provenance, diagnostics, optional verification.
-
-5. Formatting/validation plan unfinished: golden fixtures, legacy formatter decision, canonical layout diagnostics, Rule classes.
-
-6. Release work untouched: README/docs, static analysis/CI, package metadata, compatibility matrix.
-
-## Immediate next task
-
-Finish dynamic diff conflict:
-
-1. Parent: fields = run(build()).
-2. Target: [fields] then required = true.
-3. Differ::diff(parent, target, 'base.jin') throws UndiffableDefinitionException.
-4. Conflict details expose /fields and /fields/required.
-5. No callbacks execute.
-6. Focused test, composer test, git diff --check, atomic commit.
-
-Then: complete DiffResult reporting, generated ordering/comments; return to formatting/validation and release plan.
+1. Run git status --short, git diff --check, and composer check.
+2. Inspect commits since implementation start for API/documentation consistency.
+3. Do not tag, push, or publish without explicit user request.
 
 ## Suggested skills
 
