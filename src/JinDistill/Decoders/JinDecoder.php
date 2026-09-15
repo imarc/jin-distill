@@ -40,6 +40,7 @@ final class JinDecoder implements DecoderInterface
         $section = [];
         $sectionStack = [];
         $pendingComments = [];
+        $pendingTrivia = [];
 
         for ($index = 0; $index < count($lines); $index++) {
             $line = $lines[$index];
@@ -48,7 +49,7 @@ final class JinDecoder implements DecoderInterface
 
             if ($trimmed === '') {
                 $statements[] = new BlankLine($this->span($source, $lineNumber, 1, $lineNumber, 1));
-                $pendingComments = [];
+                $pendingTrivia[] = $statements[array_key_last($statements)];
                 continue;
             }
 
@@ -56,6 +57,7 @@ final class JinDecoder implements DecoderInterface
                 $comment = new Comment(trim(substr(ltrim($line), 1)), $this->span($source, $lineNumber, 1, $lineNumber, strlen($line)));
                 $statements[] = $comment;
                 $pendingComments[] = $comment;
+                $pendingTrivia[] = $comment;
                 continue;
             }
 
@@ -70,6 +72,7 @@ final class JinDecoder implements DecoderInterface
                     'source' => $source->canonicalPath(),
                 ];
                 $pendingComments = [];
+                $pendingTrivia = [];
                 continue;
             }
 
@@ -96,10 +99,11 @@ final class JinDecoder implements DecoderInterface
             $value = $this->parseValue($valueSource);
             $path = Path::fromSegments(array_merge($section, explode('.', $key)));
             $inlineComment = $inlineText === null ? null : new Comment($inlineText, $this->span($source, $lineNumber, 1, $lineNumber, strlen($line)));
-            $assignment = new Assignment($path, $value, $pendingComments, $inlineComment, $this->span($source, $lineNumber, 1, $endIndex + 1, strlen($lines[$endIndex])));
+            $assignment = new Assignment($path, $value, $pendingComments, $inlineComment, $this->span($source, $lineNumber, 1, $endIndex + 1, strlen($lines[$endIndex])), $pendingTrivia);
             $statements[] = $assignment;
             $this->recordLegacyData($assignment, $key, $data, $directives, $metadata);
             $pendingComments = [];
+            $pendingTrivia = [];
         }
 
         $document = new Document($statements, $source, $data, $this->stringKeyed($directives), $this->stringKeyed($metadata), $original);
@@ -340,15 +344,23 @@ final class JinDecoder implements DecoderInterface
         $pending = [];
         foreach (explode("\n", $raw) as $offset => $line) {
             $trimmed = trim($line);
+            if ($trimmed === '') {
+                $pending[] = ['type' => 'blank'];
+                continue;
+            }
             if (str_starts_with($trimmed, ';')) {
-                $pending[] = trim(substr($trimmed, 1));
+                $pending[] = ['type' => 'comment', 'text' => trim(substr($trimmed, 1))];
                 continue;
             }
             if (preg_match('/^"((?:""|[^"])*)"\s*:\s*(.*)$/', $trimmed, $matches) === 1) {
                 $key = str_replace('""', '"', $matches[1]);
                 [, $inline] = $this->splitInlineComment($matches[2]);
                 $metadata[implode('.', [...explode('.', $basePath), ...$stack, $key])] = [
-                    'leadingComments' => $pending,
+                    'leadingComments' => array_values(array_map(
+                        static fn (array $trivia): string => $trivia['text'],
+                        array_filter($pending, static fn (array $trivia): bool => $trivia['type'] === 'comment'),
+                    )),
+                    'leadingTrivia' => $pending,
                     'inlineComment' => $inline,
                     'line' => $startLine + $offset,
                     'source' => $source,

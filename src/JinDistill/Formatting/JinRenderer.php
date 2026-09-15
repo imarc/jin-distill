@@ -26,12 +26,16 @@ final class JinRenderer
         $options ??= new FormatOptions();
         $lines = [];
         $section = [];
+        $pendingBlankLines = 0;
 
         foreach ($document->statements() as $statement) {
             if ($statement instanceof BlankLine) {
-                $lines[] = '';
+                $pendingBlankLines++;
                 continue;
             }
+
+            $this->appendBlankLines($lines, $pendingBlankLines, $options);
+            $pendingBlankLines = 0;
 
             if ($statement instanceof Comment) {
                 $lines[] = $this->indent($section, $options) . '; ' . $statement->text();
@@ -136,12 +140,61 @@ final class JinRenderer
 
         $lines = ['{'];
         foreach ($value as $key => $item) {
+            foreach ($this->metadataTrivia($document, $path->append((string) $key), $depth + 1, $options) as $line) {
+                $lines[] = $line;
+            }
             $lines[] = $this->indentDepth($depth + 1, $options)
             . $this->quote((string) $key)
             . ': ' . $this->renderStaticValue($item, $depth + 1, $path->append((string) $key), $document, $options, true) . ',';
         }
         $lines[] = $this->indentDepth($depth, $options) . '}';
         return implode($options->lineEnding(), $lines);
+    }
+
+    /** @param list<string> $lines */
+    private function appendBlankLines(array &$lines, int $count, FormatOptions $options): void
+    {
+        if ($count === 0 || $options->spacingPolicy() === SpacingPolicy::None) {
+            return;
+        }
+
+        foreach (range(1, $options->spacingPolicy() === SpacingPolicy::One ? 1 : $count) as $_) {
+            $lines[] = '';
+        }
+    }
+
+    /** @return list<string> */
+    private function metadataTrivia(Document $document, Path $path, int $depth, FormatOptions $options): array
+    {
+        $metadata = $document->metadata[implode('.', $path->segments())] ?? null;
+        if (!is_array($metadata)) {
+            return [];
+        }
+
+        $trivia = $metadata['leadingTrivia'] ?? [];
+        if (!is_array($trivia)) {
+            return [];
+        }
+
+        $lines = [];
+        $blankLines = 0;
+        foreach ($trivia as $item) {
+            if (!is_array($item) || !is_string($item['type'] ?? null)) {
+                continue;
+            }
+            if ($item['type'] === 'blank') {
+                $blankLines++;
+                continue;
+            }
+            $this->appendBlankLines($lines, $blankLines, $options);
+            $blankLines = 0;
+            if ($item['type'] === 'comment' && is_string($item['text'] ?? null)) {
+                $lines[] = $this->indentDepth($depth, $options) . '; ' . $item['text'];
+            }
+        }
+        $this->appendBlankLines($lines, $blankLines, $options);
+
+        return $lines;
     }
 
     /** @param list<string> $section */

@@ -17,6 +17,7 @@ final class FormatOptions
         private string $sectionReferences = 'explicit',
         private string $diffGranularity = 'assignment',
         private bool $metadataSensitiveDiffs = true,
+        private SpacingPolicy $spacingPolicy = SpacingPolicy::Preserve,
     ) {
         if ($indentation === '' || !in_array($lineEnding, ["\n", "\r\n"], true)) {
             throw new InvalidArgumentException('Formatting indentation and line ending must be supported values.');
@@ -63,21 +64,29 @@ final class FormatOptions
     {
         return $this->metadataSensitiveDiffs;
     }
+    public function spacingPolicy(): SpacingPolicy
+    {
+        return $this->spacingPolicy;
+    }
 
     public function withIndentation(string $indentation): self
     {
-        return new self($indentation, $this->lineEnding, $this->commentPolicy, $this->ordering, $this->extendsPathStyle, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs);
+        return new self($indentation, $this->lineEnding, $this->commentPolicy, $this->ordering, $this->extendsPathStyle, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs, $this->spacingPolicy);
     }
     public function withCommentPolicy(CommentPolicy $policy): self
     {
-        return new self($this->indentation, $this->lineEnding, $policy, $this->ordering, $this->extendsPathStyle, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs);
+        return new self($this->indentation, $this->lineEnding, $policy, $this->ordering, $this->extendsPathStyle, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs, $this->spacingPolicy);
     }
     public function withOrdering(OrderingPolicy $ordering): self
     {
-        return new self($this->indentation, $this->lineEnding, $this->commentPolicy, $ordering, $this->extendsPathStyle, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs);
+        return new self($this->indentation, $this->lineEnding, $this->commentPolicy, $ordering, $this->extendsPathStyle, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs, $this->spacingPolicy);
     }
     public function withExtendsPathStyle(string $style): self
     {
-        return new self($this->indentation, $this->lineEnding, $this->commentPolicy, $this->ordering, $style, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs);
+        return new self($this->indentation, $this->lineEnding, $this->commentPolicy, $this->ordering, $style, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs, $this->spacingPolicy);
+    }
+    public function withSpacingPolicy(SpacingPolicy $policy): self
+    {
+        return new self($this->indentation, $this->lineEnding, $this->commentPolicy, $this->ordering, $this->extendsPathStyle, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs, $policy);
     }
 }

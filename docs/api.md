@@ -74,7 +74,8 @@ a new instance; the original instance remains unchanged.
 ### `Formatting\FormatOptions`
 
 Immutable. `withIndentation()`, `withCommentPolicy()`, `withOrdering()`,
-`withExtendsPathStyle()`. Profiles: `Profiles\ImarcStyle::v1()` (tabs, LF,
+`withExtendsPathStyle()`, `withSpacingPolicy()`. `SpacingPolicy` controls
+leading blank lines: `Preserve` (default), `None`, or `One`. Profiles: `Profiles\ImarcStyle::v1()` (tabs, LF,
 Hiraeth `file()` extends) and `Profiles\DotinkStyle::v1()` (bare relative
 extends). See `docs/formatting.md`.
 

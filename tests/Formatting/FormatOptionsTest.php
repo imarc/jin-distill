@@ -5,6 +5,7 @@ namespace JinDistill\Tests\Formatting;
 use JinDistill\Formatting\ExtendsPathStyle;
 use JinDistill\Formatting\Profiles\DotinkStyle;
 use JinDistill\Formatting\Profiles\ImarcStyle;
+use JinDistill\Formatting\SpacingPolicy;
 use PHPUnit\Framework\TestCase;
 
 final class FormatOptionsTest extends TestCase
@@ -37,5 +38,14 @@ final class FormatOptionsTest extends TestCase
         self::assertSame("\t", $default->indentation());
         self::assertSame('  ', $changed->indentation());
         self::assertSame("\t", ImarcStyle::v1()->indentation());
+    }
+
+    public function testItConfiguresLeadingSpacingImmutably(): void
+    {
+        $default = ImarcStyle::v1();
+        $changed = $default->withSpacingPolicy(SpacingPolicy::None);
+
+        self::assertSame(SpacingPolicy::Preserve, $default->spacingPolicy());
+        self::assertSame(SpacingPolicy::None, $changed->spacingPolicy());
     }
 }

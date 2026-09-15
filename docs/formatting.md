@@ -4,6 +4,20 @@ Formatting is controlled by an immutable `Formatting\FormatOptions` object.
 Rendering walks the ordered syntax model, so comments, order, and raw
 expressions survive; only layout is decided by the profile.
 
+## Leading spacing
+
+Blank lines belong to the node that follows them, including assignments and
+members in JSON-like values. Leading comments remain attached when blank lines
+separate them from that node.
+
+`FormatOptions::withSpacingPolicy()` controls emitted leading blank lines:
+
+- `SpacingPolicy::Preserve` (default) keeps their source count.
+- `SpacingPolicy::None` removes them.
+- `SpacingPolicy::One` emits one where source contained one or more.
+
+The policy applies to assignments, sections, and JSON-like members.
+
 ## Profiles
 
 | Profile | Indentation | Line ending | Extends style |

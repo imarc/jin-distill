@@ -5,6 +5,8 @@ namespace JinDistill\Tests\Formatting;
 use Dotink\Jin\Parser;
 use JinDistill\Decoders\JinDecoder;
 use JinDistill\Formatting\JinRenderer;
+use JinDistill\Formatting\FormatOptions;
+use JinDistill\Formatting\SpacingPolicy;
 use PHPUnit\Framework\TestCase;
 
 final class GoldenFormattingTest extends TestCase
@@ -37,9 +39,46 @@ final class GoldenFormattingTest extends TestCase
         );
     }
 
-    private function render(string $contents): string
+    public function testItAppliesLeadingSpacingPolicy(): void
     {
-        return (new JinRenderer())->render((new JinDecoder())->decode($contents));
+        $source = "; Heading\n\nname = CPA";
+
+        self::assertSame("; Heading\n\nname = CPA\n", $this->render($source));
+        self::assertSame("; Heading\nname = CPA\n", $this->render($source, SpacingPolicy::None));
+        self::assertSame("; Heading\n\nname = CPA\n", $this->render($source, SpacingPolicy::One));
+    }
+
+    public function testItRendersNestedJsonLeadingCommentsAndSpacing(): void
+    {
+        self::assertSame(<<<'JIN'
+[form]
+	fields = {
+		"person": {
+
+			; Personal Information
+
+			"avatar": false,
+		},
+	}
+JIN
+ . "\n", $this->render(<<<'JIN'
+[form]
+    fields = {
+        "person": {
+
+            ; Personal Information
+
+            "avatar": false,
+        },
+    }
+JIN));
+    }
+
+    private function render(string $contents, ?SpacingPolicy $spacing = null): string
+    {
+        $options = $spacing === null ? null : (new FormatOptions())->withSpacingPolicy($spacing);
+
+        return (new JinRenderer())->render((new JinDecoder())->decode($contents), $options);
     }
 
     private function withoutInheritance(string $contents): string
