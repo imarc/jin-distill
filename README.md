@@ -79,7 +79,7 @@ See `examples/diff/` for the golden inputs and generated output.
 ## Evaluation (executes PHP)
 
 > [!WARNING]
-> `evaluateFile()` and `verifySemantics()` hand the source to Dotink's parser.
+> `evaluateFile()`, `verifySemantics()`, and `verifyFileSemantics()` hand the source to Dotink's parser.
 > Jin's `run()` executes arbitrary PHP and `env()` reads the environment. Only
 > evaluate configuration you trust, and read `docs/security.md` first.
 
@@ -93,6 +93,23 @@ $evaluated = $distiller->evaluateFile('config/app.jin', new EvaluationOptions(
 
 $evaluated->resolvedData();
 ```
+
+Applications may reuse their runtime Jin configuration through a parser factory:
+
+```php
+use JinDistill\Evaluation\JinEvaluator;
+
+$distiller = $distiller->withEvaluator(new JinEvaluator(
+    fn (): Dotink\Jin\Parser => $runtimeParserFactory(),
+));
+
+$flattened = $distiller->flattenFile('config/app.jin')->content();
+$verification = $distiller->verifyFileSemantics('config/app.jin', $flattened);
+```
+
+The factory must return a fresh parser on every call. Caller-provided evaluators
+are used only by explicit evaluation workflows; static workflows remain
+non-executing. Per-call `EvaluationOptions` override the configured evaluator.
 
 ## Reports
 

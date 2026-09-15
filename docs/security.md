@@ -10,6 +10,7 @@
 | `diffFiles()` | no |
 | `evaluateFile()` | **yes** |
 | `verifySemantics()` | **yes** |
+| `verifyFileSemantics()` | **yes** |
 
 The static workflows parse source into a syntax model. An expression such as
 `run(...)` is kept as opaque text: compared as raw bytes, copied verbatim, and
@@ -25,7 +26,8 @@ Dotink's parser resolves Jin functions while parsing:
 - `env(...)` reads process environment variables, which commonly hold
   credentials.
 - `file(...)` and `--extends` read files from disk.
-- Any function you register in `EvaluationOptions` runs with your privileges.
+- Any function registered through `EvaluationOptions` or a caller-provided
+  `JinEvaluator` runs with your privileges.
 
 Evaluate only configuration you trust. Treat `evaluateFile()` on
 attacker-controlled Jin as equivalent to running attacker-supplied PHP.
@@ -66,6 +68,11 @@ configuration — typically to confirm that a normalized or flattened file still
 resolves the way the original did. Inheritance directives (`--extends`,
 `--without`) are excluded from the comparison because they describe
 composition, not configuration.
+
+`verifyFileSemantics()` performs the same comparison but reads the original
+from disk and supplies its path to the parser. A caller-provided evaluator is
+outside JinDistill's `PathPolicy`; its parser functions must enforce any needed
+filesystem restrictions themselves.
 
 ## Reporting a vulnerability
 

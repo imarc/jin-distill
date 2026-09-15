@@ -15,6 +15,7 @@ use JinDistill\Diff\DiffOptions;
 use JinDistill\Diff\DiffResult;
 use JinDistill\Evaluation\DotinkEvaluator;
 use JinDistill\Evaluation\EvaluationOptions;
+use JinDistill\Evaluation\JinEvaluator;
 use JinDistill\Evaluation\SemanticVerifier;
 use JinDistill\Evaluation\VerificationResult;
 use JinDistill\Formats\JinFormat;
@@ -35,6 +36,7 @@ class JinDistiller
     private ?string $applicationRoot = null;
     /** @var list<string>|null */
     private ?array $allowedRoots = null;
+    private ?JinEvaluator $evaluator = null;
 
     public function __construct(
         ?JinDecoder $decoder = null,
@@ -69,6 +71,14 @@ class JinDistiller
     {
         $copy = clone $this;
         $copy->allowedRoots = array_map(fn (string $root): string => $this->canonicalRoot($root), $roots);
+
+        return $copy;
+    }
+
+    public function withEvaluator(JinEvaluator $evaluator): self
+    {
+        $copy = clone $this;
+        $copy->evaluator = $evaluator;
 
         return $copy;
     }
@@ -115,12 +125,22 @@ class JinDistiller
 
     public function evaluateFile(string $path, ?EvaluationOptions $options = null): AnalysisResult
     {
-        return (new DotinkEvaluator($this->analyzerForFile($path)))->evaluateFile($path, $options);
+        return (new DotinkEvaluator($this->analyzerForFile($path), $this->evaluator))->evaluateFile($path, $options);
     }
 
     public function verifySemantics(string $original, string $generated, ?EvaluationOptions $options = null): VerificationResult
     {
-        return (new SemanticVerifier())->verify($original, $generated, $options ?? new EvaluationOptions());
+        return (new SemanticVerifier($this->evaluator))->verify($original, $generated, $options);
+    }
+
+    public function verifyFileSemantics(string $originalPath, string $generated, ?EvaluationOptions $options = null): VerificationResult
+    {
+        $original = file_get_contents($originalPath);
+        if ($original === false) {
+            throw new \RuntimeException(sprintf('Cannot read Jin source for verification: %s', $originalPath));
+        }
+
+        return (new SemanticVerifier($this->evaluator))->verify($original, $generated, $options, $originalPath);
     }
 
     private function analyzerForFile(string $path): Analyzer

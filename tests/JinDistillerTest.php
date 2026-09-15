@@ -2,6 +2,8 @@
 
 namespace JinDistill\Tests;
 
+use Dotink\Jin\Parser;
+use JinDistill\Evaluation\JinEvaluator;
 use JinDistill\JinDistiller;
 use PHPUnit\Framework\TestCase;
 
@@ -70,5 +72,50 @@ final class JinDistillerTest extends TestCase
             'name = Default',
             $configured->flattenFile($testsRoot . '/fixtures/rooted-child.jin')->content(),
         );
+    }
+
+    public function testItUsesAnImmutableCallerProvidedEvaluatorForRuntimeWorkflows(): void
+    {
+        $evaluator = new JinEvaluator(static fn (): Parser => new Parser([], [
+            'hello' => static fn (string $name): string => 'Runtime ' . $name,
+        ]));
+        $distiller = new JinDistiller();
+        $configured = $distiller->withEvaluator($evaluator);
+
+        self::assertNotSame($distiller, $configured);
+        self::assertSame(
+            'Runtime World',
+            $configured->evaluateFile(__DIR__ . '/fixtures/evaluation-functions.jin')->resolvedData()['greeting'],
+        );
+        self::assertTrue($configured->verifySemantics('greeting = hello(World)', 'greeting=hello(World)')->isEquivalent());
+    }
+
+    public function testStaticWorkflowsNeverInvokeTheRuntimeEvaluator(): void
+    {
+        $evaluator = new JinEvaluator(static function (): Parser {
+            throw new \RuntimeException('Runtime evaluator invoked.');
+        });
+
+        $output = (new JinDistiller())
+            ->withEvaluator($evaluator)
+            ->flattenFile(__DIR__ . '/fixtures/child.jin')
+            ->content();
+
+        self::assertStringContainsString('name = CPA', $output);
+    }
+
+    public function testItVerifiesAFileAgainstGeneratedContentWithRuntimeInheritance(): void
+    {
+        $fixtureRoot = realpath(__DIR__ . '/fixtures');
+        self::assertNotFalse($fixtureRoot);
+        $path = $fixtureRoot . '/child.jin';
+        $evaluator = new JinEvaluator(static fn (): Parser => new Parser([], [
+            'file' => static fn (string $file): string => $fixtureRoot . '/' . $file,
+        ]));
+        $distiller = (new JinDistiller())->withEvaluator($evaluator);
+
+        $result = $distiller->verifyFileSemantics($path, $distiller->flattenFile($path)->content());
+
+        self::assertTrue($result->isEquivalent());
     }
 }

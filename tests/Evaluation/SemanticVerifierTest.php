@@ -2,7 +2,9 @@
 
 namespace JinDistill\Tests\Evaluation;
 
+use Dotink\Jin\Parser;
 use JinDistill\Evaluation\EvaluationOptions;
+use JinDistill\Evaluation\JinEvaluator;
 use JinDistill\Evaluation\SemanticVerifier;
 use PHPUnit\Framework\TestCase;
 
@@ -41,5 +43,20 @@ final class SemanticVerifierTest extends TestCase
         );
 
         self::assertSame([], $result->differences());
+    }
+
+    public function testItUsesFreshRuntimeParsersForBothInputs(): void
+    {
+        $evaluator = new JinEvaluator(static function (): Parser {
+            $calls = 0;
+
+            return new Parser([], ['serial' => static function () use (&$calls): int {
+                return ++$calls;
+            }]);
+        });
+
+        $result = (new SemanticVerifier($evaluator))->verify('value = serial()', 'value = serial()');
+
+        self::assertTrue($result->isEquivalent());
     }
 }

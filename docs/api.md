@@ -16,6 +16,7 @@ Everything here is public API under semver. Result objects are immutable.
 | `normalize(string $contents, ?string $path = null, bool $extensions = true)` | `string` | no |
 | `evaluateFile(string $path, ?EvaluationOptions $options = null)` | `Analysis\AnalysisResult` | **yes** |
 | `verifySemantics(string $original, string $generated, ?EvaluationOptions $options = null)` | `Evaluation\VerificationResult` | **yes** |
+| `verifyFileSemantics(string $originalPath, string $generated, ?EvaluationOptions $options = null)` | `Evaluation\VerificationResult` | **yes** |
 
 No facade method writes a file. `diffFiles()` takes `$outputPath` only to
 compute the `--extends` reference relative to where you intend to save.
@@ -71,6 +72,10 @@ withApplicationRoot() sets the root used for file(...) inheritance and IMARC
 diff references. withAllowedRoots() sets the filesystem allowlist. Both return
 a new instance; the original instance remains unchanged.
 
+`withEvaluator(JinEvaluator $evaluator)` configures an immutable evaluator for
+`evaluateFile()`, `verifySemantics()`, and `verifyFileSemantics()`. Static
+workflows never use it. Explicit per-call `EvaluationOptions` take precedence.
+
 ### `Formatting\FormatOptions`
 
 Immutable. `withIndentation()`, `withCommentPolicy()`, `withOrdering()`,
@@ -88,6 +93,15 @@ extends). See `docs/formatting.md`.
 
 `context()`, `functions()`, `associative()` — passed straight to Dotink's
 parser. Register `file` here when the source uses Hiraeth `file()` inheritance.
+
+### `Evaluation\JinEvaluator`
+
+Construct with a callable that returns a fresh `Dotink\Jin\Parser`. This lets an
+application reuse its runtime parser configuration without sharing mutable
+parser state between evaluations. `fromOptions()` provides the default adapter.
+
+`verifyFileSemantics()` reads the original file and supplies its path to the
+runtime parser before comparing it with generated source.
 
 ### `Reporting\ReportOptions`
 

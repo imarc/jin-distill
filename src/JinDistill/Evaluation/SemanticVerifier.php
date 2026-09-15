@@ -2,14 +2,24 @@
 
 namespace JinDistill\Evaluation;
 
-use Dotink\Jin\Parser;
-
 final class SemanticVerifier
 {
-    public function verify(string $original, string $generated, EvaluationOptions $options): VerificationResult
+    public function __construct(private ?JinEvaluator $evaluator = null)
     {
-        $before = $this->withoutDirectives($this->evaluate($original, $options));
-        $after = $this->withoutDirectives($this->evaluate($generated, $options));
+    }
+
+    public function verify(
+        string $original,
+        string $generated,
+        ?EvaluationOptions $options = null,
+        ?string $originalPath = null,
+        ?string $generatedPath = null,
+    ): VerificationResult {
+        $evaluator = $options === null
+            ? ($this->evaluator ?? JinEvaluator::fromOptions())
+            : JinEvaluator::fromOptions($options);
+        $before = $this->withoutDirectives($evaluator->evaluate($original, $originalPath));
+        $after = $this->withoutDirectives($evaluator->evaluate($generated, $generatedPath));
         $differences = [];
         $this->compare($before, $after, '', $differences);
 
@@ -30,13 +40,6 @@ final class SemanticVerifier
         }
 
         return $data;
-    }
-
-    private function evaluate(string $contents, EvaluationOptions $options): mixed
-    {
-        $parser = new Parser($options->context(), $options->functions(), $options->associative());
-
-        return $parser->parse($contents)->all();
     }
 
     /** @param list<string> $differences */
