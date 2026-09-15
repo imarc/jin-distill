@@ -56,4 +56,19 @@ final class JinDistillerTest extends TestCase
         self::assertStringContainsString('--extends = file(base.jin)', $result->content());
         self::assertFileDoesNotExist($output);
     }
+
+    public function testItUsesImmutableApplicationAndAllowedRootsForFileInheritance(): void
+    {
+        $testsRoot = __DIR__;
+        $distiller = new JinDistiller();
+        $configured = $distiller
+            ->withApplicationRoot($testsRoot)
+            ->withAllowedRoots([$testsRoot . '/fixtures']);
+
+        self::assertNotSame($distiller, $configured);
+        self::assertStringContainsString(
+            'name = Default',
+            $configured->flattenFile($testsRoot . '/fixtures/rooted-child.jin')->content(),
+        );
+    }
 }

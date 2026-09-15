@@ -64,6 +64,13 @@ exposes `winner()`, `overridden()`, and `removals()`, each a `Definition` with
 
 ## Options
 
+### JinDistiller roots
+
+JinDistiller instances are immutable with respect to filesystem resolution.
+withApplicationRoot() sets the root used for file(...) inheritance and IMARC
+diff references. withAllowedRoots() sets the filesystem allowlist. Both return
+a new instance; the original instance remains unchanged.
+
 ### `Formatting\FormatOptions`
 
 Immutable. `withIndentation()`, `withCommentPolicy()`, `withOrdering()`,

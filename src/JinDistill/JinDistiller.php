@@ -2,6 +2,7 @@
 
 namespace JinDistill;
 
+use InvalidArgumentException;
 use JinDistill\Analysis\AnalysisResult;
 use JinDistill\Analysis\Analyzer;
 use JinDistill\Analysis\SourceGraphBuilder;
@@ -31,6 +32,9 @@ class JinDistiller
     protected JinDecoder $decoder;
     protected JinResolver $resolver;
     protected JinFormat $format;
+    private ?string $applicationRoot = null;
+    /** @var list<string>|null */
+    private ?array $allowedRoots = null;
 
     public function __construct(
         ?JinDecoder $decoder = null,
@@ -50,6 +54,23 @@ class JinDistiller
     public function decodeFile(string $path): JinDocument
     {
         return $this->decoder->decodeFile($path);
+    }
+
+    public function withApplicationRoot(?string $root): self
+    {
+        $copy = clone $this;
+        $copy->applicationRoot = $root === null ? null : $this->canonicalRoot($root);
+
+        return $copy;
+    }
+
+    /** @param list<string> $roots */
+    public function withAllowedRoots(array $roots): self
+    {
+        $copy = clone $this;
+        $copy->allowedRoots = array_map(fn (string $root): string => $this->canonicalRoot($root), $roots);
+
+        return $copy;
     }
 
     public function resolveFile(string $path): JinDocument
@@ -82,7 +103,7 @@ class JinDistiller
     ): DiffResult {
         $parent = (new DefinitionComposer())->compose($this->analyzerForFile($parentPath)->analyzeFile($parentPath));
         $target = (new DefinitionComposer())->compose($this->analyzerForFile($targetPath)->analyzeFile($targetPath));
-        $reference = ExtendsReference::forOutput($parentPath, $outputPath, $applicationRoot)->toSource($format);
+        $reference = ExtendsReference::forOutput($parentPath, $outputPath, $applicationRoot ?? $this->applicationRoot)->toSource($format);
 
         return (new Differ())->diff($parent, $target, $reference, $options, $format);
     }
@@ -104,15 +125,28 @@ class JinDistiller
 
     private function analyzerForFile(string $path): Analyzer
     {
-        $root = realpath(dirname($path));
-        if ($root === false) {
+        $defaultRoot = realpath(dirname($path));
+        if ($defaultRoot === false) {
             throw new \RuntimeException(sprintf('Cannot resolve Jin source directory: %s', $path));
         }
 
+        $root = $this->applicationRoot ?? $defaultRoot;
+        $allowedRoots = $this->allowedRoots ?? [$root];
+
         return new Analyzer(new SourceGraphBuilder(
-            new FilesystemSourceLoader(new PathPolicy([$root])),
+            new FilesystemSourceLoader(new PathPolicy($allowedRoots)),
             $this->decoder,
             [new RelativeExtendsResolver(), new FunctionExtendsResolver('file', $root)],
         ));
+    }
+
+    private function canonicalRoot(string $root): string
+    {
+        $canonical = realpath($root);
+        if ($canonical === false) {
+            throw new InvalidArgumentException(sprintf('Cannot resolve Jin application root: %s', $root));
+        }
+
+        return $canonical;
     }
 }
