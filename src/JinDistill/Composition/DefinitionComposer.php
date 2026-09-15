@@ -17,9 +17,11 @@ final class DefinitionComposer
         $statements = [];
         $positions = [];
         $opaque = [];
+        $metadata = [];
         $source = null;
         foreach (array_reverse($analysis->sourceGraph()->documents()) as $document) {
             $source ??= $document->source();
+            $metadata = array_replace($metadata, $document->metadata);
             foreach ($document->statements() as $statement) {
                 if (!$statement instanceof Assignment) {
                     continue;
@@ -112,7 +114,7 @@ final class DefinitionComposer
             }
             $renderable[] = $statement;
         }
-        return new ComposedDocument(new Document($renderable, $source), $analysis->provenance());
+        return new ComposedDocument(new Document($renderable, $source, [], [], $metadata), $analysis->provenance());
     }
 
     /** @param list<string> $ancestor @param list<string> $path */

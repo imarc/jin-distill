@@ -86,4 +86,34 @@ final class FlattenerTest extends TestCase
 
         self::assertSame("; Base name\n\nname = Child\n", (new Flattener())->flatten($analysis)->content());
     }
+
+    public function testItPreservesJsonMemberCommentsAndSpacingFromParent(): void
+    {
+        $parent = new SourceId('/project/base.jin', 'base.jin');
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([new LoadedSource($parent, <<<'JIN'
+[form]
+fields = {
+    "person": {
+
+        ; Personal Information
+
+        "avatar": false,
+    },
+}
+JIN)]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze(<<<'JIN'
+--extends = base.jin
+[form]
+fields = {
+    "person": {
+        "middleName": true,
+    },
+}
+JIN, new SourceId('/project/child.jin', 'child.jin'));
+
+        self::assertStringContainsString("\t\t\t; Personal Information\n\n\t\t\t\"avatar\": false,", (new Flattener())->flatten($analysis)->content());
+    }
 }
