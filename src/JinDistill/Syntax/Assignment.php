@@ -7,8 +7,10 @@ use JinDistill\Source\SourceSpan;
 
 final class Assignment extends Statement
 {
-    /** @param list<Comment> $comments */
-    /** @param list<Statement> $leadingTrivia */
+    /**
+     * @param list<Comment>   $comments
+     * @param list<Statement> $leadingTrivia
+     */
     public function __construct(
         private Path $path,
         private Value $value,
