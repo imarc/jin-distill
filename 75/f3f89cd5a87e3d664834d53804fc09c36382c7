@@ -1,0 +1,28 @@
+tests/Composition/GoldenFlattenTest.php
+  s_8eb9f2e6b11c9a::t_2e79061a36d510 1-33
+tests/fixtures/flatten/expected.jin
+  s_8eb9f2e6b11c9a::t_f3633949cd1da6 1-179
+src/JinDistill/Formatting/JinRenderer.php
+  s_8eb9f2e6b11c9a::t_22ed3be1db06cb 41,192,200-202
+  s_8eb9f2e6b11c9a::t_22d01ebcc94b75 203-204
+tests/fixtures/flatten/config/forms/application.jin
+  s_8eb9f2e6b11c9a::t_34ff0ef0a803d7 1-40
+tests/fixtures/flatten/vendor/imarc/cpa-tech/local/forms/application/default.jin
+  s_8eb9f2e6b11c9a::t_d0a4ec865facbe 1-198
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "75f3f89cd5a87e3d664834d53804fc09c36382c7",
+  "prompts": {},
+  "sessions": {
+    "s_8eb9f2e6b11c9a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0a5f6-340e-73e2-b016-46905b41142f",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
