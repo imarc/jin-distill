@@ -1,0 +1,31 @@
+tests/fixtures/rooted-child.jin
+  s_672ac1cdfe526c::t_4d9f1165c90f10 1
+tests/JinDistillerTest.php
+  s_672ac1cdfe526c::t_5e08c2cee2bf3f 69-71
+  s_672ac1cdfe526c::t_4d9f1165c90f10 59-68,72-73
+docs/api.md
+  s_672ac1cdfe526c::t_e00a3beb427901 67-73
+src/JinDistill/JinDistiller.php
+  s_672ac1cdfe526c::t_69078e75c295a6 106
+  s_672ac1cdfe526c::t_fd428d8ab46a36 35-37,59-73
+  s_672ac1cdfe526c::t_4bdae9916256ec 5
+  s_672ac1cdfe526c::t_718f542fe973b0 128-129,133-135,137
+  s_672ac1cdfe526c::t_f09237d23a7f50 74,142-151
+  s_672ac1cdfe526c::t_12ad8b4c520ac4 75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "900fa19551331c06432495af739a7e890b34b20e",
+  "prompts": {},
+  "sessions": {
+    "s_672ac1cdfe526c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a08c14-832e-7e42-85dc-9a797763dc8b",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
