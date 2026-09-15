@@ -1,0 +1,45 @@
+docs/formatting.md
+  s_8e2f947885b9ec::t_bb00008ba9dd7f 7-20
+tests/JinDecoderTest.php
+  s_8e2f947885b9ec::t_90f8dbfd8d6507 83-90,139-155
+tests/Formatting/FormatOptionsTest.php
+  s_8e2f947885b9ec::t_90f8dbfd8d6507 8,42-49
+  s_8e2f947885b9ec::t_5ee23db15fbf10 50
+src/JinDistill/Formatting/JinRenderer.php
+  s_8e2f947885b9ec::t_945ef4ace648b8 29,33,37-39,143-145,154-198
+  s_8e2f947885b9ec::t_7e4181711dc490 199
+src/JinDistill/Syntax/Assignment.php
+  s_8e2f947885b9ec::t_9c02b8c8cb0f2d 11,18,43-47
+  s_8e2f947885b9ec::t_446a5408607231 48
+docs/api.md
+  s_8e2f947885b9ec::t_bb00008ba9dd7f 77-78
+src/JinDistill/Formatting/SpacingPolicy.php
+  s_8e2f947885b9ec::t_9c02b8c8cb0f2d 1-10
+tests/Formatting/GoldenFormattingTest.php
+  s_8e2f947885b9ec::t_90f8dbfd8d6507 8-9,42,44-63,65-81
+  s_8e2f947885b9ec::t_c4ef3850341f6e 64
+src/JinDistill/Decoders/JinDecoder.php
+  s_8e2f947885b9ec::t_9c02b8c8cb0f2d 43,52,60,75,102,106,347-350,352,359-363
+tests/Composition/FlattenerTest.php
+  s_8e2f947885b9ec::t_90f8dbfd8d6507 77-88
+src/JinDistill/Composition/DefinitionComposer.php
+  s_8e2f947885b9ec::t_9c02b8c8cb0f2d 110-111,170,186
+src/JinDistill/Formatting/FormatOptions.php
+  s_8e2f947885b9ec::t_9c02b8c8cb0f2d 20,67-70,74,78,82,86-90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "f641975212cf555dc0c1af8740695bee8401390c",
+  "prompts": {},
+  "sessions": {
+    "s_8e2f947885b9ec": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0a5a4-40a2-7ea3-addd-3eaf11ea74f8",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
