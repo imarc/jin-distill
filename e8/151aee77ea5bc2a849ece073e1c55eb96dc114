@@ -1,0 +1,14 @@
+src/JinDistill/Syntax/Assignment.php
+  h_b44430a3281f44 10-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "e8151aee77ea5bc2a849ece073e1c55eb96dc114",
+  "prompts": {},
+  "humans": {
+    "h_b44430a3281f44": {
+      "author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
