@@ -1,0 +1,35 @@
+CHANGELOG.md
+  s_b07f173ea6cfde::t_b381f2af167d03 42-43
+README.md
+  s_b07f173ea6cfde::t_b381f2af167d03 58-62
+tests/Diff/DifferTest.php
+  s_b07f173ea6cfde::t_b381f2af167d03 38,40-41,43-44,49-51,104
+  s_b07f173ea6cfde::t_fde02622d188d1 45-48
+src/JinDistill/Diff/RemovalPlanner.php
+  s_b07f173ea6cfde::t_da2e08f3ecc0d6 16,20
+docs/api.md
+  s_b07f173ea6cfde::t_b381f2af167d03 57-58
+src/JinDistill/Diff/OverlayVerifier.php
+  s_b07f173ea6cfde::t_b381f2af167d03 39-43,45,63-64,70-77
+  s_b07f173ea6cfde::t_4f1ad6580cd550 78-79
+tests/Diff/RemovalPlannerTest.php
+  s_b07f173ea6cfde::t_f223ac517ea39b 18,26,40,42-43,48,51,54,59
+tests/Diff/DiffExamplesTest.php
+  s_b07f173ea6cfde::t_b381f2af167d03 29,62,72-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "fec4cff9762afc92f8d3e0c609bae4d648d27407",
+  "prompts": {},
+  "sessions": {
+    "s_b07f173ea6cfde": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0c589-adc2-7bb3-8920-911364bd002b",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
