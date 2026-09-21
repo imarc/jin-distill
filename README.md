@@ -55,9 +55,11 @@ echo $distiller->flattenFile('config/forms/child.jin')->content();
 
 ### Diff
 
-Generates the minimum inheritance document whose resolved configuration equals
-the target. The output path is never written; you decide what to do with the
-content.
+Generates a minimum inheritance document containing target overrides. Values
+found only in the parent remain inherited. Changed JSON lists receive a
+`--without` at their assignment path so the local list replaces that block
+without suppressing sibling values added upstream. The output path is never
+written; you decide what to do with the content.
 
 ```php
 use JinDistill\Diff\DiffOptions;

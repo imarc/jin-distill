@@ -35,11 +35,20 @@ final class DifferTest extends TestCase
         self::assertSame("--extends = file(base.jin)\n", $result->content());
     }
 
-    public function testItEmitsPlannedRemovals(): void
+    public function testItScopesRemovalsToOverriddenJsonLists(): void
     {
-        $result = (new Differ())->diff($this->compose("name = Base\nenabled = true"), $this->compose('name = Base'), 'base.jin');
+        $parent = $this->compose("[checkout]\nnotifications = [\"Parent\"]\ntest = value");
+        $target = $this->compose("[checkout]\nnotifications = [\"Child\"]");
 
-        self::assertStringContainsString("--without = [\n\t\"enabled\",\n]\n", $result->content());
+        $result = (new Differ())->diff($parent, $target, 'base.jin');
+
+        self::assertSame(
+            ['checkout.notifications'],
+            array_map(static fn ($path): string => implode('.', $path->segments()), $result->removals()),
+        );
+        self::assertStringContainsString("--without = [\n\t\"checkout.notifications\",\n]\n", $result->content());
+        self::assertStringNotContainsString('"checkout"', $result->content());
+        self::assertStringNotContainsString('checkout.test', $result->content());
     }
 
     public function testItRendersChangedNestedPathsInSections(): void
@@ -92,7 +101,7 @@ final class DifferTest extends TestCase
         self::assertNull($result->verification());
     }
 
-    public function testItVerifiesGeneratedOverlayAgainstTarget(): void
+    public function testItVerifiesGeneratedOverlayPreservesParentOnlyAssignments(): void
     {
         $parent = $this->compose("name = Base\nenabled = true\n[form]\nlabel = Parent");
         $target = $this->compose("name = Child\n[form]\nlabel = Child");

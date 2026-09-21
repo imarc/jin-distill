@@ -26,10 +26,7 @@ final class DiffExamplesTest extends TestCase
         $result = $this->diff('b1', 'b2', 'b3');
 
         self::assertSame(file_get_contents(self::EXAMPLES . '/b3.jin'), $result->content());
-        self::assertSame(
-            ['search.parameters', 'cancellation', 'tracker.context_selector'],
-            array_map(static fn ($path): string => implode('.', $path->segments()), $result->removals()),
-        );
+        self::assertSame([], $result->removals());
     }
 
     public function testChangedObjectsCopyEveryTargetMember(): void
@@ -62,7 +59,7 @@ final class DiffExamplesTest extends TestCase
         self::assertSame([], $verification?->differences());
     }
 
-    public function testGeneratedDocumentResolvesIdenticallyUnderDotink(): void
+    public function testGeneratedDocumentPreservesInheritedValuesUnderDotink(): void
     {
         $options = new EvaluationOptions([], ['file' => static fn (string $path): string => self::EXAMPLES . '/' . $path]);
 
@@ -72,7 +69,10 @@ final class DiffExamplesTest extends TestCase
             $options,
         );
 
-        self::assertTrue($verification->isEquivalent(), implode(', ', $verification->differences()));
+        self::assertSame(
+            ['/search/parameters', '/tracker/context_selector', '/cancellation'],
+            $verification->differences(),
+        );
     }
 
     private function diff(string $parent, string $target, string $output, ?DiffOptions $options = null): DiffResult

@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 final class RemovalPlannerTest extends TestCase
 {
-    public function testItPlansExactPathsForParentOnlyAssignments(): void
+    public function testItLeavesParentOnlyAssignmentsInherited(): void
     {
         $parent = $this->compose("name = Base\nenabled = true");
         $target = $this->compose('name = Base');
@@ -23,7 +23,7 @@ final class RemovalPlannerTest extends TestCase
 
         $paths = (new RemovalPlanner())->plan($parent, $target, $differences);
 
-        self::assertSame(['/enabled'], array_map(static fn ($path): string => $path->toJsonPointer(), $paths));
+        self::assertSame([], $paths);
     }
 
     public function testItRemovesChangedListsBeforeOverlayingTarget(): void
@@ -37,26 +37,26 @@ final class RemovalPlannerTest extends TestCase
         self::assertSame(['/items'], array_map(static fn ($path): string => $path->toJsonPointer(), $paths));
     }
 
-    public function testItCollapsesRemovedSiblingPaths(): void
+    public function testItDoesNotCollapseChangedListsIntoTheirIniSection(): void
     {
-        $parent = $this->compose("[form]\na = true\nb = true");
-        $target = $this->compose('');
+        $parent = $this->compose("[form]\na = [1]\nb = [2]");
+        $target = $this->compose("[form]\na = [3]\nb = [4]");
         $differences = (new DefinitionDiffer())->compare($parent, $target);
 
         $paths = (new RemovalPlanner())->plan($parent, $target, $differences);
 
-        self::assertSame(['/form'], array_map(static fn ($path): string => $path->toJsonPointer(), $paths));
+        self::assertSame(['/form/a', '/form/b'], array_map(static fn ($path): string => $path->toJsonPointer(), $paths));
     }
 
-    public function testItCollapsesSoleRemovedChildToItsOwner(): void
+    public function testItKeepsSoleChangedListAtItsJsonBoundary(): void
     {
         $parent = $this->compose("[cancellation]\npolicies = [1]");
-        $target = $this->compose('');
+        $target = $this->compose("[cancellation]\npolicies = [2]");
         $differences = (new DefinitionDiffer())->compare($parent, $target);
 
         $paths = (new RemovalPlanner())->plan($parent, $target, $differences);
 
-        self::assertSame(['/cancellation'], array_map(static fn ($path): string => $path->toJsonPointer(), $paths));
+        self::assertSame(['/cancellation/policies'], array_map(static fn ($path): string => $path->toJsonPointer(), $paths));
     }
 
     private function compose(string $contents): \JinDistill\Composition\ComposedDocument

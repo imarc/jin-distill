@@ -36,8 +36,13 @@ final class OverlayVerifier
             $state[$assignment->path()->toJsonPointer()] = $this->comparable($assignment);
         }
 
+        $expectedState = $this->values($parent);
+        foreach ($this->assignments($target) as $assignment) {
+            $expectedState[$assignment->path()->toJsonPointer()] = $this->comparable($assignment);
+        }
+
         $overlaid = $this->leaves($state);
-        $expected = $this->leaves($this->values($target));
+        $expected = $this->leaves($expectedState);
         $differencePaths = [];
 
         foreach (array_unique([...array_keys($overlaid), ...array_keys($expected)]) as $pointer) {
@@ -55,13 +60,21 @@ final class OverlayVerifier
     private function values(ComposedDocument $document): array
     {
         $values = [];
-        foreach ($document->document()->statements() as $statement) {
-            if ($statement instanceof Assignment && !str_starts_with($statement->path()->segments()[0], '--')) {
-                $values[$statement->path()->toJsonPointer()] = $this->comparable($statement);
-            }
+        foreach ($this->assignments($document) as $assignment) {
+            $values[$assignment->path()->toJsonPointer()] = $this->comparable($assignment);
         }
 
         return $values;
+    }
+
+    /** @return list<Assignment> */
+    private function assignments(ComposedDocument $document): array
+    {
+        return array_values(array_filter(
+            $document->document()->statements(),
+            static fn ($statement): bool => $statement instanceof Assignment
+                && !str_starts_with($statement->path()->segments()[0], '--'),
+        ));
     }
 
     private function comparable(Assignment $assignment): mixed

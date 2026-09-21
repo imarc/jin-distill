@@ -54,8 +54,8 @@ content(), then explicitly persist or echo that content.
 
 `verification()` is `null` unless `DiffOptions::withVerification(true)` was
 passed. It returns a `VerificationResult` proving statically that the parent,
-the planned `--without` removals, and the generated assignments describe the
-same configuration as the target.
+the assignment-scoped `--without` removals, and the generated overrides retain
+the target's local values while preserving parent-only assignments.
 
 ### `Analysis\ProvenanceIndex`
 

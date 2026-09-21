@@ -39,8 +39,8 @@ model, immutable result objects, and the facade described in `docs/api.md`.
 
 - Assignment-level differences classified as added, changed, removed, or
   metadata-changed.
-- Minimum removal planning, including collapsing an owner whose children are
-  all removed.
+- Assignment-scoped removal planning for changed JSON lists, preserving sibling
+  values added to an extended parent.
 - Generated inheritance documents with canonical extends references, planned
   `--without`, target comments, and canonical sectioning.
 - Optional static overlay verification proving the generated document resolves
