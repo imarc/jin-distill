@@ -78,6 +78,35 @@ $diff->verification();          // static proof the overlay equals the target
 
 See `examples/diff/` for the golden inputs and generated output.
 
+### Static sync lock
+
+Capture named Jin roots after a successful sync and compare them before the
+next one. One lock holds the whole set, including inherited definitions.
+
+```php
+use JinDistill\Sync\StaticSnapshot;
+
+$files = [];
+foreach (range(1, 20) as $number) {
+    $files[sprintf('config-%02d', $number)] = sprintf('config/%02d.jin', $number);
+}
+$current = $distiller->snapshotFiles($files);
+$previous = StaticSnapshot::fromJson(file_get_contents('sync.lock.json'));
+$comparison = $previous->compare($current);
+
+foreach ($comparison->changes() as $change) {
+    // Sync the changed path using $change->root(), ->path(), ->kind(),
+    // ->previous(), and ->current().
+}
+
+// Only after downstream sync succeeds:
+file_put_contents('sync.lock.json', $current->toJson());
+```
+
+Initialize a missing lock explicitly on first run. This compares static source
+definitions; a changed `env()` result alone is invisible. See `docs/api.md`
+for change and list rules.
+
 ## Evaluation (executes PHP)
 
 > [!WARNING]

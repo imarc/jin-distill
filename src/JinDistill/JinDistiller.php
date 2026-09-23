@@ -27,6 +27,8 @@ use JinDistill\Source\FilesystemSourceLoader;
 use JinDistill\Source\FunctionExtendsResolver;
 use JinDistill\Source\PathPolicy;
 use JinDistill\Source\RelativeExtendsResolver;
+use JinDistill\Sync\StaticSnapshot;
+use JinDistill\Sync\StaticSnapshotCapture;
 
 class JinDistiller
 {
@@ -121,6 +123,29 @@ class JinDistiller
     public function analyzeFile(string $path): AnalysisResult
     {
         return $this->analyzerForFile($path)->analyzeFile($path);
+    }
+
+    /** @param array<string, string> $files */
+    public function snapshotFiles(array $files): StaticSnapshot
+    {
+        if ($files === []) {
+            throw new InvalidArgumentException('Static snapshot needs at least one named file.');
+        }
+        $roots = [];
+        $locations = [];
+        $capture = new StaticSnapshotCapture();
+        foreach ($files as $name => $path) {
+            if (!is_string($name) || $name === '' || !is_string($path) || $path === '') {
+                throw new InvalidArgumentException('Static snapshot requires names and paths.');
+            }
+            $canonical = realpath($path);
+            if ($canonical === false) {
+                throw new InvalidArgumentException(sprintf('Cannot read Jin source: %s', $path));
+            }
+            $analysis = $this->analyzerForFile($canonical)->analyzeFile($canonical);
+            [$roots[$name], $locations[$name]] = $capture->capture($analysis, $this->applicationRoot ?? dirname($canonical));
+        }
+        return new StaticSnapshot($roots, $locations);
     }
 
     public function evaluateFile(string $path, ?EvaluationOptions $options = null): AnalysisResult

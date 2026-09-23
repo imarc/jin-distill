@@ -8,6 +8,7 @@
 | `normalizeFile()` | no |
 | `flattenFile()` | no |
 | `diffFiles()` | no |
+| `snapshotFiles()`, lock serialization, and comparison | no |
 | `evaluateFile()` | **yes** |
 | `verifySemantics()` | **yes** |
 | `verifyFileSemantics()` | **yes** |
@@ -17,6 +18,13 @@ The static workflows parse source into a syntax model. An expression such as
 never called. When a static override would have to reach *inside* an opaque
 expression, JinDistill refuses with `UnflattenableDefinitionException` or
 `UndiffableDefinitionException` rather than guessing.
+
+Static locks store literal and opaque source values in readable JSON. Treat
+lock contents as sensitive if Jin source contains secrets. `fromJson()`
+validates schema, node types, nesting, size, and locations. Capture rejects
+unresolved inheritance and dynamic removals so an incomplete source graph
+cannot report unchanged. The caller controls lock reads, writes, and sync
+timing; `toJson()` only returns text.
 
 ## Why evaluation is dangerous
 

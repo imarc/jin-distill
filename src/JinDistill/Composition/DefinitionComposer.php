@@ -54,14 +54,17 @@ final class DefinitionComposer
                             if (!str_starts_with($path, $prefix . '/')) {
                                 continue;
                             }
-                            $value = $defined->value()->staticValue();
+                            $value = $defined->value()->structuredValue();
+                            if ($value instanceof \stdClass) {
+                                $value = json_decode(json_encode($value, JSON_THROW_ON_ERROR), false, 512, JSON_THROW_ON_ERROR);
+                            }
                             $segments = explode('/', ltrim(substr($path, strlen($prefix)), '/'));
-                            if (!is_array($value) || !$this->removeNested($value, $segments)) {
+                            if (!$value instanceof \stdClass || !$this->removeNested($value, $segments)) {
                                 continue;
                             }
                             $statements[$position] = new Assignment(
                                 $defined->path(),
-                                new Value(json_encode($value, JSON_THROW_ON_ERROR), ValueKind::Json, $value, true),
+                                $this->jsonValue($value),
                                 $defined->comments(),
                                 $defined->inlineComment(),
                                 $defined->span(),
@@ -130,47 +133,75 @@ final class DefinitionComposer
 
     /** @param list<string> $segments */
     /**
-     * @param array<array-key, mixed> $value
      * @param list<string> $segments
      */
-    private function removeNested(array &$value, array $segments): bool
+    private function removeNested(\stdClass $value, array $segments): bool
     {
         $key = array_shift($segments);
-        if ($key === null || !array_key_exists($key, $value)) {
+        if ($key === null || !property_exists($value, $key)) {
             return false;
         }
         if ($segments === []) {
-            unset($value[$key]);
+            unset($value->{$key});
             return true;
         }
-        if (!is_array($value[$key])) {
+        if (!$value->{$key} instanceof \stdClass) {
             return false;
         }
-        return $this->removeNested($value[$key], $segments);
+        return $this->removeNested($value->{$key}, $segments);
     }
 
     private function merge(Assignment $parent, Assignment $child): Assignment
     {
-        $left = $parent->value()->staticValue();
-        $right = $child->value()->staticValue();
+        $left = $parent->value()->structuredValue();
+        $right = $child->value()->structuredValue();
         if (!$parent->value()->isStaticallyKnown()
             || !$child->value()->isStaticallyKnown()
-            || !is_array($left)
-            || !is_array($right)
-            || array_is_list($left)
-            || array_is_list($right)) {
+            || !$left instanceof \stdClass
+            || !$right instanceof \stdClass) {
             return $this->inheritLeadingComments($parent, $child);
         }
 
-        $value = array_replace_recursive($left, $right);
+        $value = $this->mergeObjects($left, $right);
         return new Assignment(
             $child->path(),
-            new Value(json_encode($value, JSON_THROW_ON_ERROR), ValueKind::Json, $value, true),
+            $this->jsonValue($value),
             $child->comments() === [] ? $parent->comments() : $child->comments(),
             $child->inlineComment(),
             $child->span(),
             $child->comments() === [] ? $parent->leadingTrivia() : $child->leadingTrivia(),
         );
+    }
+
+    private function mergeObjects(\stdClass $left, \stdClass $right): \stdClass
+    {
+        $merged = clone $left;
+        foreach (get_object_vars($right) as $name => $value) {
+            $previous = $merged->{$name} ?? null;
+            $merged->{$name} = $this->mergeNested($previous, $value);
+        }
+        return $merged;
+    }
+
+    private function mergeNested(mixed $left, mixed $right): mixed
+    {
+        if ($left instanceof \stdClass && $right instanceof \stdClass) {
+            return $this->mergeObjects($left, $right);
+        }
+        if (is_array($left) && is_array($right)) {
+            $merged = $left;
+            foreach ($right as $index => $value) {
+                $merged[$index] = $this->mergeNested($merged[$index] ?? null, $value);
+            }
+            return $merged;
+        }
+        return $right;
+    }
+
+    private function jsonValue(\stdClass $value): Value
+    {
+        $raw = json_encode($value, JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION);
+        return new Value($raw, ValueKind::Json, json_decode($raw, true, 512, JSON_THROW_ON_ERROR), true, $value);
     }
 
     private function inheritLeadingComments(Assignment $parent, Assignment $child): Assignment

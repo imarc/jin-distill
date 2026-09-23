@@ -240,7 +240,8 @@ final class JinDecoder implements DecoderInterface
             return new Value($raw, ValueKind::Opaque, null, false);
         }
         if ($raw !== '' && in_array($raw[0], ['{', '['], true)) {
-            return new Value($raw, ValueKind::Json, $this->parseJsonLike($raw), true);
+            $structured = $this->parseJsonLike($raw);
+            return new Value($raw, ValueKind::Json, json_decode(json_encode($structured, JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION), true, 512, JSON_THROW_ON_ERROR), true, $structured);
         }
         if (str_contains($raw, "\n")) {
             return new Value($raw, ValueKind::Multiline, $this->parseScalar($raw), true);
@@ -283,7 +284,7 @@ final class JinDecoder implements DecoderInterface
         $value = $this->stripJsonComments($value);
         $value = preg_replace('/,\s*([}\]])/', '$1', $value) ?? $value;
         $value = preg_replace_callback('/"((?:""|[^"])*)"/s', static fn (array $matches): string => json_encode(str_replace('""', '"', $matches[1]), JSON_THROW_ON_ERROR), $value) ?? $value;
-        $decoded = json_decode($value, true);
+        $decoded = json_decode($value);
         if (json_last_error() !== JSON_ERROR_NONE) {
             $this->fail(sprintf('Error parsing JSON-like value: %s', json_last_error_msg()), 'jin.syntax.json');
             return null;

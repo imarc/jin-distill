@@ -10,6 +10,7 @@ Everything here is public API under semver. Result objects are immutable.
 | `normalizeFile(string $path, ?FormatOptions $format = null)` | `Formatting\NormalizeResult` | no |
 | `flattenFile(string $path, ?FormatOptions $format = null)` | `Composition\FlattenResult` | no |
 | `diffFiles(string $parentPath, string $targetPath, string $outputPath, ?DiffOptions $options = null, ?FormatOptions $format = null, ?string $applicationRoot = null)` | `Diff\DiffResult` | no |
+| `snapshotFiles(array $files)` | `Sync\StaticSnapshot` | no |
 | `decode(string $contents, ?string $path = null)` | `Syntax\Document` | no |
 | `decodeFile(string $path)` | `Syntax\Document` | no |
 | `resolveFile(string $path)` | `JinDocument` | no |
@@ -56,6 +57,40 @@ content(), then explicitly persist or echo that content.
 passed. It returns a `VerificationResult` proving statically that the parent,
 the assignment-scoped `--without` removals, and the generated overrides retain
 the target's local values while preserving parent-only assignments.
+
+### `Sync\StaticSnapshot` and `Sync\StaticComparison`
+
+`snapshotFiles()` accepts a non-empty map from stable logical names to readable
+root paths. Each root composes its inherited definitions. Missing files,
+invalid syntax, unresolved `--extends`, and dynamic `--without` fail capture.
+`withApplicationRoot()` and `withAllowedRoots()` still govern source loading.
+
+`StaticSnapshot::toJson()` returns a deterministic, readable lock with schema
+`jin-distill-static-sync-lock/1`. `StaticSnapshot::fromJson(string $json)`
+validates caller-owned lock data. Neither method reads or writes a file.
+`$previous->compare($current)` returns `StaticComparison` with `status()`,
+`rootStatuses()`, and `changes()`. No stored hash or CLI is needed: capture and
+comparison already visit the values, and the caller owns lock persistence.
+
+Status is `unchanged`, `additive`, `removed`, `updated`, or `mixed`. A new or
+missing root is one change. Maps compare recursively by literal key; a new or
+missing key is one whole-subtree change. Lists compare by position. Exact
+append adds tail items; exact tail truncation removes tail items. Prepend,
+middle insertion or removal, replacement, and reorder update the whole list.
+Changes use RFC 6901 JSON Pointer paths within a root.
+
+Each `StaticChange` has `root()`, `kind()`, `path()`, `previous()`, `current()`,
+`previousLocation()`, and `currentLocation()`. Values are typed nodes: `null`,
+`boolean`, `integer`, `float`, `string`, `map`, `list`, or `opaque`. A missing
+value is `null` in an accessor; a present Jin null is `['type' => 'null']`.
+Locations contain root-relative `source` and one-based `line` when attribution
+is reliable. Previous locations belong to the old snapshot and may be stale.
+Locations never affect status.
+
+The lock compares source definitions, not resolved runtime values. Opaque
+expressions compare by unevaluated text, so changing only an environment
+variable does not produce a change. The lock rejects input over 32 MiB or
+nesting deeper than 64 nodes.
 
 ### `Analysis\ProvenanceIndex`
 
