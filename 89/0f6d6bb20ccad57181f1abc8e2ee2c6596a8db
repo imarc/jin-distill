@@ -1,0 +1,74 @@
+src/JinDistill/Sync/StaticNode.php
+  s_eb0b5e07412ae2::t_a9652669ae19c1 1-9,14-43,45-66,70-84,86-102,115,117-123,125-135,156-195,201,206-212
+  s_eb0b5e07412ae2::t_ecebc137bf7b89 196-200,202-205
+  s_eb0b5e07412ae2::t_ecac7f7a8060e6 44,85
+  s_eb0b5e07412ae2::t_b6010a04d96909 10-13,67-69,103-114,116,124
+  s_eb0b5e07412ae2::t_4d85eac5176be1 136-155
+tests/Sync/StaticSnapshotTest.php
+  s_eb0b5e07412ae2::t_863fa05aad2670 1-5,7-69,98-99,109-134,148-151,153-156,159-163,165-166,168-169
+  s_eb0b5e07412ae2::t_a93b386ebe52cc 157-158,167
+  s_eb0b5e07412ae2::t_4d85eac5176be1 100-108
+  s_eb0b5e07412ae2::t_162397fcde47fe 152,164
+  s_eb0b5e07412ae2::t_c02d3ee259fe4c 6,135-147
+  s_eb0b5e07412ae2::t_ca06ad7c8599b2 70-97
+src/JinDistill/Sync/StaticSnapshot.php
+  s_eb0b5e07412ae2::t_c31434b53a9cd9 12-15,28,113-114,119-122,126-127,136-138,157
+  s_eb0b5e07412ae2::t_c71db6e098998a 1-11,16-27,29-52,55-59,61-79,81-83,85-104,106-112,115,117-118,123-125,128-135,139-140,142-156,158-161
+  s_eb0b5e07412ae2::t_4d85eac5176be1 105,116,141
+  s_eb0b5e07412ae2::t_f504848344874e 53-54,60,80,84
+docs/api.md
+  s_eb0b5e07412ae2::t_a5268478ab7159 13
+  s_eb0b5e07412ae2::t_f4a57b7be9548c 61-94
+docs/security.md
+  s_eb0b5e07412ae2::t_a5268478ab7159 11,22-27
+  s_eb0b5e07412ae2::t_e59722913ccf7d 28
+src/JinDistill/Composition/DefinitionComposer.php
+  s_eb0b5e07412ae2::t_f230525cb11690 196
+  s_eb0b5e07412ae2::t_7bc93f000533b1 60,62,67,138,141,145,148,151,156-157,160-161,165,168,176,192-195,197-198,200-201
+  s_eb0b5e07412ae2::t_37fd1122a6886f 57-58,177-191,203,206
+  s_eb0b5e07412ae2::t_30e4f7e4ac4dd6 59
+  s_eb0b5e07412ae2::t_fc6db96d83cd38 199
+  s_eb0b5e07412ae2::t_cbd6696cfd105f 202
+  s_eb0b5e07412ae2::t_b46bd32fff9215 204-205
+src/JinDistill/Sync/StaticChange.php
+  s_eb0b5e07412ae2::t_f504848344874e 8-9,43,48
+  s_eb0b5e07412ae2::t_290f2742a6fa56 1-6,10-13,16-20,53
+  s_eb0b5e07412ae2::t_e03889e06c7df0 7,14-15,33,38
+  s_eb0b5e07412ae2::t_e6177f79a6e938 21-32,34-37,39-42,44-47,49-52
+src/JinDistill/JinDistiller.php
+  s_eb0b5e07412ae2::t_bf56d3c1f9636d 30-31,128-147
+  s_eb0b5e07412ae2::t_0daa34a902931a 148-150
+src/JinDistill/Sync/StaticSnapshotCapture.php
+  s_eb0b5e07412ae2::t_f504848344874e 13
+  s_eb0b5e07412ae2::t_c31434b53a9cd9 12,18,29
+  s_eb0b5e07412ae2::t_e0abc44fbeb709 49
+  s_eb0b5e07412ae2::t_bf56d3c1f9636d 1-11,14-17,19-28,30-48,50-81
+src/JinDistill/Syntax/Value.php
+  s_eb0b5e07412ae2::t_ad8b0fb50c7604 7,26-28
+  s_eb0b5e07412ae2::t_557f1a0bf4fa8e 29-30
+src/JinDistill/Sync/StaticComparison.php
+  s_eb0b5e07412ae2::t_e03889e06c7df0 7-10
+  s_eb0b5e07412ae2::t_290f2742a6fa56 1-6,11-51
+src/JinDistill/Decoders/JinDecoder.php
+  s_eb0b5e07412ae2::t_f230525cb11690 243
+  s_eb0b5e07412ae2::t_d647696c239921 244
+  s_eb0b5e07412ae2::t_1586d5261a49d8 287
+README.md
+  s_eb0b5e07412ae2::t_266006496c1450 81-109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "890f6d6bb20ccad57181f1abc8e2ee2c6596a8db",
+  "prompts": {},
+  "sessions": {
+    "s_eb0b5e07412ae2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0cefe-0afe-75b3-a72b-80bb3792e43f",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
