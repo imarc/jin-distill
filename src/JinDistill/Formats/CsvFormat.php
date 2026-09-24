@@ -125,7 +125,7 @@ class CsvFormat implements FormatInterface
             throw new \RuntimeException('Cannot open a temporary CSV buffer.');
         }
 
-        fputcsv($handle, $data, $this->delimiter, '"');
+        fputcsv($handle, $data, $this->delimiter, '"', '\\');
         rewind($handle);
         $row = fread($handle, 1048576);
         fclose($handle);
