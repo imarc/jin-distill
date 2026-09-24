@@ -7,6 +7,11 @@ use JinDistill\Analysis\SourceGraphBuilder;
 use JinDistill\Decoders\JinDecoder;
 use JinDistill\Diagnostics\Severity;
 use JinDistill\Evaluation\EvaluationOptions;
+use JinDistill\Formatting\FormatOptions;
+use JinDistill\Formatting\LineEnding;
+use JinDistill\Formatting\OrderingPolicy;
+use JinDistill\Formatting\SectionReferenceStyle;
+use JinDistill\Formatting\StringQuoting;
 use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\RelativeExtendsResolver;
 use JinDistill\Source\SourceId;
@@ -84,6 +89,14 @@ final class ValidatorTest extends TestCase
         self::assertSame(['jin.style.canonical-layout'], $this->ruleIds($this->validate("items = [\n\t\"a\"\n]")));
     }
 
+    public function testCanonicalSuggestionKeepsJsonMemberComments(): void
+    {
+        $diagnostics = $this->validate("fields = {\n  ; Important\n  \"name\": true\n}");
+
+        self::assertSame(['jin.style.canonical-layout'], $this->ruleIds($diagnostics));
+        self::assertStringContainsString("\t; Important\n\t\"name\": true,", $diagnostics[0]->suggestion());
+    }
+
     public function testItReportsWindowsLineEndings(): void
     {
         self::assertSame(['jin.style.line-ending'], $this->ruleIds($this->validate("name = CPA\r\n")));
@@ -92,6 +105,33 @@ final class ValidatorTest extends TestCase
     public function testItReportsNothingForCanonicalSources(): void
     {
         self::assertSame([], $this->validate("; Form\nname = CPA\n\n[form]\n\tenabled = true\n"));
+    }
+
+    public function testCanonicalDiagnosticsUseSelectedFormattingOptions(): void
+    {
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze("name = \"CPA\"\r\n[form]\r\n[&.fields]\r\n\tlabel = \"Text\"\r\n", new SourceId('memory://input.jin', 'input.jin'));
+        $options = (new FormatOptions())
+            ->withLineEnding(LineEnding::CrLf)
+            ->withSectionReferences(SectionReferenceStyle::Preserve)
+            ->withStringQuoting(StringQuoting::Always);
+
+        self::assertSame([], (new Validator(options: $options))->validate($analysis));
+    }
+
+    public function testCanonicalOrderingDiagnosticsDependOnSelectedProfile(): void
+    {
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze("[beta]\n\tb = 2\n[alpha]\n\ta = 1\n[beta]\n\tc = 3\n", new SourceId('memory://input.jin', 'input.jin'));
+
+        self::assertSame(['jin.style.canonical-layout'], $this->ruleIds((new Validator())->validate($analysis)));
+        self::assertSame([], (new Validator(options: (new FormatOptions())->withOrdering(OrderingPolicy::SourceOrder)))->validate($analysis));
     }
 
     /** @param list<\JinDistill\Diagnostics\Diagnostic> $diagnostics @return list<string> */

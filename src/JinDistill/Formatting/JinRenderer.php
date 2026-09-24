@@ -24,6 +24,7 @@ final class JinRenderer
     public function render(Document $document, ?FormatOptions $options = null): string
     {
         $options ??= new FormatOptions();
+        $document = (new DocumentFormatter())->order($document, $options->ordering());
         $lines = [];
         $section = [];
         $pendingBlankLines = 0;
@@ -44,7 +45,10 @@ final class JinRenderer
 
             if ($statement instanceof Section) {
                 $section = $statement->path()->segments();
-                $lines[] = '[' . implode('.', $section) . ']';
+                $lexeme = $options->sectionReferences() === SectionReferenceStyle::Preserve
+                    ? $statement->lexeme()
+                    : implode('.', $section);
+                $lines[] = '[' . $lexeme . ']';
                 continue;
             }
 
@@ -57,7 +61,7 @@ final class JinRenderer
             array_pop($lines);
         }
 
-        return implode($options->lineEnding(), $lines) . $options->lineEnding();
+        return implode($options->lineEnding()->value, $lines) . $options->lineEnding()->value;
     }
 
     /** @param list<string> $section */
@@ -113,10 +117,17 @@ final class JinRenderer
             return $value ? 'true' : 'false';
         }
         if (is_int($value) || is_float($value)) {
+            $lexeme = $document->numericLexemes()[$path->toJsonPointer()] ?? null;
+            if ($options->numericStyle() === NumericStyle::Preserve && is_string($lexeme)
+                && $this->numericLexemeMatches($lexeme, $value)) {
+                return $lexeme;
+            }
             return (string) $value;
         }
         if (is_string($value)) {
-            return $json ? $this->quote($value) : $this->quoteStringIfNeeded($value);
+            return $json || $options->stringQuoting() === StringQuoting::Always
+                ? $this->quote($value)
+                : $this->quoteStringIfNeeded($value);
         }
         if ($value instanceof \stdClass) {
             $value = get_object_vars($value);
@@ -130,12 +141,15 @@ final class JinRenderer
 
         if (array_is_list($value)) {
             $lines = ['['];
-            foreach ($value as $item) {
+            foreach ($value as $index => $item) {
+                foreach ($this->metadataTrivia($document, $path->append((string) $index), $depth + 1, $options) as $line) {
+                    $lines[] = $line;
+                }
                 $lines[] = $this->indentDepth($depth + 1, $options)
-                    . $this->renderStaticValue($item, $depth + 1, $path, $document, $options, true) . ',';
+                    . $this->renderStaticValue($item, $depth + 1, $path->append((string) $index), $document, $options, true) . ',';
             }
             $lines[] = $this->indentDepth($depth, $options) . ']';
-            return implode($options->lineEnding(), $lines);
+            return implode($options->lineEnding()->value, $lines);
         }
 
         $lines = ['{'];
@@ -148,7 +162,23 @@ final class JinRenderer
             . ': ' . $this->renderStaticValue($item, $depth + 1, $path->append((string) $key), $document, $options, true) . ',';
         }
         $lines[] = $this->indentDepth($depth, $options) . '}';
-        return implode($options->lineEnding(), $lines);
+        return implode($options->lineEnding()->value, $lines);
+    }
+
+    private function numericLexemeMatches(string $lexeme, int|float $value): bool
+    {
+        if (preg_match('/^0x[0-9a-f]+$/i', $lexeme) === 1) {
+            return hexdec(substr($lexeme, 2)) === $value;
+        }
+        if (preg_match('/^0b[01]+$/i', $lexeme) === 1) {
+            return bindec(substr($lexeme, 2)) === $value;
+        }
+        if (preg_match('/^0[0-7]+$/', $lexeme) === 1) {
+            return octdec($lexeme) === $value;
+        }
+        return is_numeric($lexeme) && (str_contains($lexeme, '.') || stripos($lexeme, 'e') !== false
+            ? (float) $lexeme === $value
+            : (int) $lexeme === $value);
     }
 
     /** @param list<string> $lines */
@@ -166,7 +196,9 @@ final class JinRenderer
     /** @return list<string> */
     private function metadataTrivia(Document $document, Path $path, int $depth, FormatOptions $options): array
     {
-        $metadata = $document->metadata[implode('.', $path->segments())] ?? null;
+        $metadata = $document->metadata[$path->toJsonPointer()]
+            ?? $document->metadata[implode('.', $path->segments())]
+            ?? null;
         if (!is_array($metadata)) {
             return [];
         }

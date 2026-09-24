@@ -4,6 +4,10 @@ namespace JinDistill\Tests;
 
 use Dotink\Jin\Parser;
 use JinDistill\Evaluation\JinEvaluator;
+use JinDistill\Formatting\FormatOptions;
+use JinDistill\Formatting\InheritancePathStyle;
+use JinDistill\Formatting\LineEnding;
+use JinDistill\Formatting\StringQuoting;
 use JinDistill\JinDistiller;
 use PHPUnit\Framework\TestCase;
 
@@ -57,6 +61,31 @@ final class JinDistillerTest extends TestCase
 
         self::assertStringContainsString('--extends = file(base.jin)', $result->content());
         self::assertFileDoesNotExist($output);
+    }
+
+    public function testFileWorkflowsHonorTheSameFormattingOptions(): void
+    {
+        $distiller = new JinDistiller();
+        $format = (new FormatOptions())
+            ->withIndentation('  ')
+            ->withLineEnding(LineEnding::CrLf)
+            ->withExtendsPathStyle(InheritancePathStyle::BareRelative)
+            ->withStringQuoting(StringQuoting::Always);
+        $parent = __DIR__ . '/fixtures/base.jin';
+        $child = __DIR__ . '/fixtures/child.jin';
+
+        $normalized = $distiller->normalizeFile($child, $format)->content();
+        $flattened = $distiller->flattenFile($child, $format)->content();
+        $diff = $distiller->diffFiles($parent, $child, __DIR__ . '/fixtures/generated-diff.jin', format: $format)->content();
+
+        self::assertStringContainsString("--extends = base.jin\r\n", $normalized);
+        self::assertStringContainsString("  name = \"CPA\"\r\n", $normalized);
+        self::assertStringContainsString("  name = \"CPA\"\r\n", $flattened);
+        self::assertStringContainsString("--extends = base.jin\r\n", $diff);
+        self::assertStringContainsString("  name = \"CPA\"\r\n", $diff);
+        foreach ([$normalized, $flattened, $diff] as $content) {
+            self::assertSame(0, preg_match('/(?<!\r)\n/', $content));
+        }
     }
 
     public function testItUsesImmutableApplicationAndAllowedRootsForFileInheritance(): void

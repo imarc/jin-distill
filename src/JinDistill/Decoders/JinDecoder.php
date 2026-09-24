@@ -37,6 +37,7 @@ final class JinDecoder implements DecoderInterface
         $data = [];
         $directives = [];
         $metadata = [];
+        $numericLexemes = [];
         $section = [];
         $sectionStack = [];
         $pendingComments = [];
@@ -101,12 +102,21 @@ final class JinDecoder implements DecoderInterface
             $inlineComment = $inlineText === null ? null : new Comment($inlineText, $this->span($source, $lineNumber, 1, $lineNumber, strlen($line)));
             $assignment = new Assignment($path, $value, $pendingComments, $inlineComment, $this->span($source, $lineNumber, 1, $endIndex + 1, strlen($lines[$endIndex])), $pendingTrivia);
             $statements[] = $assignment;
+            $listTrivia = [];
+            if ($value->isStaticallyKnown() && $value->kind() !== ValueKind::Multiline) {
+                $collector = new NumericLexemeCollector();
+                $numericLexemes = array_replace($numericLexemes, $collector->collect($value->raw(), $path));
+                $listTrivia = $collector->listTrivia();
+            }
             $this->recordLegacyData($assignment, $key, $data, $directives, $metadata);
+            foreach ($listTrivia as $pointer => $trivia) {
+                $metadata[$pointer] = $trivia;
+            }
             $pendingComments = [];
             $pendingTrivia = [];
         }
 
-        $document = new Document($statements, $source, $data, $this->stringKeyed($directives), $this->stringKeyed($metadata), $original);
+        $document = new Document($statements, $source, $data, $this->stringKeyed($directives), $this->stringKeyed($metadata), $original, $numericLexemes);
         if ($this->diagnostics !== []) {
             throw new InvalidStructureException('Invalid Jin structure.', $this->diagnostics, $document);
         }
@@ -334,7 +344,22 @@ final class JinDecoder implements DecoderInterface
             Arr::set($data, $path, $value);
             if ($assignment->value()->kind() === ValueKind::Json) {
                 $this->recordJsonMetadata($assignment->value()->raw(), $path, $metadata, $assignment->span()->startLine(), $assignment->span()->source()->canonicalPath());
+                $this->fillJsonMetadata($value, $path, $metadata);
             }
+        }
+    }
+
+    /** @param array<string, mixed> $metadata */
+    private function fillJsonMetadata(mixed $value, string $path, array &$metadata): void
+    {
+        if (!is_array($value)) {
+            return;
+        }
+
+        foreach ($value as $key => $child) {
+            $childPath = $path . '.' . $key;
+            $metadata[$childPath] ??= ['leadingComments' => [], 'leadingTrivia' => [], 'inlineComment' => null, 'synthetic' => true];
+            $this->fillJsonMetadata($child, $childPath, $metadata);
         }
     }
 

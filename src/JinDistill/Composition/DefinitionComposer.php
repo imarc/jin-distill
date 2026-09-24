@@ -3,8 +3,12 @@
 namespace JinDistill\Composition;
 
 use JinDistill\Analysis\AnalysisResult;
+use JinDistill\Formatting\FormatOptions;
+use JinDistill\Formatting\LeadingCommentPolicy;
 use JinDistill\Source\Path;
 use JinDistill\Syntax\Assignment;
+use JinDistill\Syntax\BlankLine;
+use JinDistill\Syntax\Comment;
 use JinDistill\Syntax\Document;
 use JinDistill\Syntax\Section;
 use JinDistill\Syntax\Value;
@@ -12,16 +16,36 @@ use JinDistill\Syntax\ValueKind;
 
 final class DefinitionComposer
 {
-    public function compose(AnalysisResult $analysis): ComposedDocument
+    public function compose(AnalysisResult $analysis, ?FormatOptions $options = null): ComposedDocument
     {
+        $options ??= new FormatOptions();
         $statements = [];
         $positions = [];
         $opaque = [];
         $metadata = [];
+        $numericLexemes = [];
+        $sectionTrivia = [];
         $source = null;
         foreach (array_reverse($analysis->sourceGraph()->documents()) as $document) {
             $source ??= $document->source();
-            $metadata = array_replace($metadata, $document->metadata);
+            foreach ($document->metadata as $path => $entry) {
+                $previous = $metadata[$path] ?? null;
+                if ($options->usesLegacyCommentMetadata()) {
+                    if (!is_array($entry) || !($entry['synthetic'] ?? false)) {
+                        $metadata[$path] = $entry;
+                    }
+                    continue;
+                }
+                if ($options->leadingComments() === LeadingCommentPolicy::NearestDefinition
+                    && is_array($entry) && is_array($previous)
+                    && ($entry['leadingComments'] ?? []) === [] && ($previous['leadingComments'] ?? []) !== []) {
+                    $entry['leadingComments'] = $previous['leadingComments'];
+                    $entry['leadingTrivia'] = $previous['leadingTrivia'] ?? [];
+                }
+                $metadata[$path] = $entry;
+            }
+            $numericLexemes = array_replace($numericLexemes, $document->numericLexemes());
+            $this->collectSectionTrivia($document, $sectionTrivia, $options->leadingComments());
             foreach ($document->statements() as $statement) {
                 if (!$statement instanceof Assignment) {
                     continue;
@@ -68,6 +92,7 @@ final class DefinitionComposer
                                 $defined->comments(),
                                 $defined->inlineComment(),
                                 $defined->span(),
+                                $defined->leadingTrivia(),
                             );
                         }
                     }
@@ -87,7 +112,7 @@ final class DefinitionComposer
                 if (isset($positions[$path])) {
                     $existing = $statements[$positions[$path]];
                     $statements[$positions[$path]] = $existing instanceof Assignment
-                        ? $this->merge($existing, $statement)
+                        ? $this->merge($existing, $statement, $options->leadingComments())
                         : $statement;
                     continue;
                 }
@@ -105,6 +130,9 @@ final class DefinitionComposer
             $segments = $statement->path()->segments();
             $nextSection = count($segments) > 1 ? array_slice($segments, 0, -1) : [];
             if ($nextSection !== $section && $nextSection !== []) {
+                foreach ($sectionTrivia[Path::fromSegments($nextSection)->toJsonPointer()] ?? [] as $trivia) {
+                    $renderable[] = $trivia;
+                }
                 $renderable[] = new Section(
                     Path::fromSegments($nextSection),
                     implode('.', $nextSection),
@@ -117,7 +145,30 @@ final class DefinitionComposer
             }
             $renderable[] = $statement;
         }
-        return new ComposedDocument(new Document($renderable, $source, [], [], $metadata), $analysis->provenance());
+        return new ComposedDocument(new Document($renderable, $source, [], [], $metadata, null, $numericLexemes), $analysis->provenance());
+    }
+
+    /** @param array<string, list<BlankLine|Comment>> $sectionTrivia */
+    private function collectSectionTrivia(Document $document, array &$sectionTrivia, LeadingCommentPolicy $policy): void
+    {
+        $pending = [];
+
+        foreach ($document->statements() as $statement) {
+            if ($statement instanceof BlankLine || $statement instanceof Comment) {
+                $pending[] = $statement;
+                continue;
+            }
+
+            if ($statement instanceof Section) {
+                $path = $statement->path()->toJsonPointer();
+                $hasComment = array_filter($pending, static fn ($trivia): bool => $trivia instanceof Comment) !== [];
+                if ($policy === LeadingCommentPolicy::WinnerOnly || $hasComment || !isset($sectionTrivia[$path])) {
+                    $sectionTrivia[$path] = $pending;
+                }
+            }
+
+            $pending = [];
+        }
     }
 
     /** @param list<string> $ancestor @param list<string> $path */
@@ -151,7 +202,7 @@ final class DefinitionComposer
         return $this->removeNested($value->{$key}, $segments);
     }
 
-    private function merge(Assignment $parent, Assignment $child): Assignment
+    private function merge(Assignment $parent, Assignment $child, LeadingCommentPolicy $policy): Assignment
     {
         $left = $parent->value()->structuredValue();
         $right = $child->value()->structuredValue();
@@ -159,17 +210,17 @@ final class DefinitionComposer
             || !$child->value()->isStaticallyKnown()
             || !$left instanceof \stdClass
             || !$right instanceof \stdClass) {
-            return $this->inheritLeadingComments($parent, $child);
+            return $this->inheritLeadingComments($parent, $child, $policy);
         }
 
         $value = $this->mergeObjects($left, $right);
         return new Assignment(
             $child->path(),
             $this->jsonValue($value),
-            $child->comments() === [] ? $parent->comments() : $child->comments(),
+            $policy === LeadingCommentPolicy::NearestDefinition && $child->comments() === [] ? $parent->comments() : $child->comments(),
             $child->inlineComment(),
             $child->span(),
-            $child->comments() === [] ? $parent->leadingTrivia() : $child->leadingTrivia(),
+            $policy === LeadingCommentPolicy::NearestDefinition && $child->comments() === [] ? $parent->leadingTrivia() : $child->leadingTrivia(),
         );
     }
 
@@ -204,9 +255,9 @@ final class DefinitionComposer
         return new Value($raw, ValueKind::Json, json_decode($raw, true, 512, JSON_THROW_ON_ERROR), true, $value);
     }
 
-    private function inheritLeadingComments(Assignment $parent, Assignment $child): Assignment
+    private function inheritLeadingComments(Assignment $parent, Assignment $child, LeadingCommentPolicy $policy): Assignment
     {
-        if ($child->comments() !== [] || $parent->comments() === []) {
+        if ($policy === LeadingCommentPolicy::WinnerOnly || $child->comments() !== [] || $parent->comments() === []) {
             return $child;
         }
 

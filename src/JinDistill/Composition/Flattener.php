@@ -19,7 +19,7 @@ final class Flattener
 
     public function flatten(AnalysisResult $analysis, ?FormatOptions $options = null): FlattenResult
     {
-        $composed = $this->composer->compose($analysis);
+        $composed = $this->composer->compose($analysis, $options);
         return new FlattenResult(
             $this->renderer->render($composed->document(), $options),
             $analysis,

@@ -7,8 +7,11 @@ use JinDistill\Source\SourceId;
 
 final class Document extends JinDocument
 {
-    /** @param list<Statement> $statements */
-    public function __construct(private array $statements, private SourceId $source, array $data = [], array $directives = [], array $metadata = [], private ?string $contents = null)
+    /**
+     * @param list<Statement> $statements
+     * @param array<string, string> $numericLexemes
+     */
+    public function __construct(private array $statements, private SourceId $source, array $data = [], array $directives = [], array $metadata = [], private ?string $contents = null, private array $numericLexemes = [])
     {
         parent::__construct($data, $directives, $metadata, $source->canonicalPath());
     }
@@ -28,5 +31,11 @@ final class Document extends JinDocument
     public function source(): SourceId
     {
         return $this->source;
+    }
+
+    /** @return array<string, string> */
+    public function numericLexemes(): array
+    {
+        return $this->numericLexemes;
     }
 }

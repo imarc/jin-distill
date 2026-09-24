@@ -113,8 +113,8 @@ class JinDistiller
         ?FormatOptions $format = null,
         ?string $applicationRoot = null,
     ): DiffResult {
-        $parent = (new DefinitionComposer())->compose($this->analyzerForFile($parentPath)->analyzeFile($parentPath));
-        $target = (new DefinitionComposer())->compose($this->analyzerForFile($targetPath)->analyzeFile($targetPath));
+        $parent = (new DefinitionComposer())->compose($this->analyzerForFile($parentPath)->analyzeFile($parentPath), $format);
+        $target = (new DefinitionComposer())->compose($this->analyzerForFile($targetPath)->analyzeFile($targetPath), $format);
         $reference = ExtendsReference::forOutput($parentPath, $outputPath, $applicationRoot ?? $this->applicationRoot)->toSource($format);
 
         return (new Differ())->diff($parent, $target, $reference, $options, $format);

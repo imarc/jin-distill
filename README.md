@@ -39,7 +39,11 @@ Rewrites one file into canonical layout. Parents are analyzed but never
 rewritten, and nothing is written to disk — you get the content back.
 
 ```php
-$result = $distiller->normalizeFile('config/forms/child.jin');
+use JinDistill\Formatting\LineEnding;
+use JinDistill\Formatting\Profiles\ImarcStyle;
+
+$format = ImarcStyle::v2()->withLineEnding(LineEnding::Lf);
+$result = $distiller->normalizeFile('config/forms/child.jin', $format);
 
 file_put_contents('config/forms/child.jin', $result->content());
 $result->diagnostics();  // style findings with suggested fixes
@@ -50,7 +54,7 @@ $result->diagnostics();  // style findings with suggested fixes
 Composes a file and its ancestors into one standalone document.
 
 ```php
-echo $distiller->flattenFile('config/forms/child.jin')->content();
+echo $distiller->flattenFile('config/forms/child.jin', $format)->content();
 ```
 
 ### Diff
@@ -69,6 +73,7 @@ $diff = $distiller->diffFiles(
     targetPath: 'config/forms/full.jin',
     outputPath: 'config/forms/generated.jin',
     options: (new DiffOptions())->withVerification(true),
+    format: $format,
 );
 
 echo $diff->content();

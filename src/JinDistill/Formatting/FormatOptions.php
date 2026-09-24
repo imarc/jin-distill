@@ -6,63 +6,67 @@ use InvalidArgumentException;
 
 final class FormatOptions
 {
+    private bool $legacyCommentMetadata = false;
+
     public function __construct(
         private string $indentation = "\t",
-        private string $lineEnding = "\n",
-        private CommentPolicy $commentPolicy = CommentPolicy::WinnerOnly,
+        private LineEnding $lineEnding = LineEnding::Lf,
+        private LeadingCommentPolicy $leadingComments = LeadingCommentPolicy::NearestDefinition,
         private OrderingPolicy $ordering = OrderingPolicy::CanonicalSections,
-        private string $extendsPathStyle = ExtendsPathStyle::HiraethFile,
-        private string $numericStyle = 'decimal',
-        private string $stringQuoting = 'minimal-safe',
-        private string $sectionReferences = 'explicit',
-        private string $diffGranularity = 'assignment',
-        private bool $metadataSensitiveDiffs = true,
+        private InheritancePathStyle $extendsPathStyle = InheritancePathStyle::HiraethFile,
+        private NumericStyle $numericStyle = NumericStyle::Decimal,
+        private StringQuoting $stringQuoting = StringQuoting::MinimalSafe,
+        private SectionReferenceStyle $sectionReferences = SectionReferenceStyle::Explicit,
         private SpacingPolicy $spacingPolicy = SpacingPolicy::Preserve,
     ) {
-        if ($indentation === '' || !in_array($lineEnding, ["\n", "\r\n"], true)) {
-            throw new InvalidArgumentException('Formatting indentation and line ending must be supported values.');
+        if ($indentation === '') {
+            throw new InvalidArgumentException('Formatting indentation must not be empty.');
         }
+    }
+
+    public static function legacyV1(): self
+    {
+        $options = new self();
+        $options->legacyCommentMetadata = true;
+        return $options;
+    }
+
+    public function usesLegacyCommentMetadata(): bool
+    {
+        return $this->legacyCommentMetadata;
     }
 
     public function indentation(): string
     {
         return $this->indentation;
     }
-    public function lineEnding(): string
+    public function lineEnding(): LineEnding
     {
         return $this->lineEnding;
     }
-    public function commentPolicy(): CommentPolicy
+    public function leadingComments(): LeadingCommentPolicy
     {
-        return $this->commentPolicy;
+        return $this->leadingComments;
     }
     public function ordering(): OrderingPolicy
     {
         return $this->ordering;
     }
-    public function extendsPathStyle(): string
+    public function extendsPathStyle(): InheritancePathStyle
     {
         return $this->extendsPathStyle;
     }
-    public function numericStyle(): string
+    public function numericStyle(): NumericStyle
     {
         return $this->numericStyle;
     }
-    public function stringQuoting(): string
+    public function stringQuoting(): StringQuoting
     {
         return $this->stringQuoting;
     }
-    public function sectionReferences(): string
+    public function sectionReferences(): SectionReferenceStyle
     {
         return $this->sectionReferences;
-    }
-    public function diffGranularity(): string
-    {
-        return $this->diffGranularity;
-    }
-    public function metadataSensitiveDiffs(): bool
-    {
-        return $this->metadataSensitiveDiffs;
     }
     public function spacingPolicy(): SpacingPolicy
     {
@@ -71,22 +75,67 @@ final class FormatOptions
 
     public function withIndentation(string $indentation): self
     {
-        return new self($indentation, $this->lineEnding, $this->commentPolicy, $this->ordering, $this->extendsPathStyle, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs, $this->spacingPolicy);
+        if ($indentation === '') {
+            throw new InvalidArgumentException('Formatting indentation must not be empty.');
+        }
+        $copy = clone $this;
+        $copy->indentation = $indentation;
+        return $copy;
     }
-    public function withCommentPolicy(CommentPolicy $policy): self
+
+    public function withLineEnding(LineEnding $lineEnding): self
     {
-        return new self($this->indentation, $this->lineEnding, $policy, $this->ordering, $this->extendsPathStyle, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs, $this->spacingPolicy);
+        $copy = clone $this;
+        $copy->lineEnding = $lineEnding;
+        return $copy;
     }
+
+    public function withLeadingComments(LeadingCommentPolicy $leadingComments): self
+    {
+        $copy = clone $this;
+        $copy->leadingComments = $leadingComments;
+        return $copy;
+    }
+
     public function withOrdering(OrderingPolicy $ordering): self
     {
-        return new self($this->indentation, $this->lineEnding, $this->commentPolicy, $ordering, $this->extendsPathStyle, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs, $this->spacingPolicy);
+        $copy = clone $this;
+        $copy->ordering = $ordering;
+        return $copy;
     }
-    public function withExtendsPathStyle(string $style): self
+
+    public function withExtendsPathStyle(InheritancePathStyle $extendsPathStyle): self
     {
-        return new self($this->indentation, $this->lineEnding, $this->commentPolicy, $this->ordering, $style, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs, $this->spacingPolicy);
+        $copy = clone $this;
+        $copy->extendsPathStyle = $extendsPathStyle;
+        return $copy;
     }
-    public function withSpacingPolicy(SpacingPolicy $policy): self
+
+    public function withNumericStyle(NumericStyle $numericStyle): self
     {
-        return new self($this->indentation, $this->lineEnding, $this->commentPolicy, $this->ordering, $this->extendsPathStyle, $this->numericStyle, $this->stringQuoting, $this->sectionReferences, $this->diffGranularity, $this->metadataSensitiveDiffs, $policy);
+        $copy = clone $this;
+        $copy->numericStyle = $numericStyle;
+        return $copy;
+    }
+
+    public function withStringQuoting(StringQuoting $stringQuoting): self
+    {
+        $copy = clone $this;
+        $copy->stringQuoting = $stringQuoting;
+        return $copy;
+    }
+
+    public function withSectionReferences(SectionReferenceStyle $sectionReferences): self
+    {
+        $copy = clone $this;
+        $copy->sectionReferences = $sectionReferences;
+        return $copy;
+    }
+
+    public function withSpacingPolicy(SpacingPolicy $spacingPolicy): self
+    {
+        $copy = clone $this;
+        $copy->spacingPolicy = $spacingPolicy;
+        return $copy;
     }
 }

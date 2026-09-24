@@ -8,7 +8,7 @@ use JinDistill\Validation\Validator;
 
 final class Normalizer
 {
-    private Validator $validator;
+    private ?Validator $validator;
     private JinRenderer $renderer;
 
     public function __construct(
@@ -16,7 +16,7 @@ final class Normalizer
         ?Validator $validator = null,
         ?JinRenderer $renderer = null,
     ) {
-        $this->validator = $validator ?? new Validator();
+        $this->validator = $validator;
         $this->renderer = $renderer ?? new JinRenderer();
     }
 
@@ -47,7 +47,7 @@ final class Normalizer
         return new NormalizeResult(
             $this->renderer->render($document, $options),
             $analysis,
-            $this->validator->validate($analysis),
+            ($this->validator ?? new Validator(options: $options))->validate($analysis),
         );
     }
 }

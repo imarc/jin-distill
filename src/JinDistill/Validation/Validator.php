@@ -5,6 +5,7 @@ namespace JinDistill\Validation;
 use JinDistill\Analysis\AnalysisResult;
 use JinDistill\Diagnostics\Diagnostic;
 use JinDistill\Evaluation\EvaluationOptions;
+use JinDistill\Formatting\FormatOptions;
 use JinDistill\Validation\Rules\CanonicalLayoutRule;
 use JinDistill\Validation\Rules\DuplicatePathRule;
 use JinDistill\Validation\Rules\ExtendsFunctionRule;
@@ -15,10 +16,10 @@ final class Validator
     private array $rules;
 
     /** @param list<Rule> $rules */
-    public function __construct(array $rules = [])
+    public function __construct(array $rules = [], ?FormatOptions $options = null)
     {
         $this->rules = $rules === []
-            ? [new DuplicatePathRule(), new CanonicalLayoutRule(), new ExtendsFunctionRule()]
+            ? [new DuplicatePathRule(), new CanonicalLayoutRule(options: $options), new ExtendsFunctionRule()]
             : $rules;
     }
 

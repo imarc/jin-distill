@@ -33,7 +33,15 @@ final class Differ
 
         $differences = (new DefinitionDiffer())->compare($parent, $target, $options);
         $removals = (new RemovalPlanner())->plan($parent, $target, $differences);
-        $document = new Document($this->nodes($target, $reference, $differences, $removals), $target->document()->source());
+        $document = new Document(
+            $this->nodes($target, $reference, $differences, $removals),
+            $target->document()->source(),
+            [],
+            [],
+            $target->document()->metadata,
+            null,
+            $target->document()->numericLexemes(),
+        );
 
         return new DiffResult(
             (new JinRenderer())->render($document, $format),
@@ -97,8 +105,8 @@ final class Differ
             $section = $owner;
             $emitted = true;
 
-            foreach ($assignment->comments() as $comment) {
-                $nodes[] = $comment;
+            foreach ($assignment->leadingTrivia() as $trivia) {
+                $nodes[] = $trivia;
             }
 
             $nodes[] = $assignment;

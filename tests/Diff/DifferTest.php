@@ -65,6 +65,13 @@ final class DifferTest extends TestCase
         self::assertStringContainsString("; Public name\nname = Child\n", $result->content());
     }
 
+    public function testItPreservesSpacingWithinTargetLeadingTrivia(): void
+    {
+        $result = (new Differ())->diff($this->compose('name = Base'), $this->compose("; Public name\n\nname = Child"), 'base.jin');
+
+        self::assertStringContainsString("; Public name\n\nname = Child\n", $result->content());
+    }
+
     public function testItRejectsNestedOverridesOfOpaqueParentAssignments(): void
     {
         $parent = $this->compose('fields = run(build())');

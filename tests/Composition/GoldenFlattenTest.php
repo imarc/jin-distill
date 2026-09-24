@@ -4,6 +4,7 @@ namespace JinDistill\Tests\Composition;
 
 use Dotink\Jin\Parser;
 use JinDistill\Evaluation\JinEvaluator;
+use JinDistill\Formatting\Profiles\ImarcStyle;
 use JinDistill\JinDistiller;
 use PHPUnit\Framework\TestCase;
 
@@ -23,7 +24,7 @@ final class GoldenFlattenTest extends TestCase
                 'file' => static fn (string $path): string => $root . '/' . $path,
             ])));
 
-        $flattened = $distiller->flattenFile($original)->content();
+        $flattened = $distiller->flattenFile($original, ImarcStyle::v1())->content();
 
         self::assertSame(file_get_contents($root . '/expected.jin'), $flattened);
         self::assertStringNotContainsString('--extends', $flattened);

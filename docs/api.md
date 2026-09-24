@@ -25,8 +25,8 @@ compute the `--extends` reference relative to where you intend to save.
 ## Deprecated output API
 
 Encoder, OutputInterface, FileOutput, and StdOutput are deprecated as of 1.0.0.
-They remain available through 1.x. Use a facade workflow, inspect returned
-content(), then explicitly persist or echo that content.
+They remain available in 2.0 for migration. Use a facade workflow, inspect
+returned content(), then explicitly persist or echo that content.
 
 ## Results
 
@@ -57,6 +57,10 @@ content(), then explicitly persist or echo that content.
 passed. It returns a `VerificationResult` proving statically that the parent,
 the assignment-scoped `--without` removals, and the generated overrides retain
 the target's local values while preserving parent-only assignments.
+
+This inheritance-preserving behavior is the 2.0 diff contract. Unlike 1.x,
+parent-only assignments are not removed to make the generated overlay equal a
+standalone target.
 
 ### `Sync\StaticSnapshot` and `Sync\StaticComparison`
 
@@ -113,11 +117,26 @@ workflows never use it. Explicit per-call `EvaluationOptions` take precedence.
 
 ### `Formatting\FormatOptions`
 
-Immutable. `withIndentation()`, `withCommentPolicy()`, `withOrdering()`,
-`withExtendsPathStyle()`, `withSpacingPolicy()`. `SpacingPolicy` controls
-leading blank lines: `Preserve` (default), `None`, or `One`. Profiles: `Profiles\ImarcStyle::v1()` (tabs, LF,
-Hiraeth `file()` extends) and `Profiles\DotinkStyle::v1()` (bare relative
-extends). See `docs/formatting.md`.
+Immutable. Constructor defaults match `Profiles\ImarcStyle::v2()`. Named
+arguments, accessors, and withers use these types:
+
+| Constructor argument | Type | Wither |
+| --- | --- | --- |
+| `indentation` | non-empty `string` | `withIndentation()` |
+| `lineEnding` | `LineEnding` | `withLineEnding()` |
+| `leadingComments` | `LeadingCommentPolicy` | `withLeadingComments()` |
+| `ordering` | `OrderingPolicy` | `withOrdering()` |
+| `extendsPathStyle` | `InheritancePathStyle` | `withExtendsPathStyle()` |
+| `numericStyle` | `NumericStyle` | `withNumericStyle()` |
+| `stringQuoting` | `StringQuoting` | `withStringQuoting()` |
+| `sectionReferences` | `SectionReferenceStyle` | `withSectionReferences()` |
+| `spacingPolicy` | `SpacingPolicy` | `withSpacingPolicy()` |
+
+Each accessor uses the argument name, for example `lineEnding()`.
+`ExtendsPathStyle::BareRelative` and `::HiraethFile` remain enum-valued
+compatibility constants; PHP cannot name an enum `ExtendsPathStyle`.
+`ImarcStyle::v1()` and `DotinkStyle::v1()` remain available for byte-stable
+1.x output. See `docs/formatting.md` for option behavior.
 
 ### `Diff\DiffOptions`
 
