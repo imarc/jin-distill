@@ -1,0 +1,19 @@
+src/JinDistill/Formats/CsvFormat.php
+  s_9486434a56868c::t_1ff47f77db336a 128
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c67d7899cbfcb42bc9c69e4775c317fb8798960d",
+  "prompts": {},
+  "sessions": {
+    "s_9486434a56868c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0c5cf-1624-71d0-8892-ed842569f06d",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
