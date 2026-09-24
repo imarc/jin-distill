@@ -1,0 +1,143 @@
+src/JinDistill/Decoders/JinDecoder.php
+  s_9486434a56868c::t_34c1d0d13d2629 105,107-109,112-114
+  s_9486434a56868c::t_70843639c95049 347,352-360,362-363
+  s_9486434a56868c::t_aeb71179cd65ea 361
+  s_9486434a56868c::t_9b93f59ae656d9 40,106,110,119
+  s_9486434a56868c::t_3903e5f12d1fb5 364-365
+src/JinDistill/Formatting/FormatOptions.php
+  s_9486434a56868c::t_aeb71179cd65ea 9-10,27-36
+  s_9486434a56868c::t_af0e27ae1ff913 13-14,17-19,22-23,37,78-90,92-93,95-97,99,102-106,108-118,120-121,123-125,127-135,137-139
+  s_9486434a56868c::t_b81ef925b5bd59 43,47,49,55,59,63,67
+  s_9486434a56868c::t_d98b6ee0738dde 16,107
+  s_9486434a56868c::t_ad0a9a4766bd85 38
+tests/Composition/GoldenFlattenTest.php
+  s_9486434a56868c::t_aeb71179cd65ea 7,27
+src/JinDistill/Formatting/Normalizer.php
+  s_9486434a56868c::t_d957b993b9d8dd 11,19,50
+tests/Composition/FlattenerTest.php
+  s_9486434a56868c::t_a1d9a040d90856 9-10,144-172
+  s_9486434a56868c::t_3bd0b8399c8627 92-114,173
+tests/Diff/DifferTest.php
+  s_9486434a56868c::t_541fc0904feac7 68-74
+src/JinDistill/Formatting/StringQuoting.php
+  s_9486434a56868c::t_af0e27ae1ff913 1-9
+docs/formatting.md
+  s_9486434a56868c::t_3ec005359271dd 4-60,87,106-107,111-113
+src/JinDistill/Formatting/InheritancePathStyle.php
+  s_9486434a56868c::t_d98b6ee0738dde 1-9
+src/JinDistill/Formatting/ExtendsRenderer.php
+  s_9486434a56868c::t_cfdec2fe759509 11-22
+src/JinDistill/Formatting/Profiles/DotinkStyle.php
+  s_9486434a56868c::t_aeb71179cd65ea 13
+  s_9486434a56868c::t_af0e27ae1ff913 7,12,14-16
+tests/fixtures/formatting/profile-order.v2.jin
+  s_9486434a56868c::t_b86903dc5831a5 1-6
+tests/JinDistillerTest.php
+  s_9486434a56868c::t_c656b80a558298 7-10,66-88
+  s_9486434a56868c::t_10a16eb69eb1b4 89-90
+src/JinDistill/Validation/Rules/CanonicalLayoutRule.php
+  s_9486434a56868c::t_9af32c45c71d1b 7,102-113,117-126
+  s_9486434a56868c::t_d957b993b9d8dd 10-11,46-49,53,56,65,88
+  s_9486434a56868c::t_577471ee51f19b 138
+  s_9486434a56868c::t_0dbc1b5e3ee4dc 127-128
+src/JinDistill/Validation/Validator.php
+  s_9486434a56868c::t_d957b993b9d8dd 8,19,22
+src/JinDistill/Formatting/LeadingCommentPolicy.php
+  s_9486434a56868c::t_af0e27ae1ff913 1-9
+tests/Formatting/FormatOptionsTest.php
+  s_9486434a56868c::t_b81ef925b5bd59 13,15
+  s_9486434a56868c::t_f1a0e2f138786a 6-10,25-29,57-83
+src/JinDistill/JinDistiller.php
+  s_9486434a56868c::t_da775187b49d10 116-117
+src/JinDistill/Formatting/ExtendsPathStyle.php
+  s_9486434a56868c::t_d98b6ee0738dde 7-8
+src/JinDistill/Formatting/DocumentFormatter.php
+  s_9486434a56868c::t_fe6b9cf7027c32 1-25,27-35,41-68,79-83
+  s_9486434a56868c::t_908316d22a50fe 37-40
+  s_9486434a56868c::t_3035347f93671f 26,36,69-78
+CHANGELOG.md
+  s_9486434a56868c::t_39a78f3ad7bf01 6-9,14-21,24-35,50-58,94-95
+  s_9486434a56868c::t_632f781f9f52ed 10-13,22-23,36-49
+src/JinDistill/Composition/Flattener.php
+  s_9486434a56868c::t_da775187b49d10 22
+src/JinDistill/Formatting/LineEnding.php
+  s_9486434a56868c::t_af0e27ae1ff913 1-9
+src/JinDistill/Formatting/Profiles/ImarcStyle.php
+  s_9486434a56868c::t_af0e27ae1ff913 6,11,13-15
+  s_9486434a56868c::t_aeb71179cd65ea 12
+src/JinDistill/Composition/DefinitionComposer.php
+  s_9486434a56868c::t_da775187b49d10 6-7,19,21,31-32,39-46,48,115,152,165,213,220,223,258,260
+  s_9486434a56868c::t_aeb71179cd65ea 33-38
+  s_9486434a56868c::t_bd03033e86818b 10-11,27,95,133-135,149-151,153-164,166-170
+  s_9486434a56868c::t_9b93f59ae656d9 26,47,148
+  s_9486434a56868c::t_d69b868ca07461 171
+  s_eb0b5e07412ae2::t_c639aac4a047ad 205
+src/JinDistill/Diff/Differ.php
+  s_9486434a56868c::t_b3fe57020aa1c1 108-109
+  s_9486434a56868c::t_da775187b49d10 36-44
+src/JinDistill/Formatting/SectionReferenceStyle.php
+  s_9486434a56868c::t_af0e27ae1ff913 1-9
+src/JinDistill/Syntax/Document.php
+  s_9486434a56868c::t_89b249fe24117c 10-13
+  s_9486434a56868c::t_fe6b9cf7027c32 14,35-39
+  s_9486434a56868c::t_907019af97a4e8 40
+tests/fixtures/formatting/profile-order.input.jin
+  s_9486434a56868c::t_b86903dc5831a5 1-7
+docs/api.md
+  s_9486434a56868c::t_39a78f3ad7bf01 28-29,61-63
+  s_9486434a56868c::t_538d44ed607cac 120-139
+  s_eb0b5e07412ae2::t_a5268478ab7159 64
+tests/Validation/ValidatorTest.php
+  s_9486434a56868c::t_a1d9a040d90856 10-11,13-14,110-115,117-122
+  s_9486434a56868c::t_2efb9b180df372 92-99
+  s_9486434a56868c::t_9af32c45c71d1b 12,123-135
+  s_9486434a56868c::t_70843639c95049 116
+  s_9486434a56868c::t_344721f1653b58 136
+tests/Formatting/GoldenFormattingTest.php
+  s_9486434a56868c::t_3035347f93671f 40,138-147,156,165
+  s_9486434a56868c::t_ee4e1293c87a45 163
+  s_9486434a56868c::t_c726bf14a7134b 9-11,14,16,95-107,117-137,148-155
+  s_9486434a56868c::t_908316d22a50fe 158-162,164
+  s_9486434a56868c::t_67a8fdcf821266 108-116
+  s_9486434a56868c::t_b86903dc5831a5 12-13,31-39
+  s_9486434a56868c::t_6a35347e008bfb 41
+  s_9486434a56868c::t_b131ce74a60f46 157
+  s_9486434a56868c::t_46df75ce59ad3e 166
+tests/fixtures/formatting/profile-order.v1.jin
+  s_9486434a56868c::t_b86903dc5831a5 1-7
+src/JinDistill/Formatting/JinRenderer.php
+  s_9486434a56868c::t_34c1d0d13d2629 145-147,199-201
+  s_9486434a56868c::t_fe6b9cf7027c32 27,48-51,64,120-124,128-130,144,149,152,165-181
+src/JinDistill/Decoders/NumericLexemeCollector.php
+  s_9486434a56868c::t_9b93f59ae656d9 1-11,14-22,24-27,34-66,68-74,90,92-111,127,129-163
+  s_9486434a56868c::t_89b249fe24117c 79-84,86
+  s_9486434a56868c::t_34c1d0d13d2629 12-13,23,28-33,67,75-78,85,87-89,91,112-126,128
+README.md
+  s_9486434a56868c::t_8f3896976c10fd 42-46,57,76
+src/JinDistill/Formatting/NumericStyle.php
+  s_9486434a56868c::t_af0e27ae1ff913 1-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "990eb0ba40d26312d82d22ca858bdaf7af7d11e6",
+  "prompts": {},
+  "sessions": {
+    "s_9486434a56868c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0c5cf-1624-71d0-8892-ed842569f06d",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    },
+    "s_eb0b5e07412ae2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0cefe-0afe-75b3-a72b-80bb3792e43f",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
