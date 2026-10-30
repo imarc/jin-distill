@@ -1,0 +1,29 @@
+src/JinDistill/Composition/DefinitionComposer.php
+  s_9486434a56868c::t_ce1b80c3e66d8c 210,214-220
+  s_9486434a56868c::t_469d527b6afbf2 247,257-265,267
+  s_9486434a56868c::t_d01e52dbcea4e4 252-256,266
+tests/Composition/GoldenFlattenTest.php
+  s_9486434a56868c::t_223a281e761fa3 34-50
+tests/fixtures/flatten/lists/base.jin
+  s_9486434a56868c::t_223a281e761fa3 1-2
+CHANGELOG.md
+  s_9486434a56868c::t_c6b8df9f65acae 6-12
+tests/fixtures/flatten/lists/child.jin
+  s_9486434a56868c::t_223a281e761fa3 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4fc41b5c7b542809d2d0434e1d93ac0e315a60d4",
+  "prompts": {},
+  "sessions": {
+    "s_9486434a56868c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0c5cf-1624-71d0-8892-ed842569f06d",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
