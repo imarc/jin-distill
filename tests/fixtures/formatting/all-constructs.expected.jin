@@ -1,0 +1,51 @@
+--extends = file(base.jin)
+--without = [
+	"complex.arrayValue",
+]
+
+hexValue = 13
+binValue = 13
+octValue = 13
+quotedValue = "literal ""quote"""
+multiValue = This continues
+on a second line.
+
+[complex]
+	objectValue = {
+		"handler": "App\Middleware\ResponseHandler",
+	}
+	envValue = env(VALUE, FALSE)
+	runValue = run(md5('value'))
+	customValue = hello(Matt)
+	template = def(value) {
+        {"value": $value}
+    }
+	include = inc(template) {
+        one
+    }
+	mapping = map(template) {
+        one two
+    }
+
+[reference]
+[reference.sub]
+	value = one
+[reference.sub.nested]
+	value = two
+
+[extras]
+	; Leading comment
+	name = CPA ; inline comment
+	count = 10
+	ratio = 1.5
+	flag = true
+	empty = null
+	listValue = [
+		1,
+		2,
+	]
+	nested = {
+		"a": {
+			"b": true,
+		},
+	}

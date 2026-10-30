@@ -1,0 +1,106 @@
+<?php
+
+return [
+    'form' =>
+    [
+        'name' => 'Professional Affiliate',
+        'fields' =>
+        [
+            'firm' => null,
+            'person' =>
+            [
+                'avatar' => null,
+                'firstName' => true,
+                'middleName' => null,
+                'lastName' => true,
+                'suffix' => null,
+                'preferredName' => null,
+                'priorName' => null,
+                'spouse' => false,
+                'birthDate' => true,
+                'ethnicity' => true,
+                'gender' => true,
+                'pronoun' => null,
+                'email' => null,
+                'emailType' => false,
+                'alternateEmail' => null,
+                'alternateEmailType' => false,
+                'emailExclude' => false,
+                'phone' => true,
+                'homePhone' => null,
+                'mobilePhone' => true,
+                'textExclude' => true,
+                'officePhone' => null,
+                'officeExtension' => null,
+                'officeFax' => false,
+                'address' =>
+                [
+                    'line1' => null,
+                    'line2' => false,
+                    'city' => null,
+                    'state' => null,
+                    'postalCode' => null,
+                    'country' => null,
+                ],
+                'poAddress' =>
+                [
+                    'line1' => null,
+                    'postalCode' => null,
+                ],
+                'contactPreferences' => false,
+                'preferences' => false,
+                'publicRegistration' => false,
+                'social' => null,
+                'links' =>
+                [
+                    'facebook' => null,
+                    'instagram' => null,
+                    'linkedin' => null,
+                    'twitter' => null,
+                ],
+                'educational' => false,
+                'school' => false,
+                'schoolName' => false,
+                'graduationDate' => false,
+                'professional' => false,
+                'firm' => false,
+                'title' => null,
+                'position' => true,
+                'preferredChapter' => false,
+                'credentials' => null,
+                'aicpaNumber' => false,
+                'certification' => false,
+                'inStateCertificationNumber' => false,
+                'inStateCertificationDate' => false,
+                'outStateCertificationState' => false,
+                'outStateCertificationNumber' => false,
+                'outStateCertificationDate' => false,
+                'directoryExclude' => false,
+                'membership' => false,
+                'sponsor' => true,
+                'groupMemberships' => false,
+                'interests' => false,
+                'skills' => false,
+                'specialNeeds' => false,
+                'survey' => false,
+                'memberSource' => false,
+                'account' =>
+                [
+                    'preface' => null,
+                    'addendum' => null,
+                    'password' => true,
+                    'passwordConfirmation' => true,
+                ],
+            ],
+            'agreements' =>
+            [
+                'bylaws' => true,
+                'terms' => false,
+                'informationRelease' => false,
+                'dataRelease' => false,
+                'verify' => false,
+            ],
+        ],
+    ],
+    '--extends' => 'local/forms/application/standard.jin',
+];

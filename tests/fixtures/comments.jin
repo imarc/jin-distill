@@ -1,0 +1,16 @@
+; Document overview
+; Base form configuration
+--extends = file(base.jin) ; parent file
+
+; Form section
+[form]
+
+    ; Public display name
+    name = CPA ; visible label
+
+    ; Required person fields
+    fields = {
+        "person": {
+            "firstName": true,
+        },
+    }

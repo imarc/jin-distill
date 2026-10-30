@@ -1,0 +1,6 @@
+[beta]
+	b = 2
+	; Second beta
+	c = 3
+[alpha]
+	a = 1

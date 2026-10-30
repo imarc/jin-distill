@@ -1,0 +1,198 @@
+[form]
+
+	;
+	; The name of this form
+	;
+
+	name = Default
+
+	;
+	; A list of fields defining FALSE (do not display), NULL (do not require), TRUE (require)
+	;
+
+	fields = {
+
+		;
+		; Whether or not we ask the user to find their firm (required has no meaning here)
+		;
+
+		"firm": null,
+
+		;
+		; Person
+		;
+
+		"person": {
+
+			;
+			; Personal Information
+			;
+
+			"avatar": false,
+			"firstName": true,
+			"middleName": false,
+			"lastName": true,
+			"suffix": false,
+			"preferredName": false,
+			"priorName": false,
+			"spouse": false,
+			"birthDate": false,
+			"ethnicity": false,
+			"gender": false,
+			"pronoun": false,
+
+			;
+			; Contact Info
+			;
+
+			"email": null,
+			"emailType": false,
+			"alternateEmail": false,
+			"alternateEmailType": false,
+			"emailExclude": false,
+
+			"phone": false,							; Display all/no phone fields, Require at least 1
+			"homePhone": false,
+			"mobilePhone": false,
+			"textExclude": false,
+			"officePhone": false,
+			"officeExtension": false,
+			"officeFax": false,
+
+			"address": {
+				"line1": true,
+				"line2": false,
+				"city": true,
+				"state": true,						; Require, but will be dynamically not-required if country is not US
+				"postalCode": true,					; Require, but will be dynamically not-required if country doesn't have them
+				"country": true
+			},
+
+			"poAddress": {
+				"line1": false,
+				"postalCode": false
+			},
+
+			"contactPreferences": false,            ; Custom society contact preferences mirrored on subscription page
+
+			;
+			; Preferences
+			;
+
+			"preferences": false,
+
+			"publicRegistration": false,
+
+			;
+			; Social
+			;
+
+			"social": false, 						; Display all/no social related fields
+
+			"links": {
+				"facebook": false,
+				"instagram": false,
+				"linkedin": false,
+				"twitter": false
+			},
+
+			;
+			; Educational Info
+			;
+
+			"educational": false,					; Display all/no educational related fields
+
+			"school": false,
+			"schoolName": false,
+			"graduationDate": false,
+
+			;
+			; Professional Info
+			;
+
+			"professional": false,					; Display all/no professional related fields
+
+			"firm": false,
+			"title": false,
+			"position": false,
+			"preferredChapter": false,
+			"credentials": false,
+			"aicpaNumber": false,
+			"ptinNumber": false,
+			"nasbaNumber": false,
+			"nasbaOptOut": false,
+
+			"certification": false,					; Allows for requiring either certification type if both set to null.
+			"inStateCertificationState": false,
+			"inStateCertificationNumber": false,
+			"inStateCertificationDate": false,
+			"outStateCertificationState": false,
+			"outStateCertificationNumber": false,
+			"outStateCertificationDate": false,
+			"directoryExclude": false,
+
+			;
+			; Membership Info
+			;
+
+			"membership": false,					; Display all/no membership related fields
+
+			"sponsor": false,
+			"groupMemberships": false,
+			"excludeFromNewMembers": false,
+
+			;
+			; Interests
+			;
+
+			"interests": false,						; Display all/no interests, require one to be selected
+
+			;
+			; Skills
+			;
+
+			"skills": false,						; Display all/no skills, require one to be selected
+
+			;
+			; Special Needs
+			;
+
+			"specialNeeds": false,					; Display all/no special needs, require one to be selected
+
+			;
+			; Volunteering
+			;
+
+			"volunteering": false,
+			"volunteerSkills": false,
+			"volunteerTags": false,
+			"volunteerPreferences": false,
+
+			;
+			; Additional Member Information
+			;
+
+			"survey": false,
+			"memberSource": false,
+
+			;
+			; Account Info
+			;
+
+			"account": {
+				"preface": null,
+				"addendum": null,                   ; Display addendum
+				"password": true,
+				"passwordConfirmation": true
+			}
+		},
+
+		"agreements": {
+			"affirmation": false,
+			"bylaws": false,
+			"terms": false,
+			"informationRelease": false,
+			"dataRelease": false,
+			"verify": false
+		}
+}

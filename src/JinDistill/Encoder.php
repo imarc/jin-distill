@@ -1,15 +1,15 @@
 <?php
+
 namespace JinDistill;
 
-use JinDistill\Formats\{JinFormat, CsvFormat, FormatInterface};
+use JinDistill\Formats\{FormatInterface};
 use JinDistill\Output\OutputInterface;
 
-
-
+/**
+ * @deprecated 1.0.0 Use a JinDistiller workflow and explicitly persist its returned content.
+ */
 class Encoder
 {
-    
-
     /**
      * Output format
      * @var FormatInterface
@@ -23,7 +23,7 @@ class Encoder
 
 
     /**
-     * 
+     *
      */
     public function __construct(FormatInterface $format, OutputInterface $output)
     {
@@ -32,9 +32,10 @@ class Encoder
     }
 
     /**
-     * 
+     *
      */
-    public function encode($array)
+    /** @param array<array-key, mixed> $array */
+    public function encode(array $array): void
     {
         $result = $this->format->encode($array);
 

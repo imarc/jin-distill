@@ -1,16 +1,79 @@
 {
     "name": "imarc/jin-distill",
+    "description": "Analyze, normalize, flatten, and diff Dotink/Jin configuration without evaluating it.",
     "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "jin",
+        "dotink",
+        "hiraeth",
+        "configuration",
+        "static-analysis",
+        "formatter",
+        "diff"
+    ],
     "authors": [
         {
             "name": "Austin Fishbaugh",
             "email": "austinfishbaugh@imarc.com"
         }
     ],
-    "require": {},
+    "support": {
+        "issues": "https://github.com/imarc/jin-distill/issues",
+        "source": "https://github.com/imarc/jin-distill"
+    },
+    "require": {
+        "php": ">=8.1",
+        "dotink/jin": "^4.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5",
+        "phpstan/phpstan": "^2.1",
+        "friendsofphp/php-cs-fixer": "^3.64"
+    },
     "autoload": {
         "psr-4": {
             "JinDistill\\": "src/JinDistill/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JinDistill\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse",
+        "style": "php-cs-fixer fix --dry-run --diff",
+        "style:fix": "php-cs-fixer fix",
+        "check": [
+            "@test",
+            "@analyse",
+            "@style",
+            "@validate:composer"
+        ],
+        "validate:composer": "composer validate --strict"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "prefer-stable": true,
+    "minimum-stability": "stable",
+    "archive": {
+        "exclude": [
+            "/vendor",
+            "/tests",
+            "/examples",
+            "/docs",
+            "/.github",
+            "/phpunit.xml.dist",
+            "/phpstan.neon.dist",
+            "/.php-cs-fixer.dist.php",
+            "/.php-cs-fixer.cache",
+            "/.phpunit.cache",
+            "/mise.toml",
+            "/.gitignore",
+            ".DS_Store"
+        ]
     }
 }

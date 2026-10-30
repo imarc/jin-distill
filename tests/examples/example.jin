@@ -1,0 +1,75 @@
+;
+; Homepage URL
+; Will use SITE_URL as defined in the environment variable if not defined
+;
+
+home = null
+
+;
+; The title of the website
+;
+
+title = {
+	"legal": "Massachusetts Society of CPAs, Inc. (MassCPAs)",
+	"full": "Massachusetts Society of CPAs",
+	"abbr": "MassCPAs"
+}
+
+;
+; The address of the society
+;
+
+address = {
+	"line1": "105 Chauncy Street, Floor 10",
+	"line2": null,
+	"city": "Boston",
+	"state": "MA",
+	"postalCode": "02111"
+}
+
+;
+; List of phone numbers
+;
+
+phones = {
+	"main": "617-556-4000",
+	"free": "800-392-6145"
+}
+
+;
+; Static links for legal information (Privacy, Terms of Services, Copyright)... these should be an
+; array of objects containing text/url, e.g.
+;
+; [
+;     {
+;         "text":"Privacy",
+;         "url":"/privacy"
+;     }
+; ]
+;
+
+legal = [
+	{
+		"text": "Privacy",
+		"url": "/privacy"
+	}
+]
+
+;
+; Various e-mail recipients for use in templating as well as for notifications.  You can specify
+; more specific e-mails to send certain items to or disable them by setting them to null.  If an
+; e-mail is not explicitly set to null or another value, it will default to the "main" e-mail.
+;
+
+emails =  {
+	; "dues": null,
+	; "applications": null,
+	; "advocacy": null,
+	"jobs": "hnaranjo@masscpas.org",
+	; "classifieds": null,
+	; "committees": null,
+	; "events": null,
+	; "people": null,
+	; "firms": null,
+	"main": "masscpas@masscpas.org",
+}

@@ -4,5 +4,6 @@ namespace JinDistill\Formats;
 
 interface FormatInterface
 {
-	public function encode(array $data): string;
+    /** @param array<array-key, mixed> $data */
+    public function encode(array $data): string;
 }

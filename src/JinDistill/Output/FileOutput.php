@@ -2,22 +2,34 @@
 
 namespace JinDistill\Output;
 
+use RuntimeException;
+
+/**
+ * @deprecated 1.0.0 Persist returned workflow content explicitly after inspection or verification.
+ */
 class FileOutput implements OutputInterface
 {
-	protected $file;
+    /** @var resource */
+    protected $file;
 
-	public function __construct($file)
-	{
-		$this->file = fopen($file, "w");
-	}
+    public function __construct(string $file)
+    {
+        $handle = fopen($file, 'w');
 
-	public function __destruct()
-	{
-		fclose($this->file);
-	}
+        if ($handle === false) {
+            throw new RuntimeException(sprintf('Cannot open output file: %s', $file));
+        }
 
-	public function write(string $data)
-	{
-		fwrite($this->file, $data);
-	}
+        $this->file = $handle;
+    }
+
+    public function __destruct()
+    {
+        fclose($this->file);
+    }
+
+    public function write(string $data): void
+    {
+        fwrite($this->file, $data);
+    }
 }
