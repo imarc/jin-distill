@@ -25,6 +25,8 @@ All notable changes to this project are documented here. This project follows
 - Caller-provided runtime parser factories plus path-aware file verification.
 - Configurable preservation of leading comments and blank lines through
   normalization and flattening.
+- Static sync locks for named Jin file sets, with typed source-only snapshots,
+  per-file change status, and added, updated, or removed value paths.
 
 ### Fixed
 
