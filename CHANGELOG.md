@@ -3,6 +3,13 @@
 All notable changes to this project are documented here. This project follows
 [semantic versioning](https://semver.org/).
 
+## [2.0.1] - 2026-10-30
+
+### Fixed
+
+- Preserve inherited list entries when flattening a child that overrides list
+  indexes, matching Dotink's parser behavior.
+
 ## [2.0.0] - 2026-10-30
 
 ### Changed

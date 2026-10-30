@@ -31,4 +31,21 @@ final class GoldenFlattenTest extends TestCase
         self::assertStringNotContainsString('--without', $flattened);
         self::assertTrue($distiller->verifyFileSemantics($original, $flattened)->isEquivalent());
     }
+
+    public function testItPreservesInheritedListEntriesWhenChildOverridesAnIndex(): void
+    {
+        $root = realpath(self::FIXTURES);
+        self::assertNotFalse($root);
+        $original = $root . '/lists/child.jin';
+        $parser = new Parser([], [
+            'file' => static fn (string $path): string => $root . '/' . $path,
+        ]);
+
+        $expected = $parser->parse(file_get_contents($original))->get('form.checks');
+        $flattened = (new JinDistiller())->withApplicationRoot($root)->flattenFile($original)->content();
+        $actual = (new Parser())->parse($flattened)->get('form.checks');
+
+        self::assertSame(['override', 'second'], $expected);
+        self::assertSame($expected, $actual);
+    }
 }

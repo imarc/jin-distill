@@ -207,13 +207,17 @@ final class DefinitionComposer
         $left = $parent->value()->structuredValue();
         $right = $child->value()->structuredValue();
         if (!$parent->value()->isStaticallyKnown()
-            || !$child->value()->isStaticallyKnown()
-            || !$left instanceof \stdClass
-            || !$right instanceof \stdClass) {
+            || !$child->value()->isStaticallyKnown()) {
             return $this->inheritLeadingComments($parent, $child, $policy);
         }
 
-        $value = $this->mergeObjects($left, $right);
+        if ($left instanceof \stdClass && $right instanceof \stdClass) {
+            $value = $this->mergeObjects($left, $right);
+        } elseif (is_array($left) && is_array($right)) {
+            $value = $this->mergeLists($left, $right);
+        } else {
+            return $this->inheritLeadingComments($parent, $child, $policy);
+        }
         return new Assignment(
             $child->path(),
             $this->jsonValue($value),
@@ -240,16 +244,27 @@ final class DefinitionComposer
             return $this->mergeObjects($left, $right);
         }
         if (is_array($left) && is_array($right)) {
-            $merged = $left;
-            foreach ($right as $index => $value) {
-                $merged[$index] = $this->mergeNested($merged[$index] ?? null, $value);
-            }
-            return $merged;
+            return $this->mergeLists($left, $right);
         }
         return $right;
     }
 
-    private function jsonValue(\stdClass $value): Value
+    /**
+     * @param array<array-key, mixed> $left
+     * @param array<array-key, mixed> $right
+     * @return array<array-key, mixed>
+     */
+    private function mergeLists(array $left, array $right): array
+    {
+        $merged = $left;
+        foreach ($right as $index => $value) {
+            $merged[$index] = $this->mergeNested($merged[$index] ?? null, $value);
+        }
+        return $merged;
+    }
+
+    /** @param \stdClass|array<array-key, mixed> $value */
+    private function jsonValue(\stdClass|array $value): Value
     {
         $raw = json_encode($value, JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION);
         return new Value($raw, ValueKind::Json, json_decode($raw, true, 512, JSON_THROW_ON_ERROR), true, $value);
