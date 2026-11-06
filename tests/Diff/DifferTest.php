@@ -9,6 +9,7 @@ use JinDistill\Decoders\JinDecoder;
 use JinDistill\Diff\Differ;
 use JinDistill\Diff\DiffOptions;
 use JinDistill\Exceptions\UndiffableDefinitionException;
+use JinDistill\Formatting\FormatOptions;
 use JinDistill\Source\LoadedSource;
 use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\Path;
@@ -18,6 +19,23 @@ use PHPUnit\Framework\TestCase;
 
 final class DifferTest extends TestCase
 {
+    public function testItAlignsGeneratedOverlayWithoutChangingItsVerifiedDifferences(): void
+    {
+        $parent = $this->compose("name = Base\nenabled = false\noptions = {\"a\": 0, \"long\": 0}");
+        $target = $this->compose("name = Child\nenabled = true\noptions = {\"a\": 1, \"long\": 2}");
+        $differ = new Differ();
+        $options = (new DiffOptions())->withVerification(true);
+        $ordinary = $differ->diff($parent, $target, 'base.jin', $options);
+        $aligned = $differ->diff($parent, $target, 'base.jin', $options, (new FormatOptions())->withAssignmentAlignment(true));
+
+        self::assertSame(
+            "--extends = file(base.jin)\n\nname    = Child\nenabled = true\noptions = {\n\t\"a\"    : 1,\n\t\"long\" : 2,\n}\n",
+            $aligned->content(),
+        );
+        self::assertEquals($ordinary->differences(), $aligned->differences());
+        self::assertTrue($aligned->verification()?->isEquivalent());
+    }
+
     public function testItGeneratesInheritanceWithChangedAssignments(): void
     {
         $parent = $this->compose('name = Base');

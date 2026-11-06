@@ -8,6 +8,7 @@ use JinDistill\Formatting\DocumentFormatter;
 use JinDistill\Formatting\FormatOptions;
 use JinDistill\Formatting\JinRenderer;
 use JinDistill\Formatting\LineEnding;
+use JinDistill\Formatting\OrderingPolicy;
 use JinDistill\Formatting\SectionReferenceStyle;
 use JinDistill\Source\Path;
 use JinDistill\Syntax\Assignment;
@@ -59,6 +60,12 @@ final class CanonicalLayoutRule implements Rule
 
         $lines = explode("\n", str_replace(["\r\n", "\r"], "\n", $contents));
         $section = [];
+        $contextual = [];
+        if ($this->options->assignmentAlignment()) {
+            foreach ($this->renderer->renderStatements($document, $this->options->withOrdering(OrderingPolicy::SourceOrder)) as $rendered) {
+                $contextual[spl_object_id($rendered['statement'])] = $rendered['text'];
+            }
+        }
 
         foreach ($document->statements() as $statement) {
             if ($statement instanceof Section) {
@@ -82,7 +89,7 @@ final class CanonicalLayoutRule implements Rule
                 continue;
             }
 
-            $canonical = $this->canonical($statement, $section, $document);
+            $canonical = $contextual[spl_object_id($statement)] ?? $this->canonical($statement, $section, $document);
             $original = $this->original($statement, $lines);
 
             if ($original === null || $original === str_replace("\r\n", "\n", $canonical)) {

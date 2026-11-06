@@ -7,7 +7,11 @@ use JinDistill\Analysis\SourceGraphBuilder;
 use JinDistill\Decoders\JinDecoder;
 use JinDistill\Evaluation\EvaluationOptions;
 use JinDistill\Evaluation\SemanticVerifier;
+use JinDistill\Formatting\FormatOptions;
+use JinDistill\Formatting\LineEnding;
 use JinDistill\Formatting\Normalizer;
+use JinDistill\Formatting\NumericStyle;
+use JinDistill\Formatting\StringQuoting;
 use JinDistill\Source\FilesystemSourceLoader;
 use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\PathPolicy;
@@ -17,6 +21,30 @@ use PHPUnit\Framework\TestCase;
 
 final class NormalizerTest extends TestCase
 {
+    public function testAlignmentPreservesFormattingChoicesAndNormalizesIdempotently(): void
+    {
+        $normalizer = new Normalizer(new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )));
+        $source = new SourceId('memory://input.jin', 'input.jin');
+        $options = (new FormatOptions())->withAssignmentAlignment(true)->withIndentation('  ')
+            ->withLineEnding(LineEnding::CrLf)->withNumericStyle(NumericStyle::Preserve)->withStringQuoting(StringQuoting::Always);
+        $input = "x=0xD\nlong=1.50\nname=Payment\noptions={\"a\":1.50,\"long\":2.00}\nexpression=run( keep = : this )";
+        $once = $normalizer->normalize($input, $source, $options)->content();
+        $twice = $normalizer->normalize($once, $source, $options);
+
+        self::assertSame(
+            "x    = 0xD\r\nlong = 1.50\r\nname = \"Payment\"\r\n"
+            . "options = {\r\n  \"a\"    : 1.50,\r\n  \"long\" : 2.00,\r\n}\r\n"
+            . "expression = run( keep = : this )\r\n",
+            $once,
+        );
+        self::assertSame($once, $twice->content());
+        self::assertSame([], $twice->diagnostics());
+    }
+
     public function testItReturnsCanonicalLocalContentAndItsAnalysis(): void
     {
         $normalizer = new Normalizer(new Analyzer(new SourceGraphBuilder(

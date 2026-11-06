@@ -16,6 +16,21 @@ use PHPUnit\Framework\TestCase;
 
 final class FlattenerTest extends TestCase
 {
+    public function testItAlignsEffectiveAssignmentsAndObjectProperties(): void
+    {
+        $parent = new SourceId('/project/base.jin', 'base.jin');
+        $analysis = (new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([new LoadedSource($parent, "name = Base\nenabled = true\noptions = {\"a\": 1, \"long\": 2}")]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )))->analyze("--extends = base.jin\nname = Child", new SourceId('/project/child.jin', 'child.jin'));
+
+        self::assertSame(
+            "name    = Child\nenabled = true\noptions = {\n\t\"a\"    : 1,\n\t\"long\" : 2,\n}\n",
+            (new Flattener())->flatten($analysis, (new FormatOptions())->withAssignmentAlignment(true))->content(),
+        );
+    }
+
     public function testItRendersStandaloneStaticComposition(): void
     {
         $parent = new SourceId('/project/base.jin', 'base.jin');

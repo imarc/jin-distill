@@ -3,6 +3,19 @@
 All notable changes to this project are documented here. This project follows
 [semantic versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Opt-in `FormatOptions::withAssignmentAlignment(true)` aligns consecutive
+  assignments and object properties during normalization, flattening, and diff
+  rendering. Canonical layout diagnostics use the same grouping context.
+  Alignment is disabled by default in every profile.
+- Aligned output retains recorded object property inline comments. When a
+  property expands across lines, its inline comment becomes a leading comment
+  so subsequent normalization preserves it. Existing decoder comment limits
+  and output with alignment disabled remain unchanged.
+
 ## [2.0.1] - 2026-10-30
 
 ### Fixed
