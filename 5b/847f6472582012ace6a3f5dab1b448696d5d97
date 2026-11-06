@@ -1,0 +1,69 @@
+tests/Composition/FlattenerTest.php
+  s_1206c1479eb2d3::t_9fd2c12dc40d4a 19-33
+docs/formatting.md
+  s_1206c1479eb2d3::t_24fc931018143b 61-97,101-104
+  s_1206c1479eb2d3::t_0df40d35863ae8 98-100
+tests/Diff/DifferTest.php
+  s_1206c1479eb2d3::t_9fd2c12dc40d4a 12,22-38
+tests/Sync/StaticSnapshotTest.php
+  s_1206c1479eb2d3::t_9fd2c12dc40d4a 7,52-66
+  s_1206c1479eb2d3::t_728aa5e96ccc34 67-68
+tests/Formatting/FormatOptionsTest.php
+  s_1206c1479eb2d3::t_ae53dee4ac683e 70,85-93
+  s_1206c1479eb2d3::t_a911b52d64d6f3 94
+docs/specs/2026-11-06-assignment-alignment.md
+  s_1206c1479eb2d3::t_0df40d35863ae8 44-48
+  s_1206c1479eb2d3::t_6807dcd6f12b74 1-43,49-78,82-114
+  s_1206c1479eb2d3::t_813a9f868a24d8 79-81
+tests/Formatting/JinRendererTest.php
+  s_1206c1479eb2d3::t_1eb49d2fd166e0 94-124
+  s_1206c1479eb2d3::t_6ca36db2a6effe 125
+  s_1206c1479eb2d3::t_8d70a1d48f4cdc 46,52
+  s_1206c1479eb2d3::t_652039c6f045c9 126-129,135,140-142
+  s_1206c1479eb2d3::t_0df40d35863ae8 130-134,136-139
+  s_1206c1479eb2d3::t_ae53dee4ac683e 6,8-9,12,17-45,47-51,53-93
+src/JinDistill/Validation/Rules/CanonicalLayoutRule.php
+  s_1206c1479eb2d3::t_f5dffe418f54aa 11
+  s_1206c1479eb2d3::t_813a9f868a24d8 63-68,92
+src/JinDistill/Formatting/FormatOptions.php
+  s_1206c1479eb2d3::t_f5dffe418f54aa 21,76-79,146-150,152
+  s_ba5d61e9a44b8c::t_8ee4dd8e418f0b 151
+tests/Validation/ValidatorTest.php
+  s_1206c1479eb2d3::t_7da2622b5ad0e2 26-39
+  s_1206c1479eb2d3::t_8d70a1d48f4cdc 11,15,40-72
+src/JinDistill/Formatting/JinRenderer.php
+  s_1206c1479eb2d3::t_ddcb12625ef6ae 186-187,191-192,201,241,271-272,278-284
+  s_1206c1479eb2d3::t_0df40d35863ae8 193-198
+  s_1206c1479eb2d3::t_f5dffe418f54aa 12,26-37,41-42,47-54,59-66,70,73-74,77-78,82,84-86,89-93,104-107,184,190,199-200,204-206,210-216,218-220,222-234,236-239
+  s_1206c1479eb2d3::t_24fc931018143b 79-81,83,217,221,235,240
+  s_1206c1479eb2d3::t_6efcfb504b825b 242
+CHANGELOG.md
+  s_1206c1479eb2d3::t_d44a08d4b3df6d 6-18
+tests/Formatting/NormalizerTest.php
+  s_1206c1479eb2d3::t_abf415a43861c6 34,40
+  s_1206c1479eb2d3::t_9fd2c12dc40d4a 10-11,13-14,24-33,35-39,41-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5b847f6472582012ace6a3f5dab1b448696d5d97",
+  "prompts": {},
+  "sessions": {
+    "s_1206c1479eb2d3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1b147-5dd1-7460-ae35-5a53ffa25fad",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    },
+    "s_ba5d61e9a44b8c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "271d0972-e603-4488-aeb4-86796c16759a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
