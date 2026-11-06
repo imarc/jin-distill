@@ -1,0 +1,21 @@
+AGENTS.md
+  s_1206c1479eb2d3::t_d44a08d4b3df6d 1-71
+composer.json
+  s_1206c1479eb2d3::t_d5060c53975e7f 69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6779dd11b31e97151f15f731b7d3dedc65607fd0",
+  "prompts": {},
+  "sessions": {
+    "s_1206c1479eb2d3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1b147-5dd1-7460-ae35-5a53ffa25fad",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
