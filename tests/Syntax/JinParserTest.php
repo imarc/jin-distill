@@ -10,6 +10,7 @@ use JinDistill\Syntax\BlankLine;
 use JinDistill\Syntax\Comment;
 use JinDistill\Syntax\Document;
 use JinDistill\Syntax\Section;
+use JinDistill\Syntax\ValueKind;
 use PHPUnit\Framework\TestCase;
 
 final class JinParserTest extends TestCase
@@ -135,6 +136,41 @@ JIN);
 
         self::assertSame("A message that continues\nwithout being evaluated.", $assignment->value()->raw());
         self::assertSame("A message that continues\nwithout being evaluated.", $assignment->value()->staticValue());
+    }
+
+    public function testItPreservesBlankLinesInsideUnquotedMultilineValues(): void
+    {
+        $body = "(\n    SELECT 1\n\n \t\n    UNION ALL\n\n    SELECT 2\n) AS records";
+        foreach (["\n", "\r\n"] as $ending) {
+            $source = str_replace("\n", $ending, "[mapping]\nsource = $body\n\nnext = true\n");
+            $document = (new JinDecoder())->decode($source);
+            $assignment = $document->statements()[1];
+
+            self::assertInstanceOf(Assignment::class, $assignment);
+            self::assertSame($body, $assignment->value()->raw());
+            self::assertSame($body, $assignment->value()->staticValue());
+            self::assertSame(ValueKind::Multiline, $assignment->value()->kind());
+            self::assertSame(2, $assignment->span()->startLine());
+            self::assertSame(2 + substr_count($body, "\n"), $assignment->span()->toArray()['end']['line']);
+            self::assertTrue($document->data['mapping']['next']);
+            self::assertInstanceOf(BlankLine::class, $document->statements()[2]);
+        }
+
+        $document = (new JinDecoder())->decode("message = first\n\n \t\nlast");
+        self::assertSame("first\n\n \t\nlast", $document->statements()[0]->value()->raw());
+    }
+
+    public function testBlankLinesBeforeStatementBoundariesRemainTrivia(): void
+    {
+        foreach (['', 'next = true', "[other]\nnext = true", "; Label\nnext = true"] as $boundary) {
+            $document = (new JinDecoder())->decode("message = first\nsecond\n\n\n" . $boundary);
+            $assignment = $document->statements()[0];
+
+            self::assertSame("first\nsecond", $assignment->value()->raw());
+            self::assertSame(2, $assignment->span()->toArray()['end']['line']);
+            self::assertInstanceOf(BlankLine::class, $document->statements()[1]);
+            self::assertInstanceOf(BlankLine::class, $document->statements()[2]);
+        }
     }
 
     public function testItKeepsFunctionAndTemplateValuesOpaque(): void

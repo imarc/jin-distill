@@ -3,6 +3,14 @@
 All notable changes to this project are documented here. This project follows
 [semantic versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Preserve embedded blank lines in unquoted multiline values, including SQL
+  mappings accepted by Dotink. Blank lines before assignments, comments,
+  sections, and the end of the file remain layout trivia.
+
 ## [2.1.0] - 2026-11-06
 
 ### Added
