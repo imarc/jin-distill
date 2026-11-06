@@ -1,0 +1,19 @@
+CHANGELOG.md
+  s_1206c1479eb2d3::t_14bbe4c9134dcf 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3dec3332e3bb3ed5e5cb21b4f2f9cd7f80a4f6ac",
+  "prompts": {},
+  "sessions": {
+    "s_1206c1479eb2d3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1b147-5dd1-7460-ae35-5a53ffa25fad",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
