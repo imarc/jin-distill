@@ -85,9 +85,19 @@ final class JinDecoder implements DecoderInterface
             $key = $matches[1];
             $rawValue = $matches[2];
             $endIndex = $index;
-            while ($endIndex + 1 < count($lines) && $this->continuesValue($rawValue, $lines[$endIndex + 1])) {
-                $endIndex++;
-                $rawValue .= "\n" . $lines[$endIndex];
+            while ($endIndex + 1 < count($lines)) {
+                $nextIndex = $endIndex + 1;
+                // Blank lines belong to the value only when its next line continues it.
+                while ($nextIndex + 1 < count($lines) && trim($lines[$nextIndex]) === '') {
+                    $nextIndex++;
+                }
+                if (!$this->continuesValue($rawValue, $lines[$nextIndex])) {
+                    break;
+                }
+                while ($endIndex < $nextIndex) {
+                    $endIndex++;
+                    $rawValue .= "\n" . $lines[$endIndex];
+                }
             }
             $index = $endIndex;
 

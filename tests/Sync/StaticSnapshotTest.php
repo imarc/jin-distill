@@ -66,6 +66,34 @@ final class StaticSnapshotTest extends TestCase
         self::assertSame('unchanged', StaticSnapshot::fromJson($before->toJson())->compare($distiller->snapshotFiles(['root' => $path]))->status());
     }
 
+    public function testSnapshotsPreserveInheritedMultilineSqlAndDetectChanges(): void
+    {
+        $sql = "(\n    SELECT 1\n\n    UNION ALL\n\n    SELECT 2\n) AS records";
+        $parent = $this->source("[mapping]\nname = Example\nsource = SELECT 0");
+        $path = $this->source("--extends = $parent\n[mapping]\nsource = $sql\n");
+        $distiller = (new JinDistiller())->withEvaluator(new JinEvaluator(static function (): never {
+            throw new \RuntimeException('Evaluator was called.');
+        }));
+        $snapshot = $distiller->snapshotFiles(['mapping' => $path]);
+        $serialized = json_decode($snapshot->toJson(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(
+            ['type' => 'string', 'value' => $sql],
+            $serialized['roots']['mapping']['entries']['mapping']['entries']['source'],
+        );
+        self::assertSame('unchanged', StaticSnapshot::fromJson($snapshot->toJson())->compare($distiller->snapshotFiles(['mapping' => $path]))->status());
+
+        $updated = str_replace('SELECT 2', 'SELECT 3', $sql);
+        file_put_contents($path, "--extends = $parent\n[mapping]\nsource = $updated\n");
+        $comparison = $snapshot->compare($distiller->snapshotFiles(['mapping' => $path]));
+
+        self::assertSame('updated', $comparison->status());
+        self::assertCount(1, $comparison->changes());
+        self::assertSame('/mapping/source', $comparison->changes()[0]->path());
+        self::assertSame(['type' => 'string', 'value' => $sql], $comparison->changes()[0]->previous());
+        self::assertSame(['type' => 'string', 'value' => $updated], $comparison->changes()[0]->current());
+    }
+
     public function testListRulesAndRootStatus(): void
     {
         $path = $this->source('items = ["a", "b"]');

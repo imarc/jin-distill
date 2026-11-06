@@ -11,6 +11,7 @@ use JinDistill\Formatting\FormatOptions;
 use JinDistill\Formatting\LineEnding;
 use JinDistill\Formatting\Normalizer;
 use JinDistill\Formatting\NumericStyle;
+use JinDistill\Formatting\SpacingPolicy;
 use JinDistill\Formatting\StringQuoting;
 use JinDistill\Source\FilesystemSourceLoader;
 use JinDistill\Source\MemorySourceLoader;
@@ -21,6 +22,30 @@ use PHPUnit\Framework\TestCase;
 
 final class NormalizerTest extends TestCase
 {
+    public function testItPreservesSqlBlankLinesAndDotinkSemanticsUnderEverySpacingPolicy(): void
+    {
+        $sql = "(\n    SELECT 1\n\n    UNION ALL\n\n    SELECT 2\n) AS records";
+        $input = "[mapping]\nsource = $sql\n\nnext = true";
+        $normalizer = new Normalizer(new Analyzer(new SourceGraphBuilder(
+            new MemorySourceLoader([]),
+            new JinDecoder(),
+            [new RelativeExtendsResolver()],
+        )));
+        $source = new SourceId('memory://mapping.jin', 'mapping.jin');
+        $expected = (new \Dotink\Jin\Parser())->parse($input)->all();
+
+        foreach (SpacingPolicy::cases() as $spacing) {
+            $options = (new FormatOptions())->withSpacingPolicy($spacing)->withAssignmentAlignment(true);
+            $once = $normalizer->normalize($input, $source, $options)->content();
+            $twice = $normalizer->normalize($once, $source, $options);
+
+            self::assertStringContainsString($sql, $once);
+            self::assertSame($once, $twice->content());
+            self::assertSame([], $twice->diagnostics());
+            self::assertSame($expected, (new \Dotink\Jin\Parser())->parse($once)->all());
+        }
+    }
+
     public function testAlignmentPreservesFormattingChoicesAndNormalizesIdempotently(): void
     {
         $normalizer = new Normalizer(new Analyzer(new SourceGraphBuilder(
