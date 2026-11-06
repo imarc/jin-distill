@@ -1,0 +1,28 @@
+src/JinDistill/Decoders/JinDecoder.php
+  s_1206c1479eb2d3::t_cdd7334be1db0d 88-100
+tests/Formatting/NormalizerTest.php
+  s_1206c1479eb2d3::t_51efa25794afc8 14,25-48
+tests/Syntax/JinParserTest.php
+  s_1206c1479eb2d3::t_51efa25794afc8 13,141-174
+  s_1206c1479eb2d3::t_34a6b6801c97e3 175
+CHANGELOG.md
+  s_1206c1479eb2d3::t_51efa25794afc8 6-13
+tests/Sync/StaticSnapshotTest.php
+  s_1206c1479eb2d3::t_51efa25794afc8 69-96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0342094564a3ced4e9a2dca11d383cd7b5e3100b",
+  "prompts": {},
+  "sessions": {
+    "s_1206c1479eb2d3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1b147-5dd1-7460-ae35-5a53ffa25fad",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Austin Fishbaugh <austinfishbaugh@imarc.com>"
+    }
+  }
+}
