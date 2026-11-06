@@ -9,6 +9,7 @@ use JinDistill\Syntax\BlankLine;
 use JinDistill\Syntax\Comment;
 use JinDistill\Syntax\Document;
 use JinDistill\Syntax\Section;
+use JinDistill\Syntax\Statement;
 use JinDistill\Syntax\Value;
 use JinDistill\Syntax\ValueKind;
 
@@ -24,48 +25,72 @@ final class JinRenderer
     public function render(Document $document, ?FormatOptions $options = null): string
     {
         $options ??= new FormatOptions();
-        $document = (new DocumentFormatter())->order($document, $options->ordering());
-        $lines = [];
-        $section = [];
-        $pendingBlankLines = 0;
-
-        foreach ($document->statements() as $statement) {
-            if ($statement instanceof BlankLine) {
-                $pendingBlankLines++;
-                continue;
-            }
-
-            $this->appendBlankLines($lines, $pendingBlankLines, $options);
-            $pendingBlankLines = 0;
-
-            if ($statement instanceof Comment) {
-                $lines[] = $this->indent($section, $options) . $this->renderComment($statement->text());
-                continue;
-            }
-
-            if ($statement instanceof Section) {
-                $section = $statement->path()->segments();
-                $lexeme = $options->sectionReferences() === SectionReferenceStyle::Preserve
-                    ? $statement->lexeme()
-                    : implode('.', $section);
-                $lines[] = '[' . $lexeme . ']';
-                continue;
-            }
-
-            if ($statement instanceof Assignment) {
-                $lines[] = $this->renderAssignment($statement, $section, $document, $options);
-            }
-        }
-
-        while ($lines !== [] && end($lines) === '') {
-            array_pop($lines);
-        }
+        $lines = array_column($this->renderStatements($document, $options), 'text');
 
         return implode($options->lineEnding()->value, $lines) . $options->lineEnding()->value;
     }
 
-    /** @param list<string> $section */
-    private function renderAssignment(Assignment $assignment, array $section, Document $document, FormatOptions $options): string
+    /**
+     * @internal Shared statement layout for rendering and validation.
+     * @return list<array{statement: Statement, text: string}>
+     */
+    public function renderStatements(Document $document, ?FormatOptions $options = null): array
+    {
+        $options ??= new FormatOptions();
+        $document = (new DocumentFormatter())->order($document, $options->ordering());
+        $rendered = [];
+        $prefixes = [];
+        $section = [];
+
+        foreach ($document->statements() as $statement) {
+            if ($statement instanceof BlankLine) {
+                if ($options->spacingPolicy() === SpacingPolicy::None
+                    || ($options->spacingPolicy() === SpacingPolicy::One && $rendered !== [] && end($rendered)['statement'] instanceof BlankLine)) {
+                    continue;
+                }
+                $text = '';
+            } elseif ($statement instanceof Comment) {
+                $text = $this->indent($section, $options) . $this->renderComment($statement->text());
+            } elseif ($statement instanceof Section) {
+                $section = $statement->path()->segments();
+                $lexeme = $options->sectionReferences() === SectionReferenceStyle::Preserve
+                    ? $statement->lexeme()
+                    : implode('.', $section);
+                $text = '[' . $lexeme . ']';
+            } elseif ($statement instanceof Assignment) {
+                $row = $this->renderAssignment($statement, $section, $document, $options);
+                $text = $row['text'];
+                if ($row['prefix'] !== null) {
+                    $prefixes[count($rendered)] = $row['prefix'];
+                }
+            } else {
+                continue;
+            }
+
+            $rendered[] = ['statement' => $statement, 'text' => $text];
+        }
+
+        while ($rendered !== [] && end($rendered)['statement'] instanceof BlankLine) {
+            array_pop($rendered);
+        }
+
+        if ($options->assignmentAlignment()) {
+            $lines = $this->align(array_column($rendered, 'text'), $prefixes);
+            $aligned = [];
+            foreach ($rendered as $index => $row) {
+                $aligned[] = ['statement' => $row['statement'], 'text' => $lines[$index]];
+            }
+            return $aligned;
+        }
+
+        return $rendered;
+    }
+
+    /**
+     * @param list<string> $section
+     * @return array{text: string, prefix: ?string}
+     */
+    private function renderAssignment(Assignment $assignment, array $section, Document $document, FormatOptions $options): array
     {
         $segments = $assignment->path()->segments();
         $directive = str_starts_with($segments[0] ?? '', '--');
@@ -76,7 +101,10 @@ final class JinRenderer
             : $this->renderValue($assignment->value(), count($section), $assignment->path(), $document, $options);
         $inlineComment = $assignment->inlineComment();
 
-        return $indentation . $key . ' = ' . $value . ($inlineComment === null ? '' : ' ; ' . $inlineComment->text());
+        return [
+            'text' => $indentation . $key . ' = ' . $value . ($inlineComment === null ? '' : ' ; ' . $inlineComment->text()),
+            'prefix' => !$directive && $inlineComment === null && strpbrk($value, "\r\n") === false ? $indentation . $key : null,
+        ];
     }
 
     /**
@@ -153,16 +181,63 @@ final class JinRenderer
         }
 
         $lines = ['{'];
+        $prefixes = [];
         foreach ($value as $key => $item) {
-            foreach ($this->metadataTrivia($document, $path->append((string) $key), $depth + 1, $options) as $line) {
+            $itemPath = $path->append((string) $key);
+            foreach ($this->metadataTrivia($document, $itemPath, $depth + 1, $options) as $line) {
                 $lines[] = $line;
             }
-            $lines[] = $this->indentDepth($depth + 1, $options)
-            . $this->quote((string) $key)
-            . ': ' . $this->renderStaticValue($item, $depth + 1, $path->append((string) $key), $document, $options, true) . ',';
+            $prefix = $this->indentDepth($depth + 1, $options) . $this->quote((string) $key);
+            $renderedItem = $this->renderStaticValue($item, $depth + 1, $itemPath, $document, $options, true);
+            $inlineComment = $options->assignmentAlignment() ? ($this->metadata($document, $itemPath)['inlineComment'] ?? null) : null;
+            $multiline = strpbrk($renderedItem, "\r\n") !== false;
+            if ($multiline && is_string($inlineComment)) {
+                $lines[] = $this->indentDepth($depth + 1, $options) . $this->renderComment($inlineComment);
+                $inlineComment = null;
+            }
+            if ($inlineComment === null && !$multiline) {
+                $prefixes[count($lines)] = $prefix;
+            }
+            $lines[] = $prefix . ': ' . $renderedItem . ',' . (is_string($inlineComment) ? ' ; ' . $inlineComment : '');
         }
         $lines[] = $this->indentDepth($depth, $options) . '}';
+        if ($options->assignmentAlignment()) {
+            $lines = $this->align($lines, $prefixes, 1);
+        }
         return implode($options->lineEnding()->value, $lines);
+    }
+
+    /**
+     * @param list<string> $lines
+     * @param array<int, string> $prefixes Eligible row prefixes ending at the key boundary.
+     * @return list<string>
+     */
+    private function align(array $lines, array $prefixes, int $minimumPadding = 0): array
+    {
+        $aligned = [];
+        $start = 0;
+        while ($start < count($lines)) {
+            if (!isset($prefixes[$start])) {
+                $aligned[] = $lines[$start];
+                $start++;
+                continue;
+            }
+
+            $end = $start;
+            $width = strlen($prefixes[$start]);
+            while (isset($prefixes[$end + 1])) {
+                $end++;
+                $width = max($width, strlen($prefixes[$end]));
+            }
+
+            for ($index = $start; $index <= $end; $index++) {
+                $length = strlen($prefixes[$index]);
+                $aligned[] = substr_replace($lines[$index], str_repeat(' ', $width - $length + $minimumPadding), $length, 0);
+            }
+            $start = $end + 1;
+        }
+
+        return $aligned;
     }
 
     private function numericLexemeMatches(string $lexeme, int|float $value): bool
@@ -193,17 +268,20 @@ final class JinRenderer
         }
     }
 
-    /** @return list<string> */
-    private function metadataTrivia(Document $document, Path $path, int $depth, FormatOptions $options): array
+    /** @return array<mixed> */
+    private function metadata(Document $document, Path $path): array
     {
         $metadata = $document->metadata[$path->toJsonPointer()]
             ?? $document->metadata[implode('.', $path->segments())]
             ?? null;
-        if (!is_array($metadata)) {
-            return [];
-        }
 
-        $trivia = $metadata['leadingTrivia'] ?? [];
+        return is_array($metadata) ? $metadata : [];
+    }
+
+    /** @return list<string> */
+    private function metadataTrivia(Document $document, Path $path, int $depth, FormatOptions $options): array
+    {
+        $trivia = $this->metadata($document, $path)['leadingTrivia'] ?? [];
         if (!is_array($trivia)) {
             return [];
         }

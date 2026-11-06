@@ -58,6 +58,50 @@ $result = $distiller->normalizeFile('config/app.jin', $format);
   sections moved by canonical grouping use absolute paths.
 - `withSpacingPolicy(SpacingPolicy::Preserve|None|One)`: keep, remove, or cap
   recorded leading blank lines at one.
+- `withAssignmentAlignment(bool)`: align equals signs in consecutive
+  assignments and colons in consecutive object properties. Disabled by default.
+
+## Optional alignment
+
+```php
+$format = ImarcStyle::v2()->withAssignmentAlignment(true);
+```
+
+```jin
+class    = Payment
+email    = emails.dues
+template = @emails/payments/firm-paid-dues.html
+
+options = {
+    "class"    : "Payment",
+    "email"    : "emails.dues",
+    "template" : "@emails/payments/firm-paid-dues.html",
+}
+```
+
+Each section and object has independent groups. Emitted blank lines, comments,
+section headers, and multiline values break groups. Directive assignments and
+rows with inline comments are excluded and break groups on both sides. A
+multiline object is excluded from its containing group, while its own eligible
+properties can align. List elements are not aligned; objects inside lists are.
+
+Groups follow the selected ordering and blank-line policy. With
+`SpacingPolicy::None`, removed blank lines do not break groups. Eligible rows
+have at least one space before the delimiter and one generated space after it;
+excluded rows retain their ordinary delimiter spacing. Quoted object key
+widths include doubled quotes. Width uses bytes, so Unicode keys may not align
+visually in every editor.
+
+Values retain the existing quoting and numeric policies. Opaque expression
+bodies and multiline content stay unchanged. Aligned mode also retains recorded
+object property inline comments so their group boundaries survive reparse;
+when the property value expands across lines, its recorded inline comment
+becomes a standalone leading comment. Disabled mode retains the existing
+comment behavior. This does not extend which comments the decoder records.
+
+Normalization, flattening, diff generation, and canonical layout validation
+share these rules. A custom validator supplied to `Normalizer` retains its own
+formatting options; configure that validator with the same format when needed.
 
 ## Leading spacing
 

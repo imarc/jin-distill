@@ -8,9 +8,11 @@ use JinDistill\Decoders\JinDecoder;
 use JinDistill\Diagnostics\Severity;
 use JinDistill\Evaluation\EvaluationOptions;
 use JinDistill\Formatting\FormatOptions;
+use JinDistill\Formatting\JinRenderer;
 use JinDistill\Formatting\LineEnding;
 use JinDistill\Formatting\OrderingPolicy;
 use JinDistill\Formatting\SectionReferenceStyle;
+use JinDistill\Formatting\SpacingPolicy;
 use JinDistill\Formatting\StringQuoting;
 use JinDistill\Source\MemorySourceLoader;
 use JinDistill\Source\RelativeExtendsResolver;
@@ -21,6 +23,53 @@ use PHPUnit\Framework\TestCase;
 
 final class ValidatorTest extends TestCase
 {
+    public function testDefaultLayoutSuggestionsKeepExpandingDottedAssignments(): void
+    {
+        foreach ([
+            ["a.b = value\n", "[a]\n\tb = value", "[a]\n\tb = value\n"],
+            ["[form]\n\tfield.name = value\n", "[form.field]\n\tname = value", "[form]\n[form.field]\n\tname = value\n"],
+        ] as [$source, $statementSuggestion, $orderSuggestion]) {
+            $diagnostics = $this->validate($source);
+
+            self::assertSame(['jin.style.canonical-layout', 'jin.style.canonical-layout'], $this->ruleIds($diagnostics));
+            self::assertSame($statementSuggestion, $diagnostics[0]->suggestion());
+            self::assertSame($orderSuggestion, $diagnostics[1]->suggestion());
+        }
+    }
+
+    public function testAlignedOutputIsCanonicalAcrossFormattingPolicies(): void
+    {
+        $source = "x=1\n\nlong=2\nobject={\"a\":1,\"long\":2}\n[beta]\nx=3\nlong=4\n[alpha]\ny=5\n[beta]\nz=6";
+        $analyzer = new Analyzer(new SourceGraphBuilder(new MemorySourceLoader([]), new JinDecoder(), [new RelativeExtendsResolver()]));
+        $sourceId = new SourceId('memory://input.jin', 'input.jin');
+
+        foreach (OrderingPolicy::cases() as $ordering) {
+            foreach (SpacingPolicy::cases() as $spacing) {
+                foreach (LineEnding::cases() as $ending) {
+                    $options = (new FormatOptions())->withAssignmentAlignment(true)
+                        ->withOrdering($ordering)->withSpacingPolicy($spacing)->withLineEnding($ending);
+                    $canonical = (new JinRenderer())->render((new JinDecoder())->decode($source), $options);
+
+                    self::assertSame([], (new Validator(options: $options))->validate($analyzer->analyze($canonical, $sourceId)));
+                }
+            }
+        }
+    }
+
+    public function testAlignmentSuggestionsKeepNeighborWidthsAndDuplicateStatementSpans(): void
+    {
+        $source = "[form]\n\tx = 1\n\tlong = 2\n\tx = 3";
+        $analysis = (new Analyzer(new SourceGraphBuilder(new MemorySourceLoader([]), new JinDecoder(), [new RelativeExtendsResolver()])))
+            ->analyze($source, new SourceId('memory://input.jin', 'input.jin'));
+        $diagnostics = (new Validator(options: (new FormatOptions())->withAssignmentAlignment(true)))->validate($analysis);
+
+        self::assertSame(['jin.style.duplicate-path', 'jin.style.canonical-layout', 'jin.style.canonical-layout'], $this->ruleIds($diagnostics));
+        self::assertSame("\tx    = 1", $diagnostics[1]->suggestion());
+        self::assertSame("\tx    = 3", $diagnostics[2]->suggestion());
+        self::assertSame(2, $diagnostics[1]->span()?->startLine());
+        self::assertSame(4, $diagnostics[2]->span()?->startLine());
+    }
+
     public function testItReportsSameFileDuplicatePathsWithoutRejectingInheritanceOverrides(): void
     {
         $analyzer = new Analyzer(new SourceGraphBuilder(new MemorySourceLoader([]), new JinDecoder(), [new RelativeExtendsResolver()]));

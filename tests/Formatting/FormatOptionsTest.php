@@ -67,6 +67,7 @@ final class FormatOptionsTest extends TestCase
             [$original->withStringQuoting(StringQuoting::Always), 'stringQuoting', StringQuoting::MinimalSafe, StringQuoting::Always],
             [$original->withSectionReferences(SectionReferenceStyle::Preserve), 'sectionReferences', SectionReferenceStyle::Explicit, SectionReferenceStyle::Preserve],
             [$original->withSpacingPolicy(SpacingPolicy::One), 'spacingPolicy', SpacingPolicy::Preserve, SpacingPolicy::One],
+            [$original->withAssignmentAlignment(true), 'assignmentAlignment', false, true],
         ];
 
         foreach ($changes as [$changed, $accessor, $before, $after]) {
@@ -80,5 +81,15 @@ final class FormatOptionsTest extends TestCase
     {
         self::assertSame(OrderingPolicy::CanonicalSections, ImarcStyle::v2()->ordering());
         self::assertSame(ExtendsPathStyle::BareRelative, DotinkStyle::v2()->extendsPathStyle());
+    }
+
+    public function testEveryProfileDisablesAssignmentAlignmentByDefault(): void
+    {
+        foreach ([new FormatOptions(), ImarcStyle::v1(), ImarcStyle::v2(), DotinkStyle::v1(), DotinkStyle::v2()] as $options) {
+            self::assertFalse($options->assignmentAlignment());
+            self::assertTrue($options->withAssignmentAlignment(true)->assignmentAlignment());
+            self::assertFalse($options->withAssignmentAlignment(true)->withAssignmentAlignment(false)->assignmentAlignment());
+            self::assertFalse($options->assignmentAlignment());
+        }
     }
 }

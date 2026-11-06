@@ -18,6 +18,7 @@ final class FormatOptions
         private StringQuoting $stringQuoting = StringQuoting::MinimalSafe,
         private SectionReferenceStyle $sectionReferences = SectionReferenceStyle::Explicit,
         private SpacingPolicy $spacingPolicy = SpacingPolicy::Preserve,
+        private bool $assignmentAlignment = false,
     ) {
         if ($indentation === '') {
             throw new InvalidArgumentException('Formatting indentation must not be empty.');
@@ -71,6 +72,10 @@ final class FormatOptions
     public function spacingPolicy(): SpacingPolicy
     {
         return $this->spacingPolicy;
+    }
+    public function assignmentAlignment(): bool
+    {
+        return $this->assignmentAlignment;
     }
 
     public function withIndentation(string $indentation): self
@@ -136,6 +141,13 @@ final class FormatOptions
     {
         $copy = clone $this;
         $copy->spacingPolicy = $spacingPolicy;
+        return $copy;
+    }
+
+    public function withAssignmentAlignment(bool $assignmentAlignment): self
+    {
+        $copy = clone $this;
+        $copy->assignmentAlignment = $assignmentAlignment;
         return $copy;
     }
 }

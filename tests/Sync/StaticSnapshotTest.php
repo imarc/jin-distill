@@ -4,6 +4,7 @@ namespace JinDistill\Tests\Sync;
 
 use InvalidArgumentException;
 use JinDistill\Evaluation\JinEvaluator;
+use JinDistill\Formatting\FormatOptions;
 use JinDistill\JinDistiller;
 use JinDistill\Sync\StaticSnapshot;
 use PHPUnit\Framework\TestCase;
@@ -46,6 +47,23 @@ final class StaticSnapshotTest extends TestCase
         self::assertSame(['/emptyList', '/emptyMap', '/function', '/map/0/a.b', '/number', '/value'], array_map(static fn ($change): string => $change->path(), $changes));
         self::assertSame('removed', $changes[5]->kind());
         self::assertSame(['type' => 'null'], $changes[5]->previous());
+    }
+
+    public function testAlignmentLeavesStaticSnapshotComparisonUnchangedWithoutEvaluation(): void
+    {
+        $path = $this->source("x = 1\nlong = 2\noptions = {\"a\": true, \"long\": \"value\"}\nexpression = env(\"TOKEN\")");
+        $distiller = (new JinDistiller())->withEvaluator(new JinEvaluator(static function (): never {
+            throw new \RuntimeException('Evaluator was called.');
+        }));
+        $before = $distiller->snapshotFiles(['root' => $path]);
+        $rendered = $distiller->normalizeFile($path, (new FormatOptions())->withAssignmentAlignment(true))->content();
+        self::assertStringContainsString('x    = 1', $rendered);
+        self::assertStringContainsString('"a"    : true,', $rendered);
+        self::assertStringContainsString('env("TOKEN")', $rendered);
+
+        file_put_contents($path, $rendered);
+
+        self::assertSame('unchanged', StaticSnapshot::fromJson($before->toJson())->compare($distiller->snapshotFiles(['root' => $path]))->status());
     }
 
     public function testListRulesAndRootStatus(): void
